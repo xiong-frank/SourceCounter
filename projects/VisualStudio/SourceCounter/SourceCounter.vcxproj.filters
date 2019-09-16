@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\sources\sc_Main.cpp" />
+    <ClCompile Include="..\..\sources\config\ConfigInfo.cpp">
+      <Filter>config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\sources\log\sc_log.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\sources\counter\AnalyzeThread.cpp">
+      <Filter>counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\sources\counter\FileReport.cpp">
+      <Filter>counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\sources\counter\ReportList.cpp">
+      <Filter>counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\sources\utils\PathUtils.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="config">
+      <UniqueIdentifier>{10cc12de-b40e-4c65-83b1-a2141c341e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="log">
+      <UniqueIdentifier>{d0d81ce0-43fb-4289-8ba2-ea5877fa69dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="counter">
+      <UniqueIdentifier>{c9da45a6-5a17-440a-b68a-e97032ad7541}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{be190369-735f-4bcf-a203-318b8000230b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\sources\config\ConfigInfo.h">
+      <Filter>config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sources\log\sc_log.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sources\counter\AnalyzeThread.h">
+      <Filter>counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sources\counter\FileReport.h">
+      <Filter>counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sources\counter\ReportList.h">
+      <Filter>counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sources\utils\PathUtils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
