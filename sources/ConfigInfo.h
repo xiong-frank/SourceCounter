@@ -1,17 +1,17 @@
-#ifndef _Config_Info_H_
+ï»¿#ifndef _Config_Info_H_
 #define _Config_Info_H_
 
-// ÅäÖÃĞÅÏ¢
+// é…ç½®ä¿¡æ¯
 class ConfigInfo
 {
 private:
 
-    unsigned int m_ThreadCount{ 0 };    // Ïß³ÌÊıÁ¿             
-    list_type m_Suffixes;               // Ä¿±êÎÄ¼şÀàĞÍºó×ºÁĞ±í
-    list_type m_Singles;                // µ¥ĞĞ×¢ÊÍ·ûºÅÁĞ±í
-    pair_list m_Multiples;              // ¶àĞĞ×¢ÊÍ±ê¼Ç¶ÔÁĞ±í
+    unsigned int m_ThreadCount{ 0 };    // çº¿ç¨‹æ•°é‡             
+    list_type m_Suffixes;               // ç›®æ ‡æ–‡ä»¶ç±»å‹åç¼€åˆ—è¡¨
+    list_type m_Singles;                // å•è¡Œæ³¨é‡Šç¬¦å·åˆ—è¡¨
+    pair_list m_Multiples;              // å¤šè¡Œæ³¨é‡Šæ ‡è®°å¯¹åˆ—è¡¨
 
-    // ¸ù¾İÅäÖÃµÄ±à³ÌÓïÑÔÀàĞÍµ÷ÕûÅäÖÃ
+    // æ ¹æ®é…ç½®çš„ç¼–ç¨‹è¯­è¨€ç±»å‹è°ƒæ•´é…ç½®
     void _AdjustConfig(const char* language);
 
 public:
@@ -21,10 +21,10 @@ public:
     const list_type& GetSingleList() const { return m_Singles; }
     const pair_list& GetMultipleList() const { return m_Multiples; }
 
-    // ÏÔÊ¾ÅäÖÃ
+    // æ˜¾ç¤ºé…ç½®
     void Show() const;
 
-    // ´ÓÎÄ¼ş¼ÓÔØÅäÖÃ
+    // ä»æ–‡ä»¶åŠ è½½é…ç½®
     bool Load(const char* fromFile);
 
 };

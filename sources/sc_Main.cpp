@@ -1,4 +1,4 @@
-#include <list>
+ï»¿#include <list>
 #include <queue>
 #include <iostream>
 
@@ -11,44 +11,44 @@
 
 int main(int argc, char *argv[])
 {
-    // Ğ£Ñé²ÎÊı
+    // æ ¡éªŒå‚æ•°
     if (argc < 2)
     {
         std::cout << "You don\'t specify any path !" << std::endl;
         return 0;
     }
 
-    // ³õÊ¼»¯ÈÕÖ¾
+    // åˆå§‹åŒ–æ—¥å¿—
     _log_init(argv[0]);
 
-    // ÌáÈ¡Â·¾¶²ÎÊıÁĞ±í
+    // æå–è·¯å¾„å‚æ•°åˆ—è¡¨
     std::vector<std::string> dirList;
     for (int i = 1; i < argc; ++i)
         ExtractDirectory(dirList, argv[i]);
 
-    // ÔÚ²ÎÊıÁĞ±íÖĞÃ»ÓĞÕÒµ½ÈÎºÎÓĞĞ§µÄÂ·¾¶
+    // åœ¨å‚æ•°åˆ—è¡¨ä¸­æ²¡æœ‰æ‰¾åˆ°ä»»ä½•æœ‰æ•ˆçš„è·¯å¾„
     if (dirList.empty())
     {
         std::cout << "All of the paths you have specified are invalid !" << std::endl;
         return 0;
     }
 
-    // ¼ÓÔØÅäÖÃÎÄ¼ş
+    // åŠ è½½é…ç½®æ–‡ä»¶
     ConfigInfo config;
     config.Load(AppointSuffix(argv[0], ".ini").c_str());
     config.Show();
 
-    // ¶¨Òå·ÖÎöÏß³Ì¶ÔÏó
+    // å®šä¹‰åˆ†æçº¿ç¨‹å¯¹è±¡
     AnalyzeThread fileThread;
 
-    // ¸ù¾İÖ¸¶¨µÄÎÄ¼şºó×ºÃû´ÓÄ¿Â¼ÖĞÍ³¼ÆÔ´´úÂëÎÄ¼şÁĞ±í
+    // æ ¹æ®æŒ‡å®šçš„æ–‡ä»¶åç¼€åä»ç›®å½•ä¸­ç»Ÿè®¡æºä»£ç æ–‡ä»¶åˆ—è¡¨
     for (std::string& dir : dirList)
     {
         unsigned int n = fileThread.ExtractFile(dir, config.GetSuffixList());
         _log("found %d files from \"%s\"", n, dir.c_str());
     }
 
-    // ÔÚËùÓĞµÄ²ÎÊıÁĞ±íÂ·¾¶ÖĞÃ»ÓĞÕÒµ½ÈÎºÎÔ´´úÂëÎÄ¼ş
+    // åœ¨æ‰€æœ‰çš„å‚æ•°åˆ—è¡¨è·¯å¾„ä¸­æ²¡æœ‰æ‰¾åˆ°ä»»ä½•æºä»£ç æ–‡ä»¶
     if (0 == fileThread.GetFileCount())
     {
         std::cout << "All of the paths you have specified hasn\'t found any source file !" << std::endl;
@@ -57,21 +57,21 @@ int main(int argc, char *argv[])
 
     clock_t t1 = clock();
 
-    // ¶¨ÒåÍ³¼Æ±¨¸æ¶ÔÏó
+    // å®šä¹‰ç»Ÿè®¡æŠ¥å‘Šå¯¹è±¡
     ReportList reports(fileThread.GetFileCount());
 
-    // Ê¹ÓÃÖ¸¶¨ÅäÖÃ²ÎÊıÆô¶¯¼ÆËãÍ³¼Æ¹ı³Ì
+    // ä½¿ç”¨æŒ‡å®šé…ç½®å‚æ•°å¯åŠ¨è®¡ç®—ç»Ÿè®¡è¿‡ç¨‹
     fileThread.Start(config.GetThreadCount(), reports, config.GetSingleList(), config.GetMultipleList());
 
     clock_t t2 = clock();
 
-    // ¶Ô¼ÆËãºÃµÄÍ³¼Æ½á¹ûÅÅĞò
+    // å¯¹è®¡ç®—å¥½çš„ç»Ÿè®¡ç»“æœæ’åº
     reports.Sort(
         [](const FileReport& a, const FileReport& b)
         {
-            // Ä¬ÈÏ°´ÎÄ¼şÃûÅÅĞò
+            // é»˜è®¤æŒ‰æ–‡ä»¶åæ’åº
             return a.GetFilePath() < b.GetFilePath();
-            // »òÕß°´ÆäËû·½Ê½ÅÅĞò
+            // æˆ–è€…æŒ‰å…¶ä»–æ–¹å¼æ’åº
             // return a.GetFilePath()   > b.GetFilePath();
             // return a.GetTotal()      < b.GetTotal();
             // return a.GetEffective()  < b.GetEffective();
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 
     clock_t t3 = clock();
 
-    // ÏÔÊ¾Í³¼Æ±¨¸æ½á¹û
+    // æ˜¾ç¤ºç»Ÿè®¡æŠ¥å‘Šç»“æœ
     reports.Show();
 
     _log("analyze %d files spend: %ums, sort spend: %ums", reports.GetTotalFile(), t2 - t1, t3 - t2);

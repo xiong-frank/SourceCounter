@@ -19,21 +19,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\sources\config\ConfigInfo.cpp" />
-    <ClCompile Include="..\..\sources\counter\AnalyzeThread.cpp" />
-    <ClCompile Include="..\..\sources\counter\FileReport.cpp" />
-    <ClCompile Include="..\..\sources\counter\ReportList.cpp" />
-    <ClCompile Include="..\..\sources\log\sc_log.cpp" />
-    <ClCompile Include="..\..\sources\sc_Main.cpp" />
-    <ClCompile Include="..\..\sources\utils\PathUtils.cpp" />
+    <ClCompile Include="..\..\..\sources\ConfigInfo.cpp" />
+    <ClCompile Include="..\..\..\sources\counter\AnalyzeThread.cpp" />
+    <ClCompile Include="..\..\..\sources\counter\FileReport.cpp" />
+    <ClCompile Include="..\..\..\sources\counter\ReportList.cpp" />
+    <ClCompile Include="..\..\..\sources\PathUtils.cpp" />
+    <ClCompile Include="..\..\..\sources\sc_log.cpp" />
+    <ClCompile Include="..\..\..\sources\sc_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\sources\config\ConfigInfo.h" />
-    <ClInclude Include="..\..\sources\counter\AnalyzeThread.h" />
-    <ClInclude Include="..\..\sources\counter\FileReport.h" />
-    <ClInclude Include="..\..\sources\counter\ReportList.h" />
-    <ClInclude Include="..\..\sources\log\sc_log.h" />
-    <ClInclude Include="..\..\sources\utils\PathUtils.h" />
+    <ClInclude Include="..\..\..\sources\ConfigInfo.h" />
+    <ClInclude Include="..\..\..\sources\counter\AnalyzeThread.h" />
+    <ClInclude Include="..\..\..\sources\counter\FileReport.h" />
+    <ClInclude Include="..\..\..\sources\counter\ReportList.h" />
+    <ClInclude Include="..\..\..\sources\PathUtils.h" />
+    <ClInclude Include="..\..\..\sources\sc_log.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

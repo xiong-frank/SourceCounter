@@ -1,4 +1,4 @@
-#include <list>
+ï»¿#include <list>
 #include <queue>
 #include <thread>
 #include <iostream>
@@ -15,16 +15,16 @@ bool AnalyzeThread::Start(unsigned int nThread, ReportList& reports, const list_
     if (0 < nThread && !m_FileQueue.empty())
     {
         /*
-         * ¹¹Ôì nThread ¸öÏß³Ì£¬½« Analyze ³ÉÔ±º¯Êı°ó¶¨µ½Ïß³Ì¶ÔÏó¼ÓÈëµ½Ïß³ÌÈİÆ÷ÖĞ¡£
-         * Analyze ·½·¨½«ÔÚ¶à¸öÏß³ÌÖĞÍ¬Ê±Ö´ĞĞ£¬²¢½«·ÖÎö½á¹ûÌí¼Óµ½ reports ²ÎÊıÖĞ¡£
-         * Ê¹ÓÃ std::bind ½«³ÉÔ±º¯Êı Analyze ÓëÏß³Ì¶ÔÏó°ó¶¨£¬Ê¹ÓÃ std::ref ½«²ÎÊı°´ÒıÓÃµÄ·½Ê½ÓëÏß³Ì°ó¶¨¡£
+         * æ„é€  nThread ä¸ªçº¿ç¨‹ï¼Œå°† Analyze æˆå‘˜å‡½æ•°ç»‘å®šåˆ°çº¿ç¨‹å¯¹è±¡åŠ å…¥åˆ°çº¿ç¨‹å®¹å™¨ä¸­ã€‚
+         * Analyze æ–¹æ³•å°†åœ¨å¤šä¸ªçº¿ç¨‹ä¸­åŒæ—¶æ‰§è¡Œï¼Œå¹¶å°†åˆ†æç»“æœæ·»åŠ åˆ° reports å‚æ•°ä¸­ã€‚
+         * ä½¿ç”¨ std::bind å°†æˆå‘˜å‡½æ•° Analyze ä¸çº¿ç¨‹å¯¹è±¡ç»‘å®šï¼Œä½¿ç”¨ std::ref å°†å‚æ•°æŒ‰å¼•ç”¨çš„æ–¹å¼ä¸çº¿ç¨‹ç»‘å®šã€‚
          */
         std::vector<std::thread> vtrThread;
         for (unsigned int i = 0; i < nThread; ++i)
             // vtrThread.emplace_back(std::thread(std::bind(&AnalyzeThread::_Analyze, this, std::ref(reports), std::ref(singles), std::ref(multiples))));
             vtrThread.emplace_back(std::thread([this, &reports, &singles, &multiples]() mutable { this->_Analyze(reports, singles, multiples); }));
 
-        // ÒÀ´Îµ÷ÓÃ join º¯ÊıµÈ´ıËùÓĞÏß³ÌÖ´ĞĞÍê³É
+        // ä¾æ¬¡è°ƒç”¨ join å‡½æ•°ç­‰å¾…æ‰€æœ‰çº¿ç¨‹æ‰§è¡Œå®Œæˆ
         for (std::thread& t : vtrThread)
             t.join();
 
@@ -42,9 +42,9 @@ unsigned int AnalyzeThread::ExtractFile(const std::string & fromPath, const list
 bool AnalyzeThread::_PickFile(std::string & file)
 {
     /*
-     * È¡ÎÄ¼ş²Ù×÷ÊÇ»¥³â²Ù×÷
-     * Í¬Ò»Ê±¿ÌÖ»ÄÜÓĞÒ»¸öÏß³Ì¿ÉÒÔ´ÓÎÄ¼ş¶ÓÁĞÈ¡µ½ÎÄ¼ş
-     * Èç¹û¶ÓÁĞÎª¿ÕÔòÈ¡ÎÄ¼şÊ§°Ü£¬·ñÔò½«È¡µ½µÄÎÄ¼ş´Ó²ÎÊı´ø³ö£¬²¢½«¸ÃÎÄ¼ş´Ó¶ÓÁĞÒÆ³ı¡£
+     * å–æ–‡ä»¶æ“ä½œæ˜¯äº’æ–¥æ“ä½œ
+     * åŒä¸€æ—¶åˆ»åªèƒ½æœ‰ä¸€ä¸ªçº¿ç¨‹å¯ä»¥ä»æ–‡ä»¶é˜Ÿåˆ—å–åˆ°æ–‡ä»¶
+     * å¦‚æœé˜Ÿåˆ—ä¸ºç©ºåˆ™å–æ–‡ä»¶å¤±è´¥ï¼Œå¦åˆ™å°†å–åˆ°çš„æ–‡ä»¶ä»å‚æ•°å¸¦å‡ºï¼Œå¹¶å°†è¯¥æ–‡ä»¶ä»é˜Ÿåˆ—ç§»é™¤ã€‚
      */
     std::lock_guard<std::mutex> automtx(m_Mutex);
 
@@ -58,17 +58,17 @@ bool AnalyzeThread::_PickFile(std::string & file)
 
 void AnalyzeThread::_Analyze(ReportList& reports, const list_type& singles, const pair_list& multiples)
 {
-    // Ñ­»·È¡ÎÄ¼ş
+    // å¾ªç¯å–æ–‡ä»¶
     for (std::string file; _PickFile(file); )
     {
-        // ½«·ÖÎö½á¹ûÌí¼Óµ½Í³¼Æ±¨¸æÁĞ±í
+        // å°†åˆ†æç»“æœæ·»åŠ åˆ°ç»Ÿè®¡æŠ¥å‘Šåˆ—è¡¨
         reports.AddReport(AnalyzeFile(file, singles, multiples));
     }
 }
 
 FileReport AnalyzeThread::AnalyzeFile(const std::string & file, const list_type & singles, const pair_list & multiples)
 {
-    // ¶¨Òå¸ÃÎÄ¼şµÄÍ³¼Æ±¨¸æ¶ÔÏó
+    // å®šä¹‰è¯¥æ–‡ä»¶çš„ç»Ÿè®¡æŠ¥å‘Šå¯¹è±¡
     FileReport fr(file);
     clock_t t = clock();
     try
@@ -84,7 +84,7 @@ FileReport AnalyzeThread::AnalyzeFile(const std::string & file, const list_type 
                     break;
 
                 unsigned int ly = LineType::UnknowLine;
-                // ¸ù¾İµ±Ç°ĞĞµÄ×´Ì¬·Ö±ğ½øĞĞ·ÖÎö
+                // æ ¹æ®å½“å‰è¡Œçš„çŠ¶æ€åˆ†åˆ«è¿›è¡Œåˆ†æ
                 switch (aa._lm)
                 {
                 case LineMode::Nothing:
@@ -102,16 +102,16 @@ FileReport AnalyzeThread::AnalyzeFile(const std::string & file, const list_type 
 
                 // _log("line: %s\ntype: %d, mode: %d", line, ly, static_cast<int>(aa._lm));
 
-                // ÎïÀíĞĞÊı+1
+                // ç‰©ç†è¡Œæ•°+1
                 fr.AddTotal(1);
 
-                // ¸ù¾İ·ÖÎö½á¹ûÍ³¼Æ¶ÔÓ¦ÀàĞÍµÄĞĞÊı
+                // æ ¹æ®åˆ†æç»“æœç»Ÿè®¡å¯¹åº”ç±»å‹çš„è¡Œæ•°
                 if (LineType::EffectiveLine == (LineType::EffectiveLine & ly))
                     fr.AddEffective(1);
                 if (LineType::CommentLine == (LineType::CommentLine & ly))
                     fr.AddComment(1);
 
-                // Èç¹ûÊÇ´øÓĞ¿ÕĞĞ±ê¼Ç²¢ÇÒÃ»ÓĞÆäËûÀàĞÍ±ê¼ÇÔòÎª¿ÕĞĞ
+                // å¦‚æœæ˜¯å¸¦æœ‰ç©ºè¡Œæ ‡è®°å¹¶ä¸”æ²¡æœ‰å…¶ä»–ç±»å‹æ ‡è®°åˆ™ä¸ºç©ºè¡Œ
                 if (LineType::EmptyLine == (LineType::EmptyLine & ly) && 0 == (ly & (LineType::EffectiveLine | LineType::CommentLine)))
                     fr.AddEmpty(1);
             }
@@ -128,7 +128,7 @@ FileReport AnalyzeThread::AnalyzeFile(const std::string & file, const list_type 
         _log("analyze file \"%s\" occur exception: %s", file.c_str(), _ex.what());
     }
 
-    // ¼ÇÂ¼·ÖÎöÊ±¼ä
+    // è®°å½•åˆ†ææ—¶é—´
     fr.SetSpendTime(clock() - t);
 
     _log("file: %s, tolal: %d, empty: %d, effective: %d, comment: %d, time: %d"
@@ -142,7 +142,7 @@ FileReport AnalyzeThread::AnalyzeFile(const std::string & file, const list_type 
     return fr;
 }
 
-// ·µ»ØÓĞĞ§µÄ×îĞ¡ÖµË÷Òı
+// è¿”å›æœ‰æ•ˆçš„æœ€å°å€¼ç´¢å¼•
 static inline unsigned int _TellFirstPos(const int(&_arr)[4])
 {
     int minpos = INT_MAX;
@@ -160,7 +160,7 @@ static inline unsigned int _TellFirstPos(const int(&_arr)[4])
     return x;
 }
 
-// ²éÕÒµÚÒ»¸öÓĞĞ§µÄÒıºÅÎ»ÖÃ
+// æŸ¥æ‰¾ç¬¬ä¸€ä¸ªæœ‰æ•ˆçš„å¼•å·ä½ç½®
 static inline const char* _FindQuotePos(const char* start)
 {
     if (*start == '\"')
@@ -168,13 +168,13 @@ static inline const char* _FindQuotePos(const char* start)
 
     for (;;)
     {
-        // ²éÕÒÒıºÅ×Ö·ûÎ»ÖÃ
+        // æŸ¥æ‰¾å¼•å·å­—ç¬¦ä½ç½®
         const char* ptr = strchr(start, '\"');
-        // ÕÒ²»µ½Ö±½Ó·µ»Ø¿Õ
+        // æ‰¾ä¸åˆ°ç›´æ¥è¿”å›ç©º
         if (ptr == nullptr)
             return nullptr;
 
-        // Í³¼ÆÒıºÅÇ°ÃæÁ¬ĞøµÄ·´Ğ±¸ÜÊıÁ¿
+        // ç»Ÿè®¡å¼•å·å‰é¢è¿ç»­çš„åæ–œæ æ•°é‡
         unsigned int n = 0;
         for (const char* slash = ptr - 1; ; --slash)
         {
@@ -186,11 +186,11 @@ static inline const char* _FindQuotePos(const char* start)
             if (slash == start)
                 break;
         }
-        // Èç¹ûÇ°ÃæµÄ·´Ğ±¸ÜÊıÁ¿¿ÉÒÔµÖÏû£¬ÔòÕÒµ½µÚÒ»¸öÓĞĞ§µÄÒıºÅÎ»ÖÃ
+        // å¦‚æœå‰é¢çš„åæ–œæ æ•°é‡å¯ä»¥æŠµæ¶ˆï¼Œåˆ™æ‰¾åˆ°ç¬¬ä¸€ä¸ªæœ‰æ•ˆçš„å¼•å·ä½ç½®
         if (0 == n % 2)
             return ptr;
 
-        // µİÔöÏÂ´Î²éÕÒÎ»ÖÃ
+        // é€’å¢ä¸‹æ¬¡æŸ¥æ‰¾ä½ç½®
         start = ptr + 1;
     }
 }
@@ -200,20 +200,20 @@ unsigned int AnalyzeThread::AnalyzeByNothing(_analyze_arg& _aa, const char* star
     if (*start == 0)
         return AnalyzeThread::LineType::EmptyLine;
 
-    // ²éÕÒÒıºÅËùÔÚÎ»ÖÃ
+    // æŸ¥æ‰¾å¼•å·æ‰€åœ¨ä½ç½®
     int qkey = -1;
     const char* qptr = _FindQuotePos(start);
-    // Èç¹ûÒıºÅÔÚĞĞÊ×£¬Ôò½øÈëÒıÓÃÄ£Ê½
+    // å¦‚æœå¼•å·åœ¨è¡Œé¦–ï¼Œåˆ™è¿›å…¥å¼•ç”¨æ¨¡å¼
     if (qptr == start)
     {
         _aa._lm = LineMode::Quoting;
         return LineType::EffectiveLine | AnalyzeByQuoting(_aa, start + 1, singles, multiples);
     }
-    // Èç¹ûÕÒµ½Ôò¼ÇÂ¼ÕÒµ½µÄÎ»ÖÃ
+    // å¦‚æœæ‰¾åˆ°åˆ™è®°å½•æ‰¾åˆ°çš„ä½ç½®
     if (qptr != nullptr)
         qkey = qptr - start;
 
-    // ²éÕÒµÚÒ»¸öµ¥ĞĞ×¢ÊÍµÄÎ»ÖÃ
+    // æŸ¥æ‰¾ç¬¬ä¸€ä¸ªå•è¡Œæ³¨é‡Šçš„ä½ç½®
     std::pair<int, int> skey{ -1, -1 };
     for (unsigned int i = 0; i < singles.size(); ++i)
     {
@@ -228,14 +228,14 @@ unsigned int AnalyzeThread::AnalyzeByNothing(_analyze_arg& _aa, const char* star
             }
         }
     }
-    // Èç¹ûµ¥ĞĞ×¢ÊÍ·ûºÅÔÚĞĞÊ×£¬Ö±½Ó·µ»Ø×¢ÊÍĞĞ
+    // å¦‚æœå•è¡Œæ³¨é‡Šç¬¦å·åœ¨è¡Œé¦–ï¼Œç›´æ¥è¿”å›æ³¨é‡Šè¡Œ
     if (skey.second == 0)
     {
         _aa._lm = LineMode::Nothing;
         return AnalyzeThread::LineType::CommentLine;
     }
 
-    // ²éÕÒµÚÒ»¸ö¶àĞĞ×¢ÊÍµÄÎ»ÖÃ
+    // æŸ¥æ‰¾ç¬¬ä¸€ä¸ªå¤šè¡Œæ³¨é‡Šçš„ä½ç½®
     std::pair<int, int> mkey{ -1, -1 };
     for (unsigned int i = 0; i < multiples.size(); ++i)
     {
@@ -250,7 +250,7 @@ unsigned int AnalyzeThread::AnalyzeByNothing(_analyze_arg& _aa, const char* star
             }
         }
     }
-    // Èç¹û¶àĞĞ×¢ÊÍ·ûºÅÔÚĞĞÊ×£¬Ôò½øÈë×¢ÊÍÄ£Ê½
+    // å¦‚æœå¤šè¡Œæ³¨é‡Šç¬¦å·åœ¨è¡Œé¦–ï¼Œåˆ™è¿›å…¥æ³¨é‡Šæ¨¡å¼
     if (mkey.second == 0)
     {
         _aa._lm = LineMode::Annotating;
@@ -264,7 +264,7 @@ unsigned int AnalyzeThread::AnalyzeByNothing(_analyze_arg& _aa, const char* star
     case 0:
     {
         _aa._lm = LineMode::Nothing;
-        // Èç¹ûÃ»ÓĞÕÒµ½ÈÎºÎÒıºÅ¡¢µ¥ĞĞ×¢ÊÍ¡¢¶àĞĞ×¢ÊÍ±ê¼Ç£¬±éÀúËùÓĞ×Ö·û£¬ÓĞÒ»¸ö·Ç¿Õ°×·û¼´ÎªÓĞĞ§´úÂëĞĞ£¬·ñÔòÎª¿Õ°×ĞĞ¡£
+        // å¦‚æœæ²¡æœ‰æ‰¾åˆ°ä»»ä½•å¼•å·ã€å•è¡Œæ³¨é‡Šã€å¤šè¡Œæ³¨é‡Šæ ‡è®°ï¼Œéå†æ‰€æœ‰å­—ç¬¦ï¼Œæœ‰ä¸€ä¸ªéç©ºç™½ç¬¦å³ä¸ºæœ‰æ•ˆä»£ç è¡Œï¼Œå¦åˆ™ä¸ºç©ºç™½è¡Œã€‚
         for (const unsigned char* ptr = reinterpret_cast<const unsigned char*>(start); *ptr; ++ptr)
             if (0 == isspace(*ptr))
                 return LineType::EffectiveLine;
@@ -273,14 +273,14 @@ unsigned int AnalyzeThread::AnalyzeByNothing(_analyze_arg& _aa, const char* star
     }
     case 1:
     {
-        // Èç¹ûÒıºÅ±ê¼ÇÔÚ×îÇ°Ãæ£¬Ôò½øÈëÒıÓÃÄ£Ê½
+        // å¦‚æœå¼•å·æ ‡è®°åœ¨æœ€å‰é¢ï¼Œåˆ™è¿›å…¥å¼•ç”¨æ¨¡å¼
         _aa._lm = LineMode::Quoting;
         return AnalyzeThread::LineType::EffectiveLine | AnalyzeByQuoting(_aa, start + qkey + 1, singles, multiples);
     }
     case 2:
     {
         _aa._lm = LineMode::Nothing;
-        // Èç¹ûµ¥ĞĞ×¢ÊÍ±ê¼ÇÔÚ×îÇ°Ãæ£¬¼ì²é×¢ÊÍÖ®Ç°ÊÇ·ñÓĞÓĞĞ§´úÂë
+        // å¦‚æœå•è¡Œæ³¨é‡Šæ ‡è®°åœ¨æœ€å‰é¢ï¼Œæ£€æŸ¥æ³¨é‡Šä¹‹å‰æ˜¯å¦æœ‰æœ‰æ•ˆä»£ç 
         for (int i = 0; i < skey.second; ++i)
             if (0 == isspace((unsigned int)start[i]))
                 return LineType::EffectiveLine | LineType::CommentLine;
@@ -291,7 +291,7 @@ unsigned int AnalyzeThread::AnalyzeByNothing(_analyze_arg& _aa, const char* star
     {
         _aa._lm = LineMode::Annotating;
         _aa._arg = mkey.first;
-        // Èç¹û¶àĞĞ×¢ÊÍ±ê¼ÇÔÚ×îÇ°Ãæ£¬¼ì²é×¢ÊÍÖ®Ç°ÊÇ·ñÓĞÓĞĞ§´úÂë
+        // å¦‚æœå¤šè¡Œæ³¨é‡Šæ ‡è®°åœ¨æœ€å‰é¢ï¼Œæ£€æŸ¥æ³¨é‡Šä¹‹å‰æ˜¯å¦æœ‰æœ‰æ•ˆä»£ç 
         unsigned int ly = AnalyzeThread::LineType::CommentLine;
         for (int i = 0; i < mkey.second; ++i)
         {
@@ -301,7 +301,7 @@ unsigned int AnalyzeThread::AnalyzeByNothing(_analyze_arg& _aa, const char* star
                 break;
             }
         }
-        // Èç¹ûÒıºÅ±ê¼ÇÔÚ×îÇ°Ãæ£¬Ôò½øÈëÒıÓÃÄ£Ê½
+        // å¦‚æœå¼•å·æ ‡è®°åœ¨æœ€å‰é¢ï¼Œåˆ™è¿›å…¥å¼•ç”¨æ¨¡å¼
         return ly | AnalyzeByAnnotating(_aa, start + mkey.second + multiples[mkey.first].first.size(), singles, multiples);
     }
     default:
@@ -316,13 +316,13 @@ unsigned int AnalyzeThread::AnalyzeByQuoting(_analyze_arg& _aa, const char* star
     if (*start == 0)
         return LineType::EffectiveLine;
 
-    // ²éÕÒÒıºÅ½áÊø±ê¼ÇÎ»ÖÃ
+    // æŸ¥æ‰¾å¼•å·ç»“æŸæ ‡è®°ä½ç½®
     const char* ptr = _FindQuotePos(start);
-    // ÕÒ²»µ½Ö±½Ó·µ»ØÓĞĞ§´úÂëĞĞ
+    // æ‰¾ä¸åˆ°ç›´æ¥è¿”å›æœ‰æ•ˆä»£ç è¡Œ
     if (ptr == nullptr)
         return LineType::EffectiveLine;
 
-    // Èç¹ûÕÒµ½Ôò½áÊøÒıÓÃÄ£Ê½£¬½øÈëÆÕÍ¨Ä£Ê½ÅĞ¶Ï
+    // å¦‚æœæ‰¾åˆ°åˆ™ç»“æŸå¼•ç”¨æ¨¡å¼ï¼Œè¿›å…¥æ™®é€šæ¨¡å¼åˆ¤æ–­
     _aa._lm = LineMode::Nothing;
     return LineType::EffectiveLine | AnalyzeByNothing(_aa, ptr + 1, singles, multiples);
 }
@@ -332,9 +332,9 @@ unsigned int AnalyzeThread::AnalyzeByAnnotating(_analyze_arg& _aa, const char* s
     if (*start == 0)
         return LineType::EmptyLine;
 
-    // ²éÕÒ¶ÔÓ¦µÄ¶àĞĞ×¢ÊÍ½áÊø±ê¼Ç
+    // æŸ¥æ‰¾å¯¹åº”çš„å¤šè¡Œæ³¨é‡Šç»“æŸæ ‡è®°
     const char* ptr = strstr(start, multiples[_aa._arg].second.c_str());
-    // Èç¹ûÃ»ÓĞÕÒµ½
+    // å¦‚æœæ²¡æœ‰æ‰¾åˆ°
     if (ptr == nullptr)
     {
         for (ptr = start; *ptr; ++ptr)
@@ -345,7 +345,7 @@ unsigned int AnalyzeThread::AnalyzeByAnnotating(_analyze_arg& _aa, const char* s
     }
     else
     {
-        // Èç¹ûÕÒµ½£¬Ôò½áÊø×¢ÊÍÄ£Ê½£¬½øÈëÆÕÍ¨Ä£Ê½ÅĞ¶Ï
+        // å¦‚æœæ‰¾åˆ°ï¼Œåˆ™ç»“æŸæ³¨é‡Šæ¨¡å¼ï¼Œè¿›å…¥æ™®é€šæ¨¡å¼åˆ¤æ–­
         _aa._lm = LineMode::Nothing;
         return LineType::CommentLine | AnalyzeByNothing(_aa, ptr + multiples[_aa._arg].second.size(), singles, multiples);
     }

@@ -1,4 +1,4 @@
-
+ï»¿
 #include <io.h>
 #include <string>
 #include <queue>
@@ -7,7 +7,7 @@
 #include "utils/PathUtils.h"
 #include "log/sc_log.h"
 
-// ÅĞ¶¨×Ö·û´® str ÊÇ·ñÒÔ suffixes ÖĞÈÎÒ»ÔªËØ½áÎ²
+// åˆ¤å®šå­—ç¬¦ä¸² str æ˜¯å¦ä»¥ suffixes ä¸­ä»»ä¸€å…ƒç´ ç»“å°¾
 static inline bool IsEndWith(const list_type& suffixes, const char* str)
 {
     unsigned int n = strlen(str);
@@ -39,12 +39,12 @@ bool IsValidDirectory(const char* dir)
 bool ExtractDirectory(list_type& pathlist, const char * path)
 {
     std::string dir(path);
-    // Í³Ò»Ä¿Â¼·Ö¸ô·û
+    // ç»Ÿä¸€ç›®å½•åˆ†éš”ç¬¦
     std::replace(dir.begin(), dir.end(), '\\', '/');
     if (dir.back() == '/')
         dir.pop_back();
 
-    // ÅĞ¶¨Ä¿Â¼ÊÇ·ñÓĞĞ§
+    // åˆ¤å®šç›®å½•æ˜¯å¦æœ‰æ•ˆ
     if (IsValidDirectory(dir.c_str()))
     {
         pathlist.emplace_back(dir);
@@ -75,13 +75,13 @@ unsigned int FilterFile(queue_type& fileQueue, const std::string& dir, const lis
         {
             if (0 != strcmp(".", fileInfo.name) && 0 != strcmp("..", fileInfo.name))
             {
-                // Èç¹ûÊÇÓĞĞ§Ä¿Â¼Ôò½øĞĞµİ¹éËÑË÷
+                // å¦‚æœæ˜¯æœ‰æ•ˆç›®å½•åˆ™è¿›è¡Œé€’å½’æœç´¢
                 n += FilterFile(fileQueue, dir + '/' + fileInfo.name, suffixes);
             }
         }
         else
         {
-            // ½«ÎÄ¼şÃûºó×ºÆ¥ÅäµÄÎÄ¼şÌí¼Óµ½¶ÓÁĞÖĞ
+            // å°†æ–‡ä»¶ååç¼€åŒ¹é…çš„æ–‡ä»¶æ·»åŠ åˆ°é˜Ÿåˆ—ä¸­
             if (suffixes.empty() || IsEndWith(suffixes, fileInfo.name))
             {
                 std::string target = dir + '/' + fileInfo.name;
@@ -104,10 +104,10 @@ unsigned int FilterFile(queue_type& fileQueue, const std::string& dir, const lis
 std::string AppointSuffix(const char * appPath, const char * suffix)
 {
     std::string resultPath(appPath);
-    // Í³Ò»Ä¿Â¼·Ö¸ô·û
+    // ç»Ÿä¸€ç›®å½•åˆ†éš”ç¬¦
     std::replace(resultPath.begin(), resultPath.end(), '\\', '/');
 
-    // Æ´½ÓÈÕÖ¾ÎÄ¼şÃû
+    // æ‹¼æ¥æ—¥å¿—æ–‡ä»¶å
     std::size_t point = resultPath.rfind('.');
     if (std::string::npos == point)
     {

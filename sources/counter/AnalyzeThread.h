@@ -1,73 +1,73 @@
-#ifndef _Analyze_Thread_H_
+ï»¿#ifndef _Analyze_Thread_H_
 #define _Analyze_Thread_H_
 
 #include <mutex>
 
-// ·ÖÎöÏß³ÌÀà
+// åˆ†æçº¿ç¨‹ç±»
 class AnalyzeThread
 {
 public:
 
-    // ¶¨ÒåĞĞÀàĞÍ
+    // å®šä¹‰è¡Œç±»å‹
     enum LineType
     {
-        UnknowLine      = 0x00,     // Î´ÖªÀàĞÍ
-        EmptyLine       = 0x01,     // ¿Õ°×ĞĞ
-        EffectiveLine   = 0x02,     // ÓĞĞ§ĞĞ
-        CommentLine     = 0x04,     // ×¢ÊÍĞĞ
+        UnknowLine      = 0x00,     // æœªçŸ¥ç±»å‹
+        EmptyLine       = 0x01,     // ç©ºç™½è¡Œ
+        EffectiveLine   = 0x02,     // æœ‰æ•ˆè¡Œ
+        CommentLine     = 0x04,     // æ³¨é‡Šè¡Œ
 
-        TypeMask        = 0x0f      // ÀàĞÍÑÚÂë
+        TypeMask        = 0x0f      // ç±»å‹æ©ç 
     };
 
-    // ¶¨ÒåĞĞ×´Ì¬
+    // å®šä¹‰è¡ŒçŠ¶æ€
     enum class LineMode : unsigned char
     {
-        Nothing,                    // ÎŞ×´Ì¬
-        Quoting,                    // ÒıÓÃÖĞ
-        Annotating                  // ×¢ÊÍÖĞ
+        Nothing,                    // æ— çŠ¶æ€
+        Quoting,                    // å¼•ç”¨ä¸­
+        Annotating                  // æ³¨é‡Šä¸­
     };
 
 private:
 
-    queue_type m_FileQueue;         // ÎÄ¼ş¶ÓÁĞ
-    std::mutex m_Mutex;             // Ïß³ÌËø
+    queue_type m_FileQueue;         // æ–‡ä»¶é˜Ÿåˆ—
+    std::mutex m_Mutex;             // çº¿ç¨‹é”
 
-    // ·ÖÎö²ÎÊı¶ÔÏó
+    // åˆ†æå‚æ•°å¯¹è±¡
     struct _analyze_arg {
         LineMode _lm{ LineMode::Nothing };
         unsigned int _arg{ 0 };
     };
 
-    // ½ûÖ¹¿½±´
+    // ç¦æ­¢æ‹·è´
     AnalyzeThread(const AnalyzeThread&) = delete;
     AnalyzeThread& operator=(const AnalyzeThread&) = delete;
 
-    // È¡Ò»¸öÎÄ¼ş
+    // å–ä¸€ä¸ªæ–‡ä»¶
     bool _PickFile(std::string& file);
 
-    // ·ÖÎöÏß³Ì
+    // åˆ†æçº¿ç¨‹
     void _Analyze(ReportList& reports, const list_type& singles, const pair_list& multiples);
 
-    // ·ÖÎöÒ»¸öÎÄ¼ş²¢·µ»ØÍ³¼Æ±¨¸æ
+    // åˆ†æä¸€ä¸ªæ–‡ä»¶å¹¶è¿”å›ç»Ÿè®¡æŠ¥å‘Š
     static FileReport AnalyzeFile(const std::string& file, const list_type& singles, const pair_list& multiples);
     
-    // ¶ÔÓ¦Ä£Ê½ÏÂµÄ·ÖÎö·½·¨£¬ÏÂÊö3¸öº¯Êı½«Ïà»¥ÅäºÏµ÷ÓÃ¹²Í¬·ÖÎöÒ»ĞĞÊı¾İµÄÀàĞÍ¡£
+    // å¯¹åº”æ¨¡å¼ä¸‹çš„åˆ†ææ–¹æ³•ï¼Œä¸‹è¿°3ä¸ªå‡½æ•°å°†ç›¸äº’é…åˆè°ƒç”¨å…±åŒåˆ†æä¸€è¡Œæ•°æ®çš„ç±»å‹ã€‚
     static unsigned int AnalyzeByNothing(_analyze_arg& aa, const char* start, const list_type& singles, const pair_list& multiples);
     static unsigned int AnalyzeByQuoting(_analyze_arg& aa, const char* start, const list_type& singles, const pair_list& multiples);
     static unsigned int AnalyzeByAnnotating(_analyze_arg& aa, const char* start, const list_type& singles, const pair_list& multiples);
 
 public:
 
-    // Ä¬ÈÏ¹¹Ôì
+    // é»˜è®¤æ„é€ 
     AnalyzeThread() = default;
 
     const queue_type& GetFileQueue() const { return m_FileQueue; }
     unsigned int GetFileCount() const { return m_FileQueue.size(); }
 
-    // ´ÓÖ¸¶¨Ä¿Â¼ÖĞÌáÈ¡Ö¸¶¨ºó×ºÃûµÄÔ´ÎÄ¼şµ½¶ÓÁĞÖĞ
+    // ä»æŒ‡å®šç›®å½•ä¸­æå–æŒ‡å®šåç¼€åçš„æºæ–‡ä»¶åˆ°é˜Ÿåˆ—ä¸­
     unsigned int ExtractFile(const std::string& fromPath, const list_type& suffixes);
 
-    // Æô¶¯Ïß³Ì
+    // å¯åŠ¨çº¿ç¨‹
     bool Start(unsigned int nThread, ReportList& reports, const list_type& singles, const pair_list& multiples);
 
 };

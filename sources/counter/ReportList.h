@@ -1,26 +1,26 @@
-#ifndef _Report_List_H_
+ï»¿#ifndef _Report_List_H_
 #define _Report_List_H_
 
 #include <mutex>
 
-// Í³¼Æ±¨¸æÁĞ±í
+// ç»Ÿè®¡æŠ¥å‘Šåˆ—è¡¨
 class ReportList
 {
 private:
 
-    FileReport* m_Reports;              // Í³¼Æ±¨¸æÁĞ±í
-    unsigned int m_Index;               // ±¨¸æÊıÁ¿
+    FileReport* m_Reports;              // ç»Ÿè®¡æŠ¥å‘Šåˆ—è¡¨
+    unsigned int m_Index;               // æŠ¥å‘Šæ•°é‡
 
-    unsigned int m_TotalLines;          // ×Ü´úÂëĞĞÊı
-    unsigned int m_TotalEmpty;          // ×Ü¿Õ°×ĞĞÊı
-    unsigned int m_TotalEffective;      // ×ÜÓĞĞ§ĞĞÊı
-    unsigned int m_TotalComment;        // ×Ü×¢ÊÍĞĞÊı
-    unsigned int m_TotalTime;           // ×Ü»¨·ÑÊ±¼ä
-    const unsigned int m_TotalFile;     // ×ÜÎÄ¼şÊıÁ¿
+    unsigned int m_TotalLines;          // æ€»ä»£ç è¡Œæ•°
+    unsigned int m_TotalEmpty;          // æ€»ç©ºç™½è¡Œæ•°
+    unsigned int m_TotalEffective;      // æ€»æœ‰æ•ˆè¡Œæ•°
+    unsigned int m_TotalComment;        // æ€»æ³¨é‡Šè¡Œæ•°
+    unsigned int m_TotalTime;           // æ€»èŠ±è´¹æ—¶é—´
+    const unsigned int m_TotalFile;     // æ€»æ–‡ä»¶æ•°é‡
 
     std::mutex m_Mutex;
 
-    // ½ûÖ¹¿½±´
+    // ç¦æ­¢æ‹·è´
     ReportList(const ReportList&) = delete;
     ReportList& operator=(const ReportList&) = delete;
 
@@ -49,13 +49,13 @@ public:
     unsigned int GetTotalFile() const { return m_TotalFile; }
     unsigned int GetIndex() const { return m_Index; }
 
-    // ¶ÔÍ³¼Æ±¨¸æÅÅĞò£¬ĞèÒªÖ¸¶¨¶Ô±¨¸æµÄ±È½Ï·½·¨
+    // å¯¹ç»Ÿè®¡æŠ¥å‘Šæ’åºï¼Œéœ€è¦æŒ‡å®šå¯¹æŠ¥å‘Šçš„æ¯”è¾ƒæ–¹æ³•
     template<typename _FuncT>
     void Sort(_FuncT pfunc)
     {
         std::lock_guard<std::mutex> automtx(m_Mutex);
 
-        // Ò»¸ö¼òµ¥µÄÑ¡ÔñÅÅĞòËã·¨
+        // ä¸€ä¸ªç®€å•çš„é€‰æ‹©æ’åºç®—æ³•
         unsigned int n = m_Index;
         for (unsigned int maxpos = 0, _index = 0; 0 < n; )
         {

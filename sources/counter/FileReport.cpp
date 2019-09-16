@@ -1,4 +1,4 @@
-#include <string>
+﻿#include <string>
 #include <iostream>
 
 #include "counter/FileReport.h"

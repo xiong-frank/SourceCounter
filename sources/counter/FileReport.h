@@ -1,17 +1,17 @@
-#ifndef _File_Report_H_
+ï»¿#ifndef _File_Report_H_
 #define _File_Report_H_
 
-// ÎÄ¼şÍ³¼Æ±¨¸æ¶ÔÏó
+// æ–‡ä»¶ç»Ÿè®¡æŠ¥å‘Šå¯¹è±¡
 class FileReport
 {
 private:
 
-    std::string m_FilePath;         // ÎÄ¼şÂ·¾¶
-    unsigned int m_Total;           // ÎïÀíĞĞÊı
-    unsigned int m_Empty;           // ¿Õ°×ĞĞÊı
-    unsigned int m_Effective;       // ÓĞĞ§ĞĞÊı
-    unsigned int m_Comment;         // ×¢ÊÍĞĞÊı
-    unsigned int m_SpendTime;       // Ê±¼ä¿ªÏú
+    std::string m_FilePath;         // æ–‡ä»¶è·¯å¾„
+    unsigned int m_Total;           // ç‰©ç†è¡Œæ•°
+    unsigned int m_Empty;           // ç©ºç™½è¡Œæ•°
+    unsigned int m_Effective;       // æœ‰æ•ˆè¡Œæ•°
+    unsigned int m_Comment;         // æ³¨é‡Šè¡Œæ•°
+    unsigned int m_SpendTime;       // æ—¶é—´å¼€é”€
 
 public:
 
@@ -66,7 +66,7 @@ public:
 
     void Show() const;
 
-    // ½»»»Á½¸öÍ³¼Æ¶ÔÏó
+    // äº¤æ¢ä¸¤ä¸ªç»Ÿè®¡å¯¹è±¡
     friend void SwapReport(FileReport& a, FileReport& b);
 
 };

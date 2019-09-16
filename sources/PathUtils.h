@@ -1,25 +1,25 @@
-#ifndef _Path_Utils_H_
+ï»¿#ifndef _Path_Utils_H_
 #define _Path_Utils_H_
 
 #include <list>
 #include <queue>
 
-// ¶¨Òå¹«¹²ÀàĞÍºÍ·½·¨
+// å®šä¹‰å…¬å…±ç±»å‹å’Œæ–¹æ³•
 
 using list_type = std::vector<std::string>;
 using pair_list = std::vector<std::pair<std::string, std::string>>;
 using queue_type = std::queue<std::string, std::list<std::string>>;
 
-// ÅĞ¶¨Ä¿Â¼ÊÇ·ñÓĞĞ§
+// åˆ¤å®šç›®å½•æ˜¯å¦æœ‰æ•ˆ
 bool IsValidDirectory(const char* dir);
 
-// ÊÕ¼¯Ä¿Â¼µ½ÁĞ±íÖĞ
+// æ”¶é›†ç›®å½•åˆ°åˆ—è¡¨ä¸­
 bool ExtractDirectory(list_type& pathlist, const char* dir);
 
-// É¸Ñ¡Ö¸¶¨Ä¿Â¼ÏÂÖ¸¶¨ÀàĞÍµÄÎÄ¼şµ½¶ÓÁĞÖĞ
+// ç­›é€‰æŒ‡å®šç›®å½•ä¸‹æŒ‡å®šç±»å‹çš„æ–‡ä»¶åˆ°é˜Ÿåˆ—ä¸­
 unsigned int FilterFile(queue_type& fileQueue, const std::string& dir, const list_type& suffixes);
 
-// ¸øÎÄ¼ş¸½¼ÓÖ¸¶¨ºó×º£¬Èç¹ûÖ®Ç°µÄºó×º´æÔÚÔòÌæ»»£¬·µ»ØĞÂµÄÎÄ¼şÂ·¾¶Ãû
+// ç»™æ–‡ä»¶é™„åŠ æŒ‡å®šåç¼€ï¼Œå¦‚æœä¹‹å‰çš„åç¼€å­˜åœ¨åˆ™æ›¿æ¢ï¼Œè¿”å›æ–°çš„æ–‡ä»¶è·¯å¾„å
 std::string AppointSuffix(const char * appPath, const char * suffix);
 
 #endif // _Path_Utils_H_

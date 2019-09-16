@@ -1,4 +1,4 @@
-#include <string>
+ï»¿#include <string>
 #include <queue>
 #include <list>
 #include <fstream>
@@ -69,7 +69,7 @@ bool ConfigInfo::Load(const char * configFile)
     fin.open(configFile);
     if (fin.is_open())
     {
-        std::string language;   // ¼ÇÂ¼ÊÇ·ñÓĞ±à³ÌÓïÑÔÅäÖÃ
+        std::string language;   // è®°å½•æ˜¯å¦æœ‰ç¼–ç¨‹è¯­è¨€é…ç½®
 
         for (;;)
         {
@@ -86,7 +86,7 @@ bool ConfigInfo::Load(const char * configFile)
                 {
                     try
                     {
-                        // ½âÎöÏß³ÌÊıÁ¿
+                        // è§£æçº¿ç¨‹æ•°é‡
                         if (!value.empty())
                             m_ThreadCount = stoul(value.front(), nullptr, 10);
                     }
@@ -97,19 +97,19 @@ bool ConfigInfo::Load(const char * configFile)
                 }
                 else if (0 == strcmp("suffixes", key.c_str()))
                 {
-                    // ¼ÓÔØºó×ºÃûÁĞ±í
+                    // åŠ è½½åç¼€ååˆ—è¡¨
                     for (std::string& v : value)
                     {
-                        // È«²¿²ÉÓÃĞ¡Ğ´
+                        // å…¨éƒ¨é‡‡ç”¨å°å†™
                         std::for_each(v.begin(), v.end(), [](char& c) { c = tolower(c); });
-                        // ·ÀÖ¹ÖØ¸´Ìí¼Ó
+                        // é˜²æ­¢é‡å¤æ·»åŠ 
                         if (m_Suffixes.end() == std::find(m_Suffixes.begin(), m_Suffixes.end(), v))
                             m_Suffixes.emplace_back(v);
                     }
                 }
                 else if (0 == strcmp("singles", key.c_str()))
                 {
-                    // ¼ÓÔØµ¥ĞĞ×¢ÊÍ·ûºÅÁĞ±í
+                    // åŠ è½½å•è¡Œæ³¨é‡Šç¬¦å·åˆ—è¡¨
                     for (std::string& v : value)
                     {
                         if (m_Singles.end() == std::find(m_Singles.begin(), m_Singles.end(), v))
@@ -118,10 +118,10 @@ bool ConfigInfo::Load(const char * configFile)
                 }
                 else if (0 == strcmp("multiples", key.c_str()))
                 {
-                    // ¼ÓÔØ¶àĞĞ×¢ÊÍ·ûºÅÁĞ±í
+                    // åŠ è½½å¤šè¡Œæ³¨é‡Šç¬¦å·åˆ—è¡¨
                     for (std::string& p : value)
                     {
-                        // °´Ã°ºÅ²ğ·Ö¶àĞĞ×¢ÊÍÆğÊ¼ºÍ½áÊø±ê¼Ç¶Ô
+                        // æŒ‰å†’å·æ‹†åˆ†å¤šè¡Œæ³¨é‡Šèµ·å§‹å’Œç»“æŸæ ‡è®°å¯¹
                         std::size_t pos = p.find(':');
                         if (0 < pos && pos < p.size() - 1)
                         {
@@ -151,7 +151,7 @@ bool ConfigInfo::Load(const char * configFile)
     }
     else
     {
-        // Èç¹ûÃ»ÓĞ¶ÁÈ¡µ½ÅäÖÃÎÄ¼ş£¬Ä¬ÈÏ°´ C++ Óï·¨ÅäÖÃ
+        // å¦‚æœæ²¡æœ‰è¯»å–åˆ°é…ç½®æ–‡ä»¶ï¼Œé»˜è®¤æŒ‰ C++ è¯­æ³•é…ç½®
         m_ThreadCount = 4;
         m_Suffixes = { ".cpp", ".h", ".c", ".inl", ".hpp", ".cxx", ".cc", ".rc", ".def" };
         m_Singles = { "//" };
@@ -166,8 +166,8 @@ bool ConfigInfo::Load(const char * configFile)
 void ConfigInfo::_AdjustConfig(const char * language)
 {
     /*
-     * Èç¹ûÅäÖÃÎÄ¼şÖĞÖ¸¶¨ÁË±à³ÌÓïÑÔÃû³Æ
-     * ½«¸ù¾İ¶ÔÓ¦µÄÓïÑÔÄ¬ÈÏÌî³äÈ±Ê§µÄÅäÖÃĞÅÏ¢
+     * å¦‚æœé…ç½®æ–‡ä»¶ä¸­æŒ‡å®šäº†ç¼–ç¨‹è¯­è¨€åç§°
+     * å°†æ ¹æ®å¯¹åº”çš„è¯­è¨€é»˜è®¤å¡«å……ç¼ºå¤±çš„é…ç½®ä¿¡æ¯
      */
     if (0 == strcmp("c++", language))
     {
@@ -211,7 +211,7 @@ void ConfigInfo::_AdjustConfig(const char * language)
     }
 }
 
-// ½âÎöÅäÖÃĞĞ
+// è§£æé…ç½®è¡Œ
 bool AnalyzeConfigLine(std::string& key, list_type& value, char* line)
 {
     char* ptr = strchr(line, '=');
@@ -274,7 +274,7 @@ bool AnalyzeConfigLine(std::string& key, list_type& value, char* line)
                     *ptr = 0;
                     if (AnalyzeValueList(value, start))
                     {
-                        // ½« key ×ª»»³ÉĞ¡Ğ´
+                        // å°† key è½¬æ¢æˆå°å†™
                         std::for_each(k1, k2, [](char& c) { c = tolower(c); });
                         key = { k1, unsigned int(k2 - k1) };
                         return true;
@@ -297,7 +297,7 @@ bool AnalyzeConfigLine(std::string& key, list_type& value, char* line)
     }
 }
 
-// °´¿Õ¸ñ·Ö¸ô²ğ·ÖÖµÁĞ±í
+// æŒ‰ç©ºæ ¼åˆ†éš”æ‹†åˆ†å€¼åˆ—è¡¨
 bool AnalyzeValueList(list_type& value, char* ptr)
 {
     for (; *ptr; ++ptr)
@@ -310,7 +310,7 @@ bool AnalyzeValueList(list_type& value, char* ptr)
                     break;
 
             std::string v(start, ptr - start);
-            // ÒÆ³ı \" Ç°ÃæµÄ '\'
+            // ç§»é™¤ \" å‰é¢çš„ '\'
             for (;;)
             {
                 std::size_t pos = v.find("\\\"");
