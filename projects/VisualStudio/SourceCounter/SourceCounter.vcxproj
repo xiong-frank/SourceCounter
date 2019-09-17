@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sources\ConfigInfo.cpp" />
+    <ClCompile Include="..\..\..\sources\LanguageConfig.cpp" />
     <ClCompile Include="..\..\..\sources\counter\AnalyzeThread.cpp" />
     <ClCompile Include="..\..\..\sources\counter\FileReport.cpp" />
     <ClCompile Include="..\..\..\sources\counter\ReportList.cpp" />
@@ -28,7 +28,7 @@
     <ClCompile Include="..\..\..\sources\sc_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\sources\ConfigInfo.h" />
+    <ClInclude Include="..\..\..\sources\LanguageConfig.h" />
     <ClInclude Include="..\..\..\sources\counter\AnalyzeThread.h" />
     <ClInclude Include="..\..\..\sources\counter\FileReport.h" />
     <ClInclude Include="..\..\..\sources\counter\ReportList.h" />

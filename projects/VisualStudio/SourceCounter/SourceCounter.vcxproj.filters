@@ -30,7 +30,7 @@
     <ClCompile Include="..\..\..\sources\sc_Main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\ConfigInfo.cpp">
+    <ClCompile Include="..\..\..\sources\LanguageConfig.cpp">
       <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,7 +53,7 @@
     <ClInclude Include="..\..\..\sources\third\json.hpp">
       <Filter>sources\third</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\ConfigInfo.h">
+    <ClInclude Include="..\..\..\sources\LanguageConfig.h">
       <Filter>sources</Filter>
     </ClInclude>
   </ItemGroup>
