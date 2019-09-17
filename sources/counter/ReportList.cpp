@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 
-#include "log/sc_log.h"
+#include "sc_log.h"
 #include "counter/FileReport.h"
 #include "counter/ReportList.h"
 

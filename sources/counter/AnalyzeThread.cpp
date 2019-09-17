@@ -4,8 +4,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "utils/PathUtils.h"
-#include "log/sc_log.h"
+#include "PathUtils.h"
+#include "sc_log.h"
 #include "counter/FileReport.h"
 #include "counter/ReportList.h"
 #include "counter/AnalyzeThread.h"

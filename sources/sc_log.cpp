@@ -4,8 +4,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "utils/PathUtils.h"
-#include "log/sc_log.h"
+#include "PathUtils.h"
+#include "sc_log.h"
 
 sc_log sc_log::_global_log;
 

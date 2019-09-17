@@ -4,9 +4,9 @@
 #include <fstream>
 #include <iostream>
 
-#include "utils/PathUtils.h"
-#include "log/sc_log.h"
-#include "config/ConfigInfo.h"
+#include "PathUtils.h"
+#include "sc_log.h"
+#include "ConfigInfo.h"
 
 // Example:
 //------------------------------------------------------------------------------

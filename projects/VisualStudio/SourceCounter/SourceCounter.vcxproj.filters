@@ -7,6 +7,9 @@
     <Filter Include="sources\counter">
       <UniqueIdentifier>{c9da45a6-5a17-440a-b68a-e97032ad7541}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\third">
+      <UniqueIdentifier>{4e7223d1-e14a-43df-8b54-11bf3348b201}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\sources\counter\AnalyzeThread.cpp">
@@ -18,9 +21,6 @@
     <ClCompile Include="..\..\..\sources\counter\ReportList.cpp">
       <Filter>sources\counter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\ConfigInfo.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\PathUtils.cpp">
       <Filter>sources</Filter>
     </ClCompile>
@@ -28,6 +28,9 @@
       <Filter>sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\sc_Main.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\ConfigInfo.cpp">
       <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,13 +44,16 @@
     <ClInclude Include="..\..\..\sources\counter\ReportList.h">
       <Filter>sources\counter</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\ConfigInfo.h">
-      <Filter>sources</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\PathUtils.h">
       <Filter>sources</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\sc_log.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\third\json.hpp">
+      <Filter>sources\third</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\ConfigInfo.h">
       <Filter>sources</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,8 +4,8 @@
 #include <queue>
 #include <list>
 
-#include "utils/PathUtils.h"
-#include "log/sc_log.h"
+#include "PathUtils.h"
+#include "sc_log.h"
 
 // 判定字符串 str 是否以 suffixes 中任一元素结尾
 static inline bool IsEndWith(const list_type& suffixes, const char* str)
