@@ -56,5 +56,8 @@
     <ClInclude Include="..\..\..\sources\LanguageConfig.h">
       <Filter>sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\sources\sc_config.h">
+      <Filter>sources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

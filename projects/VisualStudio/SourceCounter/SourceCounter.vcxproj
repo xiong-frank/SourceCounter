@@ -33,6 +33,7 @@
     <ClInclude Include="..\..\..\sources\counter\FileReport.h" />
     <ClInclude Include="..\..\..\sources\counter\ReportList.h" />
     <ClInclude Include="..\..\..\sources\PathUtils.h" />
+    <ClInclude Include="..\..\..\sources\sc_config.h" />
     <ClInclude Include="..\..\..\sources\sc_log.h" />
     <ClInclude Include="..\..\..\sources\third\json.hpp" />
   </ItemGroup>
