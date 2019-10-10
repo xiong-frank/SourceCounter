@@ -11,6 +11,21 @@
 
 int main(int argc, char *argv[])
 {
+    /*
+    --explain
+    --languages=c++,java
+    --input=/home/dir
+    --output=/home/file
+    --config=/home/config.json
+    --mode=123
+    --help
+    --version
+    --exclude
+    --detail=lines|asc
+    
+    */
+
+
     // 校验参数
     if (argc < 2)
     {

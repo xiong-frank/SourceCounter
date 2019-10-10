@@ -10,6 +10,9 @@
     <Filter Include="sources\third">
       <UniqueIdentifier>{4e7223d1-e14a-43df-8b54-11bf3348b201}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sources\config">
+      <UniqueIdentifier>{486f8bbc-ad54-41e6-b548-2d8c871a1e87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\sources\counter\AnalyzeThread.cpp">
@@ -21,17 +24,20 @@
     <ClCompile Include="..\..\..\sources\counter\ReportList.cpp">
       <Filter>sources\counter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\PathUtils.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\sc_log.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\sc_Main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\LanguageConfig.cpp">
-      <Filter>sources</Filter>
+    <ClCompile Include="..\..\..\sources\third\sc_log.cpp">
+      <Filter>sources\third</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\config\PathUtils.cpp">
+      <Filter>sources\config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\config\LangRules.cpp">
+      <Filter>sources\config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\config\Option.cpp">
+      <Filter>sources\config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,20 +50,23 @@
     <ClInclude Include="..\..\..\sources\counter\ReportList.h">
       <Filter>sources\counter</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\PathUtils.h">
-      <Filter>sources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\sc_log.h">
-      <Filter>sources</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\third\json.hpp">
       <Filter>sources\third</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\LanguageConfig.h">
-      <Filter>sources</Filter>
+    <ClInclude Include="..\..\..\sources\third\sc_log.h">
+      <Filter>sources\third</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\sc_config.h">
-      <Filter>sources</Filter>
+    <ClInclude Include="..\..\..\sources\config\PathUtils.h">
+      <Filter>sources\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\third\cmd_parser.h">
+      <Filter>sources\third</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\config\LangRules.h">
+      <Filter>sources\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\config\Option.h">
+      <Filter>sources\config</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

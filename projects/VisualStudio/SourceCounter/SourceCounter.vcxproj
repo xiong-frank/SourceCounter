@@ -19,23 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sources\LanguageConfig.cpp" />
+    <ClCompile Include="..\..\..\sources\config\LangRules.cpp" />
+    <ClCompile Include="..\..\..\sources\config\Option.cpp" />
+    <ClCompile Include="..\..\..\sources\config\PathUtils.cpp" />
     <ClCompile Include="..\..\..\sources\counter\AnalyzeThread.cpp" />
     <ClCompile Include="..\..\..\sources\counter\FileReport.cpp" />
     <ClCompile Include="..\..\..\sources\counter\ReportList.cpp" />
-    <ClCompile Include="..\..\..\sources\PathUtils.cpp" />
-    <ClCompile Include="..\..\..\sources\sc_log.cpp" />
     <ClCompile Include="..\..\..\sources\sc_Main.cpp" />
+    <ClCompile Include="..\..\..\sources\third\sc_log.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\sources\LanguageConfig.h" />
+    <ClInclude Include="..\..\..\sources\config\LangRules.h" />
+    <ClInclude Include="..\..\..\sources\config\PathUtils.h" />
+    <ClInclude Include="..\..\..\sources\config\Option.h" />
     <ClInclude Include="..\..\..\sources\counter\AnalyzeThread.h" />
     <ClInclude Include="..\..\..\sources\counter\FileReport.h" />
     <ClInclude Include="..\..\..\sources\counter\ReportList.h" />
-    <ClInclude Include="..\..\..\sources\PathUtils.h" />
-    <ClInclude Include="..\..\..\sources\sc_config.h" />
-    <ClInclude Include="..\..\..\sources\sc_log.h" />
+    <ClInclude Include="..\..\..\sources\third\cmd_parser.h" />
     <ClInclude Include="..\..\..\sources\third\json.hpp" />
+    <ClInclude Include="..\..\..\sources\third\sc_log.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
