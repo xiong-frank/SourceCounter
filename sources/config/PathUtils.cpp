@@ -5,7 +5,7 @@
 #include <list>
 
 #include "PathUtils.h"
-#include "sc_log.h"
+#include "third/xf_log.h"
 
 // 判定字符串 str 是否以 suffixes 中任一元素结尾
 static inline bool IsEndWith(const list_type& suffixes, const char* str)
@@ -52,7 +52,7 @@ bool ExtractDirectory(list_type& pathlist, const char * path)
     }
     else
     {
-        _log("the path isn\'t existing or isn\'t a valid direatory !");
+        _xflog("the path isn\'t existing or isn\'t a valid direatory !");
         return false;
     }
 }
@@ -64,7 +64,7 @@ unsigned int FilterFile(queue_type& fileQueue, const std::string& dir, const lis
     intptr_t hFile = _findfirst((dir + "/*.*").c_str(), &fileInfo);
     if (-1L == hFile)
     {
-        _log("the path \"%s\" is invalid !", dir.c_str());
+        _xflog("the path \"%s\" is invalid !", dir.c_str());
         return 0;
     }
 
@@ -85,13 +85,13 @@ unsigned int FilterFile(queue_type& fileQueue, const std::string& dir, const lis
             if (suffixes.empty() || IsEndWith(suffixes, fileInfo.name))
             {
                 std::string target = dir + '/' + fileInfo.name;
-                _log("found file: %s", target.c_str());
+                _xflog("found file: %s", target.c_str());
                 fileQueue.emplace(target);
                 ++n;
             }
             else
             {
-                // _log("ignore file: %s", (dir + '/' + fileInfo.name).c_str());
+                // _xflog("ignore file: %s", (dir + '/' + fileInfo.name).c_str());
             }
         }
     } while (_findnext(hFile, &fileInfo) == 0);

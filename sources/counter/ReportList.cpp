@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 
-#include "sc_log.h"
+#include "third/xf_log.h"
 #include "counter/FileReport.h"
 #include "counter/ReportList.h"
 
@@ -29,7 +29,7 @@ void ReportList::Show() const
     for (unsigned int i = 0; i < m_Index; ++i)
         m_Reports[i].Show();
 
-    _log("TotalFile: %d, TotalLines: %d, TotalEmpty: %d, TotalEffective: %d, TotalComment: %d, TotalTime: %d"
+    _xflog("TotalFile: %d, TotalLines: %d, TotalEmpty: %d, TotalEffective: %d, TotalComment: %d, TotalTime: %d"
         , m_TotalFile
         , m_TotalLines
         , m_TotalEmpty

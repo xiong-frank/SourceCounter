@@ -26,7 +26,6 @@
     <ClCompile Include="..\..\..\sources\counter\FileReport.cpp" />
     <ClCompile Include="..\..\..\sources\counter\ReportList.cpp" />
     <ClCompile Include="..\..\..\sources\sc_Main.cpp" />
-    <ClCompile Include="..\..\..\sources\third\xf_log.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\config\LangRules.h" />
@@ -35,7 +34,7 @@
     <ClInclude Include="..\..\..\sources\counter\AnalyzeThread.h" />
     <ClInclude Include="..\..\..\sources\counter\FileReport.h" />
     <ClInclude Include="..\..\..\sources\counter\ReportList.h" />
-    <ClInclude Include="..\..\..\sources\third\cmd_parser.h" />
+    <ClInclude Include="..\..\..\sources\third\xf_cmd_parser.h" />
     <ClInclude Include="..\..\..\sources\third\json.hpp" />
     <ClInclude Include="..\..\..\sources\third\xf_log.h" />
   </ItemGroup>

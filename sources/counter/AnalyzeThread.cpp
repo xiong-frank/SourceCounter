@@ -4,8 +4,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "PathUtils.h"
-#include "sc_log.h"
+#include "config/PathUtils.h"
+#include "third/xf_log.h"
 #include "counter/FileReport.h"
 #include "counter/ReportList.h"
 #include "counter/AnalyzeThread.h"
@@ -100,7 +100,7 @@ FileReport AnalyzeThread::AnalyzeFile(const std::string & file, const list_type 
                     break;
                 }
 
-                // _log("line: %s\ntype: %d, mode: %d", line, ly, static_cast<int>(aa._lm));
+                // _xflog("line: %s\ntype: %d, mode: %d", line, ly, static_cast<int>(aa._lm));
 
                 // 物理行数+1
                 fr.AddTotal(1);
@@ -120,18 +120,18 @@ FileReport AnalyzeThread::AnalyzeFile(const std::string & file, const list_type 
         }
         else
         {
-            _log("open file \"%s\" failed !", file.c_str());
+            _xflog("open file \"%s\" failed !", file.c_str());
         }
     }
     catch (const std::exception& _ex)
     {
-        _log("analyze file \"%s\" occur exception: %s", file.c_str(), _ex.what());
+        _xflog("analyze file \"%s\" occur exception: %s", file.c_str(), _ex.what());
     }
 
     // 记录分析时间
     fr.SetSpendTime(clock() - t);
 
-    _log("file: %s, tolal: %d, empty: %d, effective: %d, comment: %d, time: %d"
+    _xflog("file: %s, tolal: %d, empty: %d, effective: %d, comment: %d, time: %d"
         , fr.GetFilePath().c_str()
         , fr.GetTotal()
         , fr.GetEmpty()

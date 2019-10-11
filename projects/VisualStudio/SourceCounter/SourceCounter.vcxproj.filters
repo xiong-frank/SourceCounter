@@ -36,9 +36,6 @@
     <ClCompile Include="..\..\..\sources\config\Option.cpp">
       <Filter>sources\config</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\third\xf_log.cpp">
-      <Filter>sources\third</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\counter\AnalyzeThread.h">
@@ -56,9 +53,6 @@
     <ClInclude Include="..\..\..\sources\config\PathUtils.h">
       <Filter>sources\config</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\third\cmd_parser.h">
-      <Filter>sources\third</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\config\LangRules.h">
       <Filter>sources\config</Filter>
     </ClInclude>
@@ -66,6 +60,9 @@
       <Filter>sources\config</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\third\xf_log.h">
+      <Filter>sources\third</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\third\xf_cmd_parser.h">
       <Filter>sources\third</Filter>
     </ClInclude>
   </ItemGroup>

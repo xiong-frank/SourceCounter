@@ -2,9 +2,8 @@
 #include <queue>
 #include <iostream>
 
-#include "PathUtils.h"
-#include "sc_log.h"
-#include "ConfigInfo.h"
+#include "config/PathUtils.h"
+#include "third/xf_log.h"
 #include "counter/FileReport.h"
 #include "counter/ReportList.h"
 #include "counter/AnalyzeThread.h"
@@ -25,7 +24,7 @@ int main(int argc, char *argv[])
     
     */
 
-
+    /*
     // 校验参数
     if (argc < 2)
     {
@@ -100,6 +99,6 @@ int main(int argc, char *argv[])
     reports.Show();
 
     _log("analyze %d files spend: %ums, sort spend: %ums", reports.GetTotalFile(), t2 - t1, t3 - t2);
-
+    */
     return 0;
 }
