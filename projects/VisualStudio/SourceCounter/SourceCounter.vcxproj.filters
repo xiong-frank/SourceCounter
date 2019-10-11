@@ -27,9 +27,6 @@
     <ClCompile Include="..\..\..\sources\sc_Main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\third\sc_log.cpp">
-      <Filter>sources\third</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\config\PathUtils.cpp">
       <Filter>sources\config</Filter>
     </ClCompile>
@@ -38,6 +35,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sources\config\Option.cpp">
       <Filter>sources\config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\third\xf_log.cpp">
+      <Filter>sources\third</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -53,9 +53,6 @@
     <ClInclude Include="..\..\..\sources\third\json.hpp">
       <Filter>sources\third</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\third\sc_log.h">
-      <Filter>sources\third</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\config\PathUtils.h">
       <Filter>sources\config</Filter>
     </ClInclude>
@@ -67,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\config\Option.h">
       <Filter>sources\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\third\xf_log.h">
+      <Filter>sources\third</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
