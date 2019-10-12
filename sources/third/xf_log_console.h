@@ -1,5 +1,4 @@
-﻿#ifndef _XF_Log_H_
-#define _XF_Log_H_
+﻿#pragma once
 
 #include <iostream>
 #include <sstream>
@@ -43,18 +42,6 @@ namespace xf::log
 
         static constexpr unsigned int max_length{ 0x0400 };     // 单条日志最大字符数
 
-        void output(const char* format, ...) const
-        {
-            char strText[max_length]{ 0 };
-
-            va_list args;
-            va_start(args, format);
-            std::vsnprintf(strText, max_length, format, args);
-            va_end(args);
-
-            _output(strText);
-        }
-
         void operator()(const char* format, ...) const
         {
             char strText[max_length]{ 0 };
@@ -67,33 +54,33 @@ namespace xf::log
             _output(strText);
         }
 
-        template<typename _IterType>
-        static std::string to_string(_IterType first, _IterType last)
-        {
-            std::ostringstream oss;
-            oss << '[';
-            if (first != last) oss << *first++;
-            while (first != last) oss << ", " << *first++;
-            oss << ']';
-
-            return oss.str();
-        }
-
-        template<typename _Type>
-        static std::string to_string(const _Type& value)
-        {
-            return Log::to_string(std::cbegin(value), std::cend(value));
-        }
-
-        template<typename _Type, std::size_t n>
-        static std::string to_string(const _Type (&value)[n])
-        {
-            return Log::to_string(value, value + n);
-        }
-
         static Log& GetInstance() { static Log _log; return (_log); }
 
     };  // class Log
+
+    template<typename _IterType>
+    std::string to_string(_IterType first, _IterType last)
+    {
+        std::ostringstream oss;
+        oss << '[';
+        if (first != last) oss << *first++;
+        while (first != last) oss << ", " << *first++;
+        oss << ']';
+
+        return oss.str();
+    }
+
+    template<typename _Type>
+    std::string to_string(const _Type& value)
+    {
+        return xf::log::to_string(std::cbegin(value), std::cend(value));
+    }
+
+    template<typename _Type, std::size_t n>
+    std::string to_string(const _Type(&value)[n])
+    {
+        return xf::log::to_string(value, value + n);
+    }
 
 }   // namespace xf::log
 
@@ -102,5 +89,3 @@ namespace xf::log
 #else
 #define _xflog 
 #endif  // _xf_log_console
-
-#endif  // _XF_Log_H_

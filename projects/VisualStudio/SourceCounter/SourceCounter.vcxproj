@@ -25,7 +25,7 @@
     <ClCompile Include="..\..\..\sources\counter\AnalyzeThread.cpp" />
     <ClCompile Include="..\..\..\sources\counter\FileReport.cpp" />
     <ClCompile Include="..\..\..\sources\counter\ReportList.cpp" />
-    <ClCompile Include="..\..\..\sources\sc_Main.cpp" />
+    <ClCompile Include="..\..\..\sources\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\config\LangRules.h" />
@@ -36,7 +36,7 @@
     <ClInclude Include="..\..\..\sources\counter\ReportList.h" />
     <ClInclude Include="..\..\..\sources\third\xf_cmd_parser.h" />
     <ClInclude Include="..\..\..\sources\third\json.hpp" />
-    <ClInclude Include="..\..\..\sources\third\xf_log.h" />
+    <ClInclude Include="..\..\..\sources\third\xf_log_console.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -115,7 +115,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;__SC_LOG_=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_xf_log_console;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sources\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -128,7 +128,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_xf_log_console;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sources\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>

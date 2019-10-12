@@ -5,12 +5,12 @@
 #include <list>
 
 #include "PathUtils.h"
-#include "third/xf_log.h"
+#include "third/xf_log_console.h"
 
 // 判定字符串 str 是否以 suffixes 中任一元素结尾
 static inline bool IsEndWith(const list_type& suffixes, const char* str)
 {
-    unsigned int n = strlen(str);
+    auto n = strlen(str);
     for (const std::string& s : suffixes)
     {
         if (s.size() < n)

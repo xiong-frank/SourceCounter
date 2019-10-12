@@ -24,9 +24,6 @@
     <ClCompile Include="..\..\..\sources\counter\ReportList.cpp">
       <Filter>sources\counter</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sources\sc_Main.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\config\PathUtils.cpp">
       <Filter>sources\config</Filter>
     </ClCompile>
@@ -35,6 +32,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sources\config\Option.cpp">
       <Filter>sources\config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\Main.cpp">
+      <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -59,10 +59,10 @@
     <ClInclude Include="..\..\..\sources\config\Option.h">
       <Filter>sources\config</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\third\xf_log.h">
+    <ClInclude Include="..\..\..\sources\third\xf_cmd_parser.h">
       <Filter>sources\third</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\sources\third\xf_cmd_parser.h">
+    <ClInclude Include="..\..\..\sources\third\xf_log_console.h">
       <Filter>sources\third</Filter>
     </ClInclude>
   </ItemGroup>

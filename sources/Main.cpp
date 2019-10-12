@@ -2,14 +2,26 @@
 #include <queue>
 #include <iostream>
 
+#include "third/xf_log_console.h"
 #include "config/PathUtils.h"
-#include "third/xf_log.h"
+#include "config/Option.h"
 #include "counter/FileReport.h"
 #include "counter/ReportList.h"
 #include "counter/AnalyzeThread.h"
 
 int main(int argc, char *argv[])
 {
+    _xflog("x: %d, y: %d", 2, 7);
+    _xflog("just log");
+
+    _xflog("int vct: %s", xf::log::to_string(std::vector<int>{1, 2, 4, 8}).c_str());
+    _xflog("string vct: %s", xf::log::to_string(std::vector<std::string>{"Frank", "sxl", "yy"}).c_str());
+    _xflog("array: %s", xf::log::to_string({1, 2, 3}).c_str());
+    int x[3]{ 4,7,8 };
+    _xflog("x: %s", xf::log::to_string(x).c_str());
+
+    _xflog("empty vct: %s", xf::log::to_string(std::vector<int>()).c_str());
+
     /*
     --explain
     --languages=c++,java
@@ -19,10 +31,31 @@ int main(int argc, char *argv[])
     --mode=123
     --help
     --version
-    --exclude
+    --exclude=*.h
     --detail=lines|asc
+    --thread=10
     
     */
+
+    if (sc::Option::ParseCommandLine(argv, argc))
+    {
+        sc::AnalyzeThread analyzer;
+        analyzer.Load(_sc_opt.InputPath(), _sc_opt.Languages(), _sc_opt.Exclusion());
+
+        if (_sc_opt.Explain())
+        {
+            // ...
+
+            return 0;
+        }
+
+        auto t1 = std::chrono::system_clock::now();
+        analyzer.Start(_sc_opt.ThreadNumber());
+        auto t2 = std::chrono::system_clock::now();
+
+        analyzer.Output(_sc_opt.OutputPath(), _sc_opt.Detail());
+    }
+
 
     /*
     // 校验参数

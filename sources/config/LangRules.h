@@ -4,7 +4,7 @@
 namespace sc
 {
     // 配置信息
-    class LangRules
+    class LangRules final
     {
     public:
 
@@ -25,6 +25,10 @@ namespace sc
             pair_list<string_type, string_type> primitives; // 原生字符串符号
         };
 
+        LangRules() = default;
+        LangRules(const LangRules&) = delete;
+        LangRules& operator = (const LangRules&) = delete;
+
     private:
 
         std::map<string_type, string_type> m_ExtMap;    // 文件扩展名对应的语言
@@ -32,11 +36,17 @@ namespace sc
 
     public:
 
+        void BuildInRules() { }
+
         // 从文件加载配置
         bool Load(const string_type& fromFile);
 
+        static LangRules& Instance() { static LangRules _lrs; return (_lrs); }
 
     };  // class LangRules
+
 }
+
+#define _sc_lrs sc::LangRules::Instance()
 
 #endif // _Language_Rules_H_

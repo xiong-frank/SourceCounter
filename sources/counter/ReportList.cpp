@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 
-#include "third/xf_log.h"
+#include "third/xf_log_console.h"
 #include "counter/FileReport.h"
 #include "counter/ReportList.h"
 
