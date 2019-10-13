@@ -1,74 +1,67 @@
-﻿#ifndef _File_Report_H_
-#define _File_Report_H_
+﻿#pragma once
 
-// 文件统计报告对象
-class FileReport
+namespace sc
 {
-private:
-
-    std::string m_FilePath;         // 文件路径
-    unsigned int m_Total;           // 物理行数
-    unsigned int m_Empty;           // 空白行数
-    unsigned int m_Effective;       // 有效行数
-    unsigned int m_Comment;         // 注释行数
-    unsigned int m_SpendTime;       // 时间开销
-
-public:
-
-    FileReport() = default;
-
-    explicit FileReport(const std::string& path)
-        : m_FilePath(path), m_Total(0), m_Empty(0), m_Effective(0), m_Comment(0), m_SpendTime(0)
-    { }
-
-    FileReport(const FileReport& r)
-        : m_FilePath(r.m_FilePath)
-        , m_Total(r.m_Total)
-        , m_Empty(r.m_Empty)
-        , m_Effective(r.m_Effective)
-        , m_Comment(r.m_Comment)
-        , m_SpendTime(r.m_SpendTime)
-    { }
-
-    FileReport& operator=(const FileReport& r)
+    class ReportItem
     {
-        if (this != &r)
+    protected:
+
+        unsigned int nLines{ 0 };       // 物理行数
+        unsigned int nCodes{ 0 };       // 有效行数
+        unsigned int nComments{ 0 };    // 注释行数
+        unsigned int nBlanks{ 0 };      // 空白行数
+
+    public:
+
+        unsigned int Lines() const { return nLines; }
+        unsigned int Codes() const { return nCodes; }
+        unsigned int Blanks() const { return nBlanks; }
+        unsigned int Comments() const { return nComments; }
+
+        void AddLines(unsigned int n) { nLines += n; }
+        void AddCodes(unsigned int n) { nCodes += n; }
+        void AddBlanks(unsigned int n) { nBlanks += n; }
+        void AddComments(unsigned int n) { nComments += n; }
+
+        void AddLines() { ++nLines; }
+        void AddCodes() { ++nCodes; }
+        void AddBlanks() { ++nBlanks; }
+        void AddComments() { ++nComments; }
+
+        ReportItem& operator += (const ReportItem& item)
         {
-            m_FilePath  = r.m_FilePath;
-            m_Total     = r.m_Total;
-            m_Empty     = r.m_Empty;
-            m_Effective = r.m_Effective;
-            m_Comment   = r.m_Comment;
-            m_SpendTime = r.m_SpendTime;
+            AddLines(item.Lines());
+            AddCodes(item.Codes());
+            AddBlanks(item.Blanks());
+            AddComments(item.Comments());
+
+            return *this;
         }
+    };  // class ReportItem
 
-        return *this;
-    }
+    class FileReport
+    {
+    private:
 
-    void SetFilePath(const std::string& path) { m_FilePath = path; }
-    void SetTotal(unsigned int n) { m_Total = n; }
-    void SetEmpty(unsigned int n) { m_Empty = n; }
-    void SetEffective(unsigned int n) { m_Effective = n; }
-    void SetComment(unsigned int n) { m_Comment = n; }
-    void SetSpendTime(unsigned int t) { m_SpendTime = t; }
+        std::string m_FilePath;     // 文件路径
+        std::string m_Type;         // 语言类型
+        ReportItem m_Report;        // 统计数据
 
-    void AddTotal(unsigned int n) { m_Total += n; }
-    void AddEmpty(unsigned int n) { m_Empty += n; }
-    void AddEffective(unsigned int n) { m_Effective += n; }
-    void AddComment(unsigned int n) { m_Comment += n; }
+    public:
 
-    const std::string& GetFilePath() const { return m_FilePath; }
-    unsigned int GetTotal() const { return m_Total; }
-    unsigned int GetEmpty() const { return m_Empty; }
-    unsigned int GetEffective() const { return m_Effective; }
-    unsigned int GetComment() const { return m_Comment; }
-    unsigned int GetSpendTime() const { return m_SpendTime; }
+        FileReport() = default;
 
-    void Show() const;
+        FileReport(const std::string& path, const std::string& type)
+            : m_FilePath(path), m_Type(type)
+        { }
 
-    // 交换两个统计对象
-    friend void SwapReport(FileReport& a, FileReport& b);
+        void SetFilePath(const std::string& path) { m_FilePath = path; }
+        void SetType(const std::string& type) { m_Type = type; }
 
-};
+        const std::string& GetFilePath() const { return m_FilePath; }
+        const std::string& GetType() const { return m_Type; }
+        const ReportItem& GetReport() const { return m_Report; }
+        ReportItem& GetReport() { return m_Report; }
+    };  // class FileReport
 
-#endif  // _File_Report_H_
+}   // namespace sc

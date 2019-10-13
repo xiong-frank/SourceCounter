@@ -23,10 +23,13 @@ namespace xf::log
         {
             auto tp = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
             auto tt = std::chrono::system_clock::to_time_t(tp);
-            auto lt = std::localtime(&tt);
+            struct tm lt;
+            localtime_s(&lt, &tt);
+
+            // auto lt = std::localtime(&tt);
 
             char text[32]{ 0 };
-            std::snprintf(text, 32, "%02d:%02d:%02d.%03d", lt->tm_hour, lt->tm_min, lt->tm_sec, int(tp.time_since_epoch().count() % 1000));
+            std::snprintf(text, 32, "%02d:%02d:%02d.%03d", lt.tm_hour, lt.tm_min, lt.tm_sec, int(tp.time_since_epoch().count() % 1000));
             
             return std::cout << text << "(" << std::this_thread::get_id() << ")-> ";
         }

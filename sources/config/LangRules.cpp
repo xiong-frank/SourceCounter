@@ -15,4 +15,9 @@ namespace sc
         return false;
     }
 
+    std::string LangRules::Type(const std::string& ext) const
+    {
+        return std::string();
+    }
+
 }

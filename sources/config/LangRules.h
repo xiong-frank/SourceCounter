@@ -41,6 +41,8 @@ namespace sc
         // 从文件加载配置
         bool Load(const string_type& fromFile);
 
+        std::string Type(const std::string& ext) const;
+
         static LangRules& Instance() { static LangRules _lrs; return (_lrs); }
 
     };  // class LangRules

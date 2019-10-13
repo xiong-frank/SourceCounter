@@ -22,18 +22,18 @@
     <ClCompile Include="..\..\..\sources\config\LangRules.cpp" />
     <ClCompile Include="..\..\..\sources\config\Option.cpp" />
     <ClCompile Include="..\..\..\sources\config\PathUtils.cpp" />
-    <ClCompile Include="..\..\..\sources\counter\AnalyzeThread.cpp" />
+    <ClCompile Include="..\..\..\sources\counter\Analyzer.cpp" />
+    <ClCompile Include="..\..\..\sources\counter\Rapporteur.cpp" />
     <ClCompile Include="..\..\..\sources\counter\FileReport.cpp" />
-    <ClCompile Include="..\..\..\sources\counter\ReportList.cpp" />
     <ClCompile Include="..\..\..\sources\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\config\LangRules.h" />
     <ClInclude Include="..\..\..\sources\config\PathUtils.h" />
     <ClInclude Include="..\..\..\sources\config\Option.h" />
-    <ClInclude Include="..\..\..\sources\counter\AnalyzeThread.h" />
+    <ClInclude Include="..\..\..\sources\counter\Analyzer.h" />
+    <ClInclude Include="..\..\..\sources\counter\Rapporteur.h" />
     <ClInclude Include="..\..\..\sources\counter\FileReport.h" />
-    <ClInclude Include="..\..\..\sources\counter\ReportList.h" />
     <ClInclude Include="..\..\..\sources\third\xf_cmd_parser.h" />
     <ClInclude Include="..\..\..\sources\third\json.hpp" />
     <ClInclude Include="..\..\..\sources\third\xf_log_console.h" />

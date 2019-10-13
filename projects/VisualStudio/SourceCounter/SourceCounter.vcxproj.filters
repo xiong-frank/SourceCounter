@@ -15,13 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sources\counter\AnalyzeThread.cpp">
-      <Filter>sources\counter</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\counter\FileReport.cpp">
-      <Filter>sources\counter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\sources\counter\ReportList.cpp">
       <Filter>sources\counter</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\sources\config\PathUtils.cpp">
@@ -36,15 +30,15 @@
     <ClCompile Include="..\..\..\sources\Main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\sources\counter\Analyzer.cpp">
+      <Filter>sources\counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sources\counter\Rapporteur.cpp">
+      <Filter>sources\counter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\sources\counter\AnalyzeThread.h">
-      <Filter>sources\counter</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\sources\counter\FileReport.h">
-      <Filter>sources\counter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\counter\ReportList.h">
       <Filter>sources\counter</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\sources\third\json.hpp">
@@ -64,6 +58,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\third\xf_log_console.h">
       <Filter>sources\third</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\counter\Analyzer.h">
+      <Filter>sources\counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sources\counter\Rapporteur.h">
+      <Filter>sources\counter</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
