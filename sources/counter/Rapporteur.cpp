@@ -73,6 +73,7 @@ namespace sc
 
     public:
 
+        _report_t() = default;
         explicit _report_t(const ReportItem& item) : ReportItem(item), nFiles(1) { }
 
         unsigned int Files() const { return nFiles; }
@@ -95,15 +96,26 @@ namespace sc
     using report_map_t = std::map<std::string, _report_t>;
     using report_pair_t = report_map_t::value_type;
 
+    inline void _ShowReport(const std::string& name, const _report_t& report)
+    {
+        std::printf("| %-10s | %-10u | %-10u | %-10u | %-10u | %-10u |",
+                    name.c_str(), report.Files(), report.Lines(), report.Codes(), report.Comments(), report.Blanks());
+    }
+
+    inline void _OutputToFile(const std::string& filename, const std::vector<FileReport>& reports, const report_map_t& reportMap, const _report_t& total)
+    {
+
+    }
+
     template<typename _LessType>
     void _InsertReport(std::list<report_pair_t> reports, const report_pair_t& item, _LessType lt)
     {
 
     }
 
-    void Rapporteur::Report(const std::string& output, unsigned int detail) const
+    void Rapporteur::Report(const std::string& filename, unsigned int detail) const
     {
-        ReportItem total;
+        _report_t total;
         report_map_t reportMap;
 
         for (const auto& item : m_Reports)
@@ -129,8 +141,6 @@ namespace sc
                               {
                                   switch (rank)
                                   {
-                                  case order_t::by_nothing:
-                                      return true;
                                   case order_t::by_files:
                                       return (asc ? _LessThanByFiles(a.second, b.second) : _LessThanByFiles(b.second, a.second));
                                   case order_t::by_lines:
@@ -142,14 +152,33 @@ namespace sc
                                   case order_t::by_blank:
                                       return (asc ? _LessThanByBlanks(a.second, b.second) : _LessThanByBlanks(b.second, a.second));
                                   default:
-                                      return false;
+                                      return true;
                                   }
                               });
 
+            std::cout << "+------------+------------+------------+------------+------------+------------+" << std::endl;
+            std::cout << "|   Language |      Files |      Lines |      Codes |   Comments |     Blanks |" << std::endl;
+            std::cout << "+------------+------------+------------+------------+------------+------------+" << std::endl;
 
+            for (const auto& report : reports)
+                _ShowReport(report.first, report.second);
+
+            std::cout << "+------------+------------+------------+------------+------------+------------+" << std::endl;
+            _ShowReport("Total", total);
+            std::cout << "+------------+------------+------------+------------+------------+------------+" << std::endl;
+        }
+        else
+        {
+
+            std::cout << "+------------+------------+------------+------------+------------+" << std::endl;
+            std::cout << "|      Files |      Lines |      Codes |   Comments |     Blanks |" << std::endl;
+            std::cout << "+------------+------------+------------+------------+------------+" << std::endl;
+            std::printf("| %-10u | %-10u | %-10u | %-10u | %-10u |",
+                        total.Files(), total.Lines(), total.Codes(), total.Comments(), total.Blanks());
+            std::cout << "+------------+------------+------------+------------+------------+" << std::endl;
         }
 
-        // ...
+        _OutputToFile(filename, m_Reports, reportMap, total);
     }
 
     std::vector<std::string> Rapporteur::Files() const

@@ -55,7 +55,7 @@ namespace sc
         bool Start(unsigned int nThread);
 
         // 汇报
-        void Report(const std::string& output, unsigned int detail) const;
+        void Report(const std::string& filename, unsigned int detail) const;
 
         static Rapporteur& Instance() { static Rapporteur _rapporteur; return (_rapporteur); }
 
