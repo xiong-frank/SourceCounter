@@ -117,7 +117,6 @@ namespace sc
     {
         _report_t total;
         report_map_t reportMap;
-
         for (const auto& item : m_Reports)
         {
             total += item.GetReport();
@@ -129,8 +128,8 @@ namespace sc
                 iter->second += item.GetReport();
         }
 
-        unsigned int rank = (order_t::rank_mask & detail);
-        if (0 < rank)
+        ;
+        if (unsigned int rank = (order_t::rank_mask & detail); 0 < rank)
         {
             std::list<report_pair_t> reports;
             bool asc = (order_t::ascending == (order_t::order_mask & detail));
