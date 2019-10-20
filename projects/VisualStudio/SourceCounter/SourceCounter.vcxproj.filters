@@ -13,9 +13,6 @@
     <Filter Include="sources\config">
       <UniqueIdentifier>{486f8bbc-ad54-41e6-b548-2d8c871a1e87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sources\resources">
-      <UniqueIdentifier>{f1565202-cd97-4b35-a206-efe365ee0f02}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\sources\counter\FileReport.cpp">
@@ -61,12 +58,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\sources\counter\Rapporteur.h">
       <Filter>sources\counter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\resources\help_chinese.h">
-      <Filter>sources\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\sources\resources\help_english.h">
-      <Filter>sources\resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -32,8 +32,6 @@
     <ClInclude Include="..\..\..\sources\counter\Analyzer.h" />
     <ClInclude Include="..\..\..\sources\counter\Rapporteur.h" />
     <ClInclude Include="..\..\..\sources\counter\FileReport.h" />
-    <ClInclude Include="..\..\..\sources\resources\help_chinese.h" />
-    <ClInclude Include="..\..\..\sources\resources\help_english.h" />
     <ClInclude Include="..\..\..\sources\third\xf_cmd_parser.h" />
     <ClInclude Include="..\..\..\sources\third\json.hpp" />
     <ClInclude Include="..\..\..\sources\third\xf_log_console.h" />
