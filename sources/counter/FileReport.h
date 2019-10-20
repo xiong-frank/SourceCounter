@@ -37,6 +37,7 @@ namespace sc
 
             return *this;
         }
+
     };  // class ReportItem
 
     class FileReport
@@ -51,8 +52,8 @@ namespace sc
 
         FileReport() = default;
 
-        FileReport(const std::string& path, const std::string& type)
-            : m_FilePath(path), m_Type(type)
+        FileReport(const std::string& path, const std::string& type, const ReportItem& item)
+            : m_FilePath(path), m_Type(type), m_Report(item)
         { }
 
         void SetFilePath(const std::string& path) { m_FilePath = path; }

@@ -1,62 +1,61 @@
-#include <string>
+ï»¿#include <string>
 #include <iostream>
+#include <fstream>
+#include <map>
+
+#include "third/xf_log_console.h"
 
 #include "counter/FileReport.h"
 #include "counter/Analyzer.h"
 
 namespace sc
 {
-
-
-    FileReport Analyzer::Analyze(const std::string& file) const
+    ReportItem Analyzer::Analyze(const std::string& file)
     {
-        /*
-        // ¶¨Òå¸ÃÎÄ¼şµÄÍ³¼Æ±¨¸æ¶ÔÏó
-        FileReport fr(file);
-        clock_t t = clock();
+        // å®šä¹‰è¯¥æ–‡ä»¶çš„ç»Ÿè®¡æŠ¥å‘Šå¯¹è±¡
+        ReportItem report;
         try
         {
-            std::ifstream fin;
-            fin.open(file);
+            std::ifstream fin(file);
             if (fin.is_open())
             {
-                for (_analyze_arg aa; ; )
-                {
-                    char line[0x0400]{ 0 };
-                    if (!fin.getline(line, 0x0400))
-                        break;
+                unsigned int (Analyzer:: * funcs[3])(const std::string&, std::size_t) = { &Analyzer::_OnNothing, &Analyzer::_OnQuoting, &Analyzer::_OnAnnotating };
 
-                    unsigned int ly = LineType::UnknowLine;
-                    // ¸ù¾İµ±Ç°ĞĞµÄ×´Ì¬·Ö±ğ½øĞĞ·ÖÎö
-                    switch (aa._lm)
+                std::string line;
+                for (_analyze_arg aa; std::getline(fin, line); )
+                {
+                    unsigned int lt = (this->*funcs[static_cast<unsigned int>(_status)])(line, 0);
+
+                    // _xflog("line: %s\ntype: %d, mode: %d", line, ly, static_cast<int>(aa._lm));
+
+                    // ç‰©ç†è¡Œæ•°+1
+                    report.AddLines();
+
+                    /*
+                     *  ...
+                     */
+
+                    switch (_status)
                     {
-                    case LineMode::Nothing:
-                        ly = AnalyzeByNothing(aa, line, singles, multiples);
+                    case LineStatus::Nothing:
                         break;
-                    case LineMode::Quoting:
-                        ly = AnalyzeByQuoting(aa, line, singles, multiples);
+                    case LineStatus::Quoting:
                         break;
-                    case LineMode::Annotating:
-                        ly = AnalyzeByAnnotating(aa, line, singles, multiples);
+                    case LineStatus::Annotating:
                         break;
                     default:
                         break;
                     }
 
-                    // _xflog("line: %s\ntype: %d, mode: %d", line, ly, static_cast<int>(aa._lm));
+                    // æ ¹æ®åˆ†æç»“æœç»Ÿè®¡å¯¹åº”ç±»å‹çš„è¡Œæ•°
+                    if (LineType::HasCode == (LineType::HasCode & lt))
+                        report.AddCodes(1);
+                    if (LineType::HasComment == (LineType::HasComment & lt))
+                        report.AddComments(1);
 
-                    // ÎïÀíĞĞÊı+1
-                    fr.AddTotal(1);
-
-                    // ¸ù¾İ·ÖÎö½á¹ûÍ³¼Æ¶ÔÓ¦ÀàĞÍµÄĞĞÊı
-                    if (LineType::EffectiveLine == (LineType::EffectiveLine & ly))
-                        fr.AddEffective(1);
-                    if (LineType::CommentLine == (LineType::CommentLine & ly))
-                        fr.AddComment(1);
-
-                    // Èç¹ûÊÇ´øÓĞ¿ÕĞĞ±ê¼Ç²¢ÇÒÃ»ÓĞÆäËûÀàĞÍ±ê¼ÇÔòÎª¿ÕĞĞ
-                    if (LineType::EmptyLine == (LineType::EmptyLine & ly) && 0 == (ly & (LineType::EffectiveLine | LineType::CommentLine)))
-                        fr.AddEmpty(1);
+                    // å¦‚æœæ˜¯å¸¦æœ‰ç©ºè¡Œæ ‡è®°å¹¶ä¸”æ²¡æœ‰å…¶ä»–ç±»å‹æ ‡è®°åˆ™ä¸ºç©ºè¡Œ
+                    if (LineType::Blank == (LineType::Blank & lt) && 0 == (lt & (LineType::HasCode | LineType::HasComment)))
+                        report.AddBlanks(1);
                 }
 
                 fin.close();
@@ -71,24 +70,17 @@ namespace sc
             _xflog("analyze file \"%s\" occur exception: %s", file.c_str(), _ex.what());
         }
 
-        // ¼ÇÂ¼·ÖÎöÊ±¼ä
-        fr.SetSpendTime(clock() - t);
+        _xflog("file: %s, lines: %d, codes: %d, blanks: %d, comments: %d"
+               , file.c_str()
+               , report.Lines()
+               , report.Codes()
+               , report.Comments()
+               , report.Blanks());
 
-        _xflog("file: %s, tolal: %d, empty: %d, effective: %d, comment: %d, time: %d"
-               , fr.GetFilePath().c_str()
-               , fr.GetTotal()
-               , fr.GetEmpty()
-               , fr.GetEffective()
-               , fr.GetComment()
-               , fr.GetSpendTime());
-
-        return fr;
-        */
-
-        return FileReport();
+        return report;
     }
 
-    // ·µ»ØÓĞĞ§µÄ×îĞ¡ÖµË÷Òı
+    // è¿”å›æœ‰æ•ˆçš„æœ€å°å€¼ç´¢å¼•
     static inline unsigned int _TellFirstPos(const long long(&_arr)[4])
     {
         int minpos = INT_MAX;
@@ -101,7 +93,7 @@ namespace sc
         return x;
     }
 
-    // ²éÕÒµÚÒ»¸öÓĞĞ§µÄÒıºÅÎ»ÖÃ
+    // æŸ¥æ‰¾ç¬¬ä¸€ä¸ªæœ‰æ•ˆçš„å¼•å·ä½ç½®
     static inline const char* _FindQuotePos(const char* start)
     {
         if (*start == '\"')
@@ -109,13 +101,13 @@ namespace sc
 
         for (;;)
         {
-            // ²éÕÒÒıºÅ×Ö·ûÎ»ÖÃ
+            // æŸ¥æ‰¾å¼•å·å­—ç¬¦ä½ç½®
             const char* ptr = strchr(start, '\"');
-            // ÕÒ²»µ½Ö±½Ó·µ»Ø¿Õ
+            // æ‰¾ä¸åˆ°ç›´æ¥è¿”å›ç©º
             if (ptr == nullptr)
                 return nullptr;
 
-            // Í³¼ÆÒıºÅÇ°ÃæÁ¬ĞøµÄ·´Ğ±¸ÜÊıÁ¿
+            // ç»Ÿè®¡å¼•å·å‰é¢è¿ç»­çš„åæ–œæ æ•°é‡
             unsigned int n = 0;
             for (const char* slash = ptr - 1; ; --slash)
             {
@@ -127,11 +119,11 @@ namespace sc
                 if (slash == start)
                     break;
             }
-            // Èç¹ûÇ°ÃæµÄ·´Ğ±¸ÜÊıÁ¿¿ÉÒÔµÖÏû£¬ÔòÕÒµ½µÚÒ»¸öÓĞĞ§µÄÒıºÅÎ»ÖÃ
+            // å¦‚æœå‰é¢çš„åæ–œæ æ•°é‡å¯ä»¥æŠµæ¶ˆï¼Œåˆ™æ‰¾åˆ°ç¬¬ä¸€ä¸ªæœ‰æ•ˆçš„å¼•å·ä½ç½®
             if (0 == n % 2)
                 return ptr;
 
-            // µİÔöÏÂ´Î²éÕÒÎ»ÖÃ
+            // é€’å¢ä¸‹æ¬¡æŸ¥æ‰¾ä½ç½®
             start = ptr + 1;
         }
     }
@@ -139,22 +131,22 @@ namespace sc
     unsigned int Analyzer::AnalyzeByNothing(_analyze_arg& _aa, const char* start, const list_type& singles, const pair_list& multiples)
     {
         if (*start == 0)
-            return AnalyzeThread::LineType::EmptyLine;
+            return AnalyzeThread::LineType::Blank;
 
-        // ²éÕÒÒıºÅËùÔÚÎ»ÖÃ
+        // æŸ¥æ‰¾å¼•å·æ‰€åœ¨ä½ç½®
         std::ptrdiff_t qkey = -1;
         const char* qptr = _FindQuotePos(start);
-        // Èç¹ûÒıºÅÔÚĞĞÊ×£¬Ôò½øÈëÒıÓÃÄ£Ê½
+        // å¦‚æœå¼•å·åœ¨è¡Œé¦–ï¼Œåˆ™è¿›å…¥å¼•ç”¨æ¨¡å¼
         if (qptr == start)
         {
-            _aa._lm = LineMode::Quoting;
-            return LineType::EffectiveLine | AnalyzeByQuoting(_aa, start + 1, singles, multiples);
+            _aa._lm = LineStatus::Quoting;
+            return LineType::HasCode | AnalyzeByQuoting(_aa, start + 1, singles, multiples);
         }
-        // Èç¹ûÕÒµ½Ôò¼ÇÂ¼ÕÒµ½µÄÎ»ÖÃ
+        // å¦‚æœæ‰¾åˆ°åˆ™è®°å½•æ‰¾åˆ°çš„ä½ç½®
         if (qptr != nullptr)
             qkey = qptr - start;
 
-        // ²éÕÒµÚÒ»¸öµ¥ĞĞ×¢ÊÍµÄÎ»ÖÃ
+        // æŸ¥æ‰¾ç¬¬ä¸€ä¸ªå•è¡Œæ³¨é‡Šçš„ä½ç½®
         std::pair<int, std::ptrdiff_t> skey{ -1, -1 };
         for (unsigned int i = 0; i < singles.size(); ++i)
         {
@@ -169,14 +161,14 @@ namespace sc
                 }
             }
         }
-        // Èç¹ûµ¥ĞĞ×¢ÊÍ·ûºÅÔÚĞĞÊ×£¬Ö±½Ó·µ»Ø×¢ÊÍĞĞ
+        // å¦‚æœå•è¡Œæ³¨é‡Šç¬¦å·åœ¨è¡Œé¦–ï¼Œç›´æ¥è¿”å›æ³¨é‡Šè¡Œ
         if (skey.second == 0)
         {
-            _aa._lm = LineMode::Nothing;
-            return AnalyzeThread::LineType::CommentLine;
+            _aa._lm = LineStatus::Nothing;
+            return AnalyzeThread::LineType::HasComment;
         }
 
-        // ²éÕÒµÚÒ»¸ö¶àĞĞ×¢ÊÍµÄÎ»ÖÃ
+        // æŸ¥æ‰¾ç¬¬ä¸€ä¸ªå¤šè¡Œæ³¨é‡Šçš„ä½ç½®
         std::pair<int, std::ptrdiff_t> mkey{ -1, -1 };
         for (unsigned int i = 0; i < multiples.size(); ++i)
         {
@@ -191,12 +183,12 @@ namespace sc
                 }
             }
         }
-        // Èç¹û¶àĞĞ×¢ÊÍ·ûºÅÔÚĞĞÊ×£¬Ôò½øÈë×¢ÊÍÄ£Ê½
+        // å¦‚æœå¤šè¡Œæ³¨é‡Šç¬¦å·åœ¨è¡Œé¦–ï¼Œåˆ™è¿›å…¥æ³¨é‡Šæ¨¡å¼
         if (mkey.second == 0)
         {
-            _aa._lm = LineMode::Annotating;
+            _aa._lm = LineStatus::Annotating;
             _aa._arg = mkey.first;
-            return LineType::CommentLine | AnalyzeByAnnotating(_aa, start + multiples[mkey.first].first.size(), singles, multiples);
+            return LineType::HasComment | AnalyzeByAnnotating(_aa, start + multiples[mkey.first].first.size(), singles, multiples);
         }
 
         unsigned int index = _TellFirstPos({ INT_MAX, qkey, skey.second, mkey.second });
@@ -204,45 +196,45 @@ namespace sc
         {
         case 0:
         {
-            _aa._lm = LineMode::Nothing;
-            // Èç¹ûÃ»ÓĞÕÒµ½ÈÎºÎÒıºÅ¡¢µ¥ĞĞ×¢ÊÍ¡¢¶àĞĞ×¢ÊÍ±ê¼Ç£¬±éÀúËùÓĞ×Ö·û£¬ÓĞÒ»¸ö·Ç¿Õ°×·û¼´ÎªÓĞĞ§´úÂëĞĞ£¬·ñÔòÎª¿Õ°×ĞĞ¡£
+            _aa._lm = LineStatus::Nothing;
+            // å¦‚æœæ²¡æœ‰æ‰¾åˆ°ä»»ä½•å¼•å·ã€å•è¡Œæ³¨é‡Šã€å¤šè¡Œæ³¨é‡Šæ ‡è®°ï¼Œéå†æ‰€æœ‰å­—ç¬¦ï¼Œæœ‰ä¸€ä¸ªéç©ºç™½ç¬¦å³ä¸ºæœ‰æ•ˆä»£ç è¡Œï¼Œå¦åˆ™ä¸ºç©ºç™½è¡Œã€‚
             for (const unsigned char* ptr = reinterpret_cast<const unsigned char*>(start); *ptr; ++ptr)
                 if (0 == isspace(*ptr))
-                    return LineType::EffectiveLine;
+                    return LineType::HasCode;
 
-            return LineType::EmptyLine;
+            return LineType::Blank;
         }
         case 1:
         {
-            // Èç¹ûÒıºÅ±ê¼ÇÔÚ×îÇ°Ãæ£¬Ôò½øÈëÒıÓÃÄ£Ê½
-            _aa._lm = LineMode::Quoting;
-            return AnalyzeThread::LineType::EffectiveLine | AnalyzeByQuoting(_aa, start + qkey + 1, singles, multiples);
+            // å¦‚æœå¼•å·æ ‡è®°åœ¨æœ€å‰é¢ï¼Œåˆ™è¿›å…¥å¼•ç”¨æ¨¡å¼
+            _aa._lm = LineStatus::Quoting;
+            return AnalyzeThread::LineType::HasCode | AnalyzeByQuoting(_aa, start + qkey + 1, singles, multiples);
         }
         case 2:
         {
-            _aa._lm = LineMode::Nothing;
-            // Èç¹ûµ¥ĞĞ×¢ÊÍ±ê¼ÇÔÚ×îÇ°Ãæ£¬¼ì²é×¢ÊÍÖ®Ç°ÊÇ·ñÓĞÓĞĞ§´úÂë
+            _aa._lm = LineStatus::Nothing;
+            // å¦‚æœå•è¡Œæ³¨é‡Šæ ‡è®°åœ¨æœ€å‰é¢ï¼Œæ£€æŸ¥æ³¨é‡Šä¹‹å‰æ˜¯å¦æœ‰æœ‰æ•ˆä»£ç 
             for (int i = 0; i < skey.second; ++i)
                 if (0 == isspace((unsigned int)start[i]))
-                    return LineType::EffectiveLine | LineType::CommentLine;
+                    return LineType::HasCode | LineType::HasComment;
 
-            return LineType::CommentLine;
+            return LineType::HasComment;
         }
         case 3:
         {
-            _aa._lm = LineMode::Annotating;
+            _aa._lm = LineStatus::Annotating;
             _aa._arg = mkey.first;
-            // Èç¹û¶àĞĞ×¢ÊÍ±ê¼ÇÔÚ×îÇ°Ãæ£¬¼ì²é×¢ÊÍÖ®Ç°ÊÇ·ñÓĞÓĞĞ§´úÂë
-            unsigned int ly = AnalyzeThread::LineType::CommentLine;
+            // å¦‚æœå¤šè¡Œæ³¨é‡Šæ ‡è®°åœ¨æœ€å‰é¢ï¼Œæ£€æŸ¥æ³¨é‡Šä¹‹å‰æ˜¯å¦æœ‰æœ‰æ•ˆä»£ç 
+            unsigned int ly = AnalyzeThread::LineType::HasComment;
             for (int i = 0; i < mkey.second; ++i)
             {
                 if (0 == isspace((unsigned int)start[i]))
                 {
-                    ly |= LineType::EffectiveLine;
+                    ly |= LineType::HasCode;
                     break;
                 }
             }
-            // Èç¹ûÒıºÅ±ê¼ÇÔÚ×îÇ°Ãæ£¬Ôò½øÈëÒıÓÃÄ£Ê½
+            // å¦‚æœå¼•å·æ ‡è®°åœ¨æœ€å‰é¢ï¼Œåˆ™è¿›å…¥å¼•ç”¨æ¨¡å¼
             return ly | AnalyzeByAnnotating(_aa, start + mkey.second + multiples[mkey.first].first.size(), singles, multiples);
         }
         default:
@@ -255,44 +247,56 @@ namespace sc
     unsigned int Analyzer::AnalyzeByQuoting(_analyze_arg& _aa, const char* start, const list_type& singles, const pair_list& multiples)
     {
         if (*start == 0)
-            return LineType::EffectiveLine;
+            return LineType::HasCode;
 
-        // ²éÕÒÒıºÅ½áÊø±ê¼ÇÎ»ÖÃ
+        // æŸ¥æ‰¾å¼•å·ç»“æŸæ ‡è®°ä½ç½®
         const char* ptr = _FindQuotePos(start);
-        // ÕÒ²»µ½Ö±½Ó·µ»ØÓĞĞ§´úÂëĞĞ
+        // æ‰¾ä¸åˆ°ç›´æ¥è¿”å›æœ‰æ•ˆä»£ç è¡Œ
         if (ptr == nullptr)
-            return LineType::EffectiveLine;
+            return LineType::HasCode;
 
-        // Èç¹ûÕÒµ½Ôò½áÊøÒıÓÃÄ£Ê½£¬½øÈëÆÕÍ¨Ä£Ê½ÅĞ¶Ï
-        _aa._lm = LineMode::Nothing;
-        return LineType::EffectiveLine | AnalyzeByNothing(_aa, ptr + 1, singles, multiples);
+        // å¦‚æœæ‰¾åˆ°åˆ™ç»“æŸå¼•ç”¨æ¨¡å¼ï¼Œè¿›å…¥æ™®é€šæ¨¡å¼åˆ¤æ–­
+        _aa._lm = LineStatus::Nothing;
+        return LineType::HasCode | AnalyzeByNothing(_aa, ptr + 1, singles, multiples);
     }
 
     unsigned int Analyzer::AnalyzeByAnnotating(_analyze_arg& _aa, const char* start, const list_type& singles, const pair_list& multiples)
     {
         if (*start == 0)
-            return LineType::EmptyLine;
+            return LineType::Blank;
 
-        // ²éÕÒ¶ÔÓ¦µÄ¶àĞĞ×¢ÊÍ½áÊø±ê¼Ç
+        // æŸ¥æ‰¾å¯¹åº”çš„å¤šè¡Œæ³¨é‡Šç»“æŸæ ‡è®°
         const char* ptr = strstr(start, multiples[_aa._arg].second.c_str());
-        // Èç¹ûÃ»ÓĞÕÒµ½
+        // å¦‚æœæ²¡æœ‰æ‰¾åˆ°
         if (ptr == nullptr)
         {
             for (ptr = start; *ptr; ++ptr)
                 if (0 == isspace(unsigned int(*ptr)))
-                    return LineType::CommentLine;
+                    return LineType::HasComment;
 
-            return LineType::EmptyLine;
+            return LineType::Blank;
         }
         else
         {
-            // Èç¹ûÕÒµ½£¬Ôò½áÊø×¢ÊÍÄ£Ê½£¬½øÈëÆÕÍ¨Ä£Ê½ÅĞ¶Ï
-            _aa._lm = LineMode::Nothing;
-            return LineType::CommentLine | AnalyzeByNothing(_aa, ptr + multiples[_aa._arg].second.size(), singles, multiples);
+            // å¦‚æœæ‰¾åˆ°ï¼Œåˆ™ç»“æŸæ³¨é‡Šæ¨¡å¼ï¼Œè¿›å…¥æ™®é€šæ¨¡å¼åˆ¤æ–­
+            _aa._lm = LineStatus::Nothing;
+            return LineType::HasComment | AnalyzeByNothing(_aa, ptr + multiples[_aa._arg].second.size(), singles, multiples);
         }
     }
     */
+    unsigned int Analyzer::_OnNothing(const std::string& line, std::size_t index)
+    {
+        return 0;
+    }
 
+    unsigned int Analyzer::_OnQuoting(const std::string& line, std::size_t index)
+    {
+        return 0;
+    }
+
+    unsigned int Analyzer::_OnAnnotating(const std::string& line, std::size_t index)
+    {
+        return 0;
+    }
 
 }
-

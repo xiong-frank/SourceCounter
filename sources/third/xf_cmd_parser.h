@@ -39,7 +39,7 @@ namespace xf::cmd
 
     enum class value_t : unsigned char {
         vt_string, vt_integer, vt_unsigned, vt_float, vt_boolean, vt_nothing
-    };
+    };  // enum value_t
 
     class option_t
     {
@@ -110,211 +110,210 @@ namespace xf::cmd
         template<typename _ValueType> static option_t make(bool, bool);
         template<> static option_t make<nullptr_t>(bool u, bool k) { return option_t(u, k); }
 
-    };
+    };  // class option_t
 
-    class Parser
+    enum state_t {
+        s_ok,                   // ok
+        s_nothing,              // 没有任何参数
+        s_k_unrecognized,       // 参数不能识别
+        s_k_duplicated,         // 参数重复
+        s_k_conflict,           // 参数唯一性冲突
+        s_k_missing,            // 缺少必需的参数
+        s_v_missing,            // 参数值缺失
+        s_v_redundant,          // 参数值多余
+        s_v_error               // 参数值错误
+    };  // enum state_t
+
+    class result_t
     {
+        friend class Parser;
+
+        using variant_t = std::variant<nullptr_t, bool, int, unsigned int, double, string_t>;
+
+        template<typename _Type> static string_t _to_string(const _Type& v) { return std::to_string(v); }
+        template<> static string_t _to_string(const nullptr_t& v) { return ""; }
+        template<> static string_t _to_string(const bool& v) { return (v ? "true" : "false"); }
+        template<> static string_t _to_string(const string_t& v) { return v; }
+        template<> static string_t _to_string(const variant_t& v)
+        {
+            string_t x;
+            std::visit([&](auto&& t) mutable { x = result_t::_to_string(t); }, v);
+            return x;
+        }
+
+        state_t _state;
+        string_t _info;
+        pair_t<string_t, string_t> _extra;
+        map_t<string_t, string_t> _k_map;
+        map_t<string_t, variant_t> _v_map;
+        bool _is_unique{ false };
+
+        result_t(state_t code, const string_t& text) : _state(code), _info(text) { }
+
     public:
 
-        enum state_t {
-            s_ok,                   // ok
-            s_nothing,              // 没有任何参数
-            s_k_unrecognized,       // 参数不能识别
-            s_k_duplicated,         // 参数重复
-            s_k_conflict,           // 参数唯一性冲突
-            s_k_missing,            // 缺少必需的参数
-            s_v_missing,            // 参数值缺失
-            s_v_redundant,          // 参数值多余
-            s_v_error               // 参数值错误
-        };
+        state_t code() const { return _state; }
+        const string_t& info() const { return _info; }
+        const pair_t<string_t, string_t>& hint() const { return _extra; }
+        bool is_valid() const { return (state_t::s_ok == code()); }
+        bool is_existing(const string_t& key) const { return _k_map.find(key) != _k_map.end(); }
 
-        class result_t
+        operator bool() const { return is_valid(); }
+        operator const string_t& () const { return info(); }
+
+        bool has_value(const string_t& key) const
         {
-            friend class Parser;
+            auto k_iter = _k_map.find(key);
+            if (k_iter == _k_map.end())
+                return false;
 
-            using variant_t = std::variant<nullptr_t, bool, int, unsigned int, double, string_t>;
+            auto v_iter = _v_map.find(k_iter->second);
+            if (v_iter == _v_map.end())
+                return false;
 
-            template<typename _Type> static string_t _to_string(const _Type& v) { return std::to_string(v); }
-            template<> static string_t _to_string(const nullptr_t& v) { return ""; }
-            template<> static string_t _to_string(const bool& v) { return (v ? "true" : "false"); }
-            template<> static string_t _to_string(const string_t& v) { return v; }
-            template<> static string_t _to_string(const variant_t& v)
-            {
-                string_t x;
-                std::visit([&](auto&& t) mutable { x = result_t::_to_string(t); }, v);
-                return x;
+            return (static_cast<size_type>(value_t::vt_nothing) < v_iter->second.index());
+        }
+
+        template<typename _Type>
+        _Type get(const string_t& key) const
+        {
+            return std::get<_Type>(_v_map.at(_k_map.at(key)));
+        }
+
+        template<typename _Type>
+        _Type get(const string_t& key, const _Type& value) const
+        {
+            try {
+                return get<_Type>(key);
             }
-
-            state_t _state;
-            string_t _info;
-            pair_t<string_t, string_t> _extra;
-            map_t<string_t, string_t> _k_map;
-            map_t<string_t, variant_t> _v_map;
-            bool _is_unique{ false };
-
-            result_t(state_t code, const string_t& text) : _state(code), _info(text) { }
-
-        public:
-
-            state_t code() const { return _state; }
-            const string_t& info() const { return _info; }
-            const pair_t<string_t, string_t>& hint() const { return _extra; }
-            bool is_valid() const { return (state_t::s_ok == code()); }
-            bool is_existing(const string_t& key) const { return _k_map.find(key) != _k_map.end(); }
-
-            operator bool() const { return is_valid(); }
-            operator const string_t& () const { return info(); }
-
-            bool has_value(const string_t& key) const
-            {
-                auto k_iter = _k_map.find(key);
-                if (k_iter == _k_map.end())
-                    return false;
-
-                auto v_iter = _v_map.find(k_iter->second);
-                if (v_iter == _v_map.end())
-                    return false;
-
-                return (static_cast<size_type>(value_t::vt_nothing) < v_iter->second.index());
+            catch (const std::exception& /* e */) {
+                // std::cout << e.what() << std::endl;
+                return value;
             }
+        }
 
-            template<typename _Type>
-            _Type get(const string_t& key) const
+        const map_t<string_t, variant_t>& get() const { return _v_map; }
+
+        map_t<string_t, string_t> args() const
+        {
+            map_t<string_t, string_t> mss;
+            for (auto v : _v_map)
+                mss.emplace(v.first, _to_string(v.second));
+
+            return mss;
+        }
+
+    private:
+
+        static string_t _make_info(state_t s, const string_t& a, const string_t& b)
+        {
+            switch (s)
             {
-                return std::get<_Type>(_v_map.at(_k_map.at(key)));
+            case state_t::s_ok:
+                return "ok";
+            case state_t::s_nothing:
+                return R"(error: don't get any parameter.)";
+            case state_t::s_k_unrecognized:
+                return R"(error: unrecognized parameter ")" + a + R"(".)";
+            case state_t::s_k_duplicated:
+                return R"(error: repeat paramter ")" + a + R"(" and ")" + b + R"(".)";
+            case state_t::s_k_missing:
+                return R"(error: the parameter ")" + a + R"(" must be specified but not found.)";
+            case state_t::s_v_missing:
+                return R"(error: parameter ")" + a + R"(" must specify a value.)";
+            case state_t::s_v_redundant:
+                return R"(error: the parameter ")" + a + R"(" doesn't require value.)";
+            case state_t::s_v_error:
+                return R"(error: the ")" + b + R"(" can't be treated as the value of parameter ")" + a + R"(".)";
+            case state_t::s_k_conflict:
+                return R"(error: parameter ")" + a + R"(" can't be specified with other parameters.)";
+            default:
+                return string_t();
             }
+        }
 
-            template<typename _Type>
-            _Type get(const string_t& key, const _Type& value) const
+        void _set_error(state_t s, const string_t& a = string_t(), const string_t& b = string_t())
+        {
+            _state = s;
+            _extra.first = a;
+            _extra.second = b;
+
+            _info = _make_info(_state, _extra.first, _extra.second);
+        }
+
+        bool _check_key(const string_t& key, const option_t& opt)
+        {
+            if (_k_map.empty())
             {
-                try {
-                    return get<_Type>(key);
-                } catch (const std::exception& /* e */) {
-                    // std::cout << e.what() << std::endl;
-                    return value;
-                }
-            }
-
-            const map_t<string_t, variant_t>& get() const { return _v_map; }
-            
-            map_t<string_t, string_t> args() const
-            {
-                map_t<string_t, string_t> mss;
-                for (auto v : _v_map)
-                    mss.emplace(v.first, _to_string(v.second));
-
-                return mss;
-            }
-
-        private:
-
-            static string_t _make_info(state_t s, const string_t& a, const string_t& b)
-            {
-                switch (s)
-                {
-                case state_t::s_ok:
-                    return "ok";
-                case state_t::s_nothing:
-                    return R"(error: don't get any parameter.)";
-                case state_t::s_k_unrecognized:
-                    return R"(error: unrecognized parameter ")" + a + R"(".)";
-                case state_t::s_k_duplicated:
-                    return R"(error: repeat paramter ")" + a + R"(" and ")" + b + R"(".)";
-                case state_t::s_k_missing:
-                    return R"(error: the parameter ")" + a + R"(" must be specified but not found.)";
-                case state_t::s_v_missing:
-                    return R"(error: parameter ")" + a + R"(" must specify a value.)";
-                case state_t::s_v_redundant:
-                    return R"(error: the parameter ")" + a + R"(" doesn't require value.)";
-                case state_t::s_v_error:
-                    return R"(error: the ")" + b + R"(" can't be treated as the value of parameter ")" + a + R"(".)";
-                case state_t::s_k_conflict:
-                    return R"(error: parameter ")" + a + R"(" can't be specified with other parameters.)";
-                default:
-                    return string_t();
-                }
-            }
-
-            void _set_error(state_t s, const string_t& a = string_t(), const string_t& b = string_t())
-            {
-                _state = s;
-                _extra.first = a;
-                _extra.second = b;
-
-                _info = _make_info(_state, _extra.first, _extra.second);
-            }
-
-            bool _check_key(const string_t& key, const option_t& opt)
-            {
-                if (_k_map.empty())
-                {
-                    if (opt.is_unique()) _is_unique = true;
-                    return true;
-                }
-
-                if (_is_unique)
-                {
-                    _set_error(state_t::s_k_conflict, _v_map.begin()->first);
-                    return false;
-                }
-
-                if (opt.is_unique())
-                {
-                    _set_error(state_t::s_k_conflict, key);
-                    return false;
-                }
-
-                auto iter = _k_map.find(key);
-                if (iter != _k_map.end())
-                {
-                    _set_error(state_t::s_k_duplicated, iter->second, key);
-                    return false;
-                }
-
+                if (opt.is_unique()) _is_unique = true;
                 return true;
             }
 
-            template<typename _Type>
-            void _add_value(const string_t& key, const _Type& value, const set_t<string_t>& keys)
+            if (_is_unique)
             {
-                _v_map.emplace(key, variant_t(value));
-                for (auto k : keys) _k_map.emplace(k, key);
+                _set_error(state_t::s_k_conflict, _v_map.begin()->first);
+                return false;
             }
 
-            void _add_value(const string_t& key, const string_t& value, const set_t<string_t>& keys, const option_t& opt)
+            if (opt.is_unique())
             {
-                switch (opt.value_type())
-                {
-                case value_t::vt_string:
-                    _add_value(key, value, keys);
-                    break;
-                case value_t::vt_boolean:
-                    _add_value(key, ('t' == value[0] || 'T' == value[0]), keys);
-                    break;
-                case value_t::vt_float:
-                    _add_value(key, std::stod(value), keys);
-                    break;
-                case value_t::vt_integer:
-                    _add_value(key, std::stoi(value), keys);
-                    break;
-                case value_t::vt_unsigned:
-                    _add_value(key, unsigned int(std::stoul(value)), keys);
-                    break;
-                case value_t::vt_nothing:
-                    _add_value(key, nullptr, keys);
-                    break;
-                default:
-                    break;
-                }
+                _set_error(state_t::s_k_conflict, key);
+                return false;
             }
-            
-            void _add_value(const string_t& key, const set_t<string_t>& keys)
+
+            auto iter = _k_map.find(key);
+            if (iter != _k_map.end())
             {
+                _set_error(state_t::s_k_duplicated, iter->second, key);
+                return false;
+            }
+
+            return true;
+        }
+
+        template<typename _Type>
+        void _add_value(const string_t& key, const _Type& value, const set_t<string_t>& keys)
+        {
+            _v_map.emplace(key, variant_t(value));
+            for (auto k : keys) _k_map.emplace(k, key);
+        }
+
+        void _add_value(const string_t& key, const string_t& value, const set_t<string_t>& keys, const option_t& opt)
+        {
+            switch (opt.value_type())
+            {
+            case value_t::vt_string:
+                _add_value(key, value, keys);
+                break;
+            case value_t::vt_boolean:
+                _add_value(key, ('t' == value[0] || 'T' == value[0]), keys);
+                break;
+            case value_t::vt_float:
+                _add_value(key, std::stod(value), keys);
+                break;
+            case value_t::vt_integer:
+                _add_value(key, std::stoi(value), keys);
+                break;
+            case value_t::vt_unsigned:
+                _add_value(key, unsigned int(std::stoul(value)), keys);
+                break;
+            case value_t::vt_nothing:
                 _add_value(key, nullptr, keys);
+                break;
+            default:
+                break;
             }
-            
-        };
+        }
 
+        void _add_value(const string_t& key, const set_t<string_t>& keys)
+        {
+            _add_value(key, nullptr, keys);
+        }
+
+    };  // class result_t
+
+    class Parser
+    {
     public:
 
         Parser() = default;
@@ -650,6 +649,6 @@ namespace xf::cmd
             return 0 == a.compare(0, b.size(), b);
         }
 
-    };
+    };  // class Parser
 
-}
+}   // namespace xf::cmd

@@ -8,7 +8,6 @@
 #include "third/xf_log_console.h"
 
 #include "config/Option.h"
-#include "config/PathUtils.h"
 #include "config/LangRules.h"
 
 #include "counter/Analyzer.h"
@@ -17,34 +16,21 @@
 
 namespace sc
 {
-    template<typename _Type>
-    bool _contains(const std::vector<_Type>& vtr, const _Type& value)
-    {
-        for (const auto& v : vtr)
-            if (v == value)
-                return true;
-
-        return false;
-    }
-
     unsigned int Rapporteur::Load(const std::string& input, const std::vector<std::string>& langs, const std::string& excludes)
     {
         unsigned int n = 0;
-        for (auto& iter : std::filesystem::recursive_directory_iterator(input))
+        std::filesystem::path p(input);
+
+        if (std::filesystem::is_regular_file(p))
         {
-            if (iter.is_regular_file() && (_sc_opt.AllowEmpty() || 0 < iter.file_size()))
-            {
-                auto file(iter.path());
-                if (!std::regex_match(file.generic_string(), std::regex(excludes)))
-                {
-                    auto t = _sc_lrs.Type(file.extension().generic_string());
-                    if (!t.empty() && (langs.empty() || _contains(langs, t)))
-                    {
-                        m_Files.emplace_back(std::filesystem::canonical(file).generic_string(), t);
-                        ++n;
-                    }
-                }
-            }
+            if (_AddFile(p, langs, excludes))
+                ++n;
+        }
+        else
+        {
+            for (const auto& iter : std::filesystem::recursive_directory_iterator(p))
+                if (iter.is_regular_file() && _AddFile(iter.path(), langs, excludes))
+                    ++n;
         }
 
         return n;
@@ -129,10 +115,10 @@ namespace sc
         }
 
         ;
-        if (unsigned int rank = (order_t::rank_mask & detail); 0 < rank)
+        if (unsigned int rank = (order_t::order_mask & detail); 0 < rank)
         {
             std::list<report_pair_t> reports;
-            bool asc = (order_t::ascending == (order_t::order_mask & detail));
+            bool asc = (order_t::ascending == (order_t::order_direction & detail));
 
             for (const auto& item : reportMap)
                 _InsertReport(reports, item,
@@ -148,7 +134,7 @@ namespace sc
                                       return (asc ? _LessThanByCodes(a.second, b.second) : _LessThanByCodes(b.second, a.second));
                                   case order_t::by_comments:
                                       return (asc ? _LessThanByComments(a.second, b.second) : _LessThanByComments(b.second, a.second));
-                                  case order_t::by_blank:
+                                  case order_t::by_blanks:
                                       return (asc ? _LessThanByBlanks(a.second, b.second) : _LessThanByBlanks(b.second, a.second));
                                   default:
                                       return true;
@@ -217,6 +203,34 @@ namespace sc
         return true;
     }
 
+    template<typename _Type>
+    bool _contains(const std::vector<_Type>& vtr, const _Type& value)
+    {
+        for (const auto& v : vtr)
+            if (v == value)
+                return true;
+
+        return false;
+    }
+
+    bool Rapporteur::_AddFile(const std::filesystem::path& file, const std::vector<std::string>& langs, const std::string& excludes)
+    {
+        if (_sc_opt.AllowEmpty() || 0 < std::filesystem::file_size(file))
+        {
+            if (excludes.empty() || !std::regex_match(file.generic_string(), std::regex(excludes)))
+            {
+                auto t = _sc_lrs.Type(file.extension().generic_string());
+                if (!t.empty() && (langs.empty() || _contains(langs, t)))
+                {
+                    m_Files.emplace_back(std::filesystem::canonical(file).generic_string(), t);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     Analyzer Rapporteur::_GetAnalyzer(const std::string& language)
     {
         return Analyzer();
@@ -226,7 +240,7 @@ namespace sc
     {
         // 循环取文件
         for (std::pair<std::string, std::string> item; _PickFile(item); )
-            m_Reports.emplace_back(_GetAnalyzer(item.second).Analyze(item.first));
+            m_Reports.emplace_back(item.first, item.second, _GetAnalyzer(item.second).Analyze(item.first));
     }
 
 }

@@ -1,30 +1,13 @@
 ﻿#pragma once
 
-#include <mutex>
-
 namespace sc
 {
     class Analyzer;
-    class FileReport;
 
     // 分析线程类
     class Rapporteur
     {
     private:
-
-        enum order_t {
-            by_nothing  = 0x01,
-            by_lines    = 0x02,
-            by_codes    = 0x03,
-            by_comments = 0x04,
-            by_blank    = 0x05,
-            by_files    = 0x06,
-            rank_mask   = 0x07,
-
-            ascending   = 0x00,
-            descending  = 0x08,
-            order_mask  = 0x08
-        };
 
         std::mutex m_Mutex;
         std::vector<std::pair<std::string, std::string>> m_Files;
@@ -34,8 +17,11 @@ namespace sc
         Rapporteur(const Rapporteur&) = delete;
         Rapporteur& operator=(const Rapporteur&) = delete;
 
-        // 取一个文件
+        // 取出一个文件
         bool _PickFile(std::pair<std::string, std::string>& file);
+
+        // 添加一个文件
+        bool _AddFile(const std::filesystem::path& file, const std::vector<std::string>& langs, const std::string& excludes);
 
         // 分析线程函数
         void _Analyze();

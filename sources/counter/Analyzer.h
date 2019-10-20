@@ -1,50 +1,54 @@
-#pragma once
+ï»¿#pragma once
 
 
 namespace sc
 {
-    class FileReport;
+    class ReportItem;
 
     class Analyzer
     {
     public:
 
-        // ¶¨ÒåĞĞÀàĞÍ
+        // å®šä¹‰è¡Œç±»å‹
         enum LineType
         {
-            UnknowLine = 0x00,     // Î´ÖªÀàĞÍ
-            EmptyLine = 0x01,     // ¿Õ°×ĞĞ
-            EffectiveLine = 0x02,     // ÓĞĞ§ĞĞ
-            CommentLine = 0x04,     // ×¢ÊÍĞĞ
-
-            TypeMask = 0x0f      // ÀàĞÍÑÚÂë
+            Unknow      = 0x00,     // æœªçŸ¥ç±»å‹
+            Blank       = 0x01,     // ç©ºç™½è¡Œ
+            HasCode     = 0x02,     // æœ‰ä»£ç 
+            HasComment  = 0x04      // æœ‰æ³¨é‡Š
         };
 
-        // ¶¨ÒåĞĞ×´Ì¬
-        enum class LineMode : unsigned char
+        // å®šä¹‰è¡ŒçŠ¶æ€
+        enum class LineStatus : unsigned char
         {
-            Nothing,                    // ÎŞ×´Ì¬
-            Quoting,                    // ÒıÓÃÖĞ
-            Annotating                  // ×¢ÊÍÖĞ
+            Nothing,                    // æ— çŠ¶æ€
+            Quoting,                    // å¼•ç”¨ä¸­
+            Annotating                  // æ³¨é‡Šä¸­
         };
 
-        // ·ÖÎö²ÎÊı¶ÔÏó
+        // åˆ†æå‚æ•°å¯¹è±¡
         struct _analyze_arg {
-            LineMode _lm{ LineMode::Nothing };
+            LineStatus _lm{ LineStatus::Nothing };
             unsigned int _arg{ 0 };
         };
 
-        // ¶ÔÓ¦Ä£Ê½ÏÂµÄ·ÖÎö·½·¨£¬ÏÂÊö3¸öº¯Êı½«Ïà»¥ÅäºÏµ÷ÓÃ¹²Í¬·ÖÎöÒ»ĞĞÊı¾İµÄÀàĞÍ¡£
+        // å¯¹åº”æ¨¡å¼ä¸‹çš„åˆ†ææ–¹æ³•ï¼Œä¸‹è¿°3ä¸ªå‡½æ•°å°†ç›¸äº’é…åˆè°ƒç”¨å…±åŒåˆ†æä¸€è¡Œæ•°æ®çš„ç±»å‹ã€‚
         /*
         static unsigned int AnalyzeByNothing(_analyze_arg& aa, const char* start, const list_type& singles, const pair_list& multiples);
         static unsigned int AnalyzeByQuoting(_analyze_arg& aa, const char* start, const list_type& singles, const pair_list& multiples);
         static unsigned int AnalyzeByAnnotating(_analyze_arg& aa, const char* start, const list_type& singles, const pair_list& multiples);
         */
+
+        LineStatus _status{ LineStatus::Nothing };
+        std::pair<std::string, std::string> _symbol;
+
+        unsigned int _OnNothing(const std::string& line, std::size_t index);
+        unsigned int _OnQuoting(const std::string& line, std::size_t index);
+        unsigned int _OnAnnotating(const std::string& line, std::size_t index);
+
     public:
 
-        FileReport Analyze(const std::string& file) const;
-
-
+        ReportItem Analyze(const std::string& file);
 
     };
 

@@ -1,24 +1,32 @@
-#pragma once
+﻿#pragma once
+
+namespace xf::cmd {
+    class result_t;
+}
 
 namespace sc
 {
-    /*
-    --explain
-    --languages=c++,java
-    --input=/home/dir
-    --output=/home/file
-    --config=/home/config.json
-    --mode=123
-    --help
-    --version
-    --exclude=*.h
-    --detail=lines|asc
-    --thread=10
+    enum order_t {
+        by_nothing  = 0x01,
+        by_lines    = 0x02,
+        by_codes    = 0x03,
+        by_comments = 0x04,
+        by_blanks   = 0x05,
+        by_files    = 0x06,
+        order_mask  = 0x07,
 
-    */
+        ascending   = 0x00,
+        descending  = 0x08,
+        order_direction  = 0x08
+    };
 
-    enum Mode {
-        is_comment
+    enum mode_t {
+        mc_is_blank     = 0x01,
+        mc_is_comment   = 0x02,
+        ms_is_code      = 0x04,
+        ms_is_blank     = 0x08,
+        cc_is_code      = 0x10,
+        cc_is_comment   = 0x20
     };
 
     class Option final
@@ -28,11 +36,10 @@ namespace sc
         std::string output;
         std::string configFile;
         std::string exclusion;
-        unsigned int nThread;
-        unsigned int detail;
-        unsigned int mode;
-        bool explain{ false };
-        bool empty{ false };
+        unsigned int nThread{ 0 };
+        unsigned int detail{ 0 };
+        unsigned int mode{ mode_t::mc_is_blank | mode_t::ms_is_blank | mode_t::cc_is_code };
+        bool empty{ true };
 
         Option() = default;
         Option(const Option&) = delete;
@@ -41,7 +48,6 @@ namespace sc
     public:
 
         bool AllowEmpty() const { return empty; }
-        bool Explaining() const { return explain; }
         const std::string& ConfigFile() const { return configFile; }
         const std::string& InputPath() const { return input; }
         const std::string& OutputPath() const { return output; }
@@ -51,12 +57,12 @@ namespace sc
         bool CheckMode(unsigned int m) const { return false; }
         unsigned int Detail() const { return detail; }
 
-        void Explain(const std::vector<std::string>& file) const;
+        void Explain() const;
+
+        static bool InitOption(const xf::cmd::result_t& result);
 
         static Option& Instance() { static Option _opt; return (_opt); }
 
-        static bool ParseCommandLine(const char* const * argv, std::size_t argc);
-        
     };  // class Option
 
 }   // namespace sc
