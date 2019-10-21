@@ -1,9 +1,11 @@
 ﻿#include <string>
-#include <iostream>
+#include <vector>
 #include <fstream>
 #include <map>
 
 #include "third/xf_log_console.h"
+
+#include "config/Option.h"
 
 #include "counter/FileReport.h"
 #include "counter/Analyzer.h"
@@ -12,62 +14,65 @@ namespace sc
 {
     ReportItem Analyzer::Analyze(const std::string& file)
     {
-        // 定义该文件的统计报告对象
         ReportItem report;
-        try
+        std::ifstream fin(file);
+        if (fin.is_open())
         {
-            std::ifstream fin(file);
-            if (fin.is_open())
+            unsigned int (Analyzer:: * funcs[3])(const std::string&, std::size_t) = { &Analyzer::_OnNothing, &Analyzer::_OnQuoting, &Analyzer::_OnAnnotating };
+
+            std::string line;
+            for (_analyze_arg aa; std::getline(fin, line); )
             {
-                unsigned int (Analyzer:: * funcs[3])(const std::string&, std::size_t) = { &Analyzer::_OnNothing, &Analyzer::_OnQuoting, &Analyzer::_OnAnnotating };
-
-                std::string line;
-                for (_analyze_arg aa; std::getline(fin, line); )
+                switch ((this->*funcs[static_cast<unsigned int>(_status)])(line, 0))
                 {
-                    unsigned int lt = (this->*funcs[static_cast<unsigned int>(_status)])(line, 0);
-
-                    // _xflog("line: %s\ntype: %d, mode: %d", line, ly, static_cast<int>(aa._lm));
-
-                    // 物理行数+1
-                    report.AddLines();
-
-                    /*
-                     *  ...
-                     */
-
+                case (line_t::HasCode | line_t::HasComment):
+                {
+                    if (_sc_opt.CheckMode(mode_t::cc_is_code)) report.AddCodes();
+                    if (_sc_opt.CheckMode(mode_t::cc_is_comment)) report.AddComments();
+                    break;
+                }
+                case line_t::Blank:
+                {
                     switch (_status)
                     {
-                    case LineStatus::Nothing:
+                    case status_t::Quoting:
+                    {
+                        if (_sc_opt.CheckMode(mode_t::ms_is_code)) report.AddCodes();
+                        if (_sc_opt.CheckMode(mode_t::ms_is_blank)) report.AddBlanks();
                         break;
-                    case LineStatus::Quoting:
+                    }
+                    case status_t::Annotating:
+                    {
+                        if (_sc_opt.CheckMode(mode_t::mc_is_blank)) report.AddBlanks();
+                        if (_sc_opt.CheckMode(mode_t::mc_is_comment)) report.AddComments();
                         break;
-                    case LineStatus::Annotating:
+                    }
+                    case status_t::Normal:
+                        report.AddBlanks();
                         break;
                     default:
                         break;
                     }
-
-                    // 根据分析结果统计对应类型的行数
-                    if (LineType::HasCode == (LineType::HasCode & lt))
-                        report.AddCodes(1);
-                    if (LineType::HasComment == (LineType::HasComment & lt))
-                        report.AddComments(1);
-
-                    // 如果是带有空行标记并且没有其他类型标记则为空行
-                    if (LineType::Blank == (LineType::Blank & lt) && 0 == (lt & (LineType::HasCode | LineType::HasComment)))
-                        report.AddBlanks(1);
+                    break;
+                }
+                case line_t::HasCode:
+                    report.AddCodes();
+                    break;
+                case line_t::HasComment:
+                    report.AddComments();
+                    break;
+                default:
+                    break;
                 }
 
-                fin.close();
+                report.AddLines();
             }
-            else
-            {
-                _xflog("open file \"%s\" failed !", file.c_str());
-            }
+
+            fin.close();
         }
-        catch (const std::exception & _ex)
+        else
         {
-            _xflog("analyze file \"%s\" occur exception: %s", file.c_str(), _ex.what());
+            _xflog("open file \"%s\" failed !", file.c_str());
         }
 
         _xflog("file: %s, lines: %d, codes: %d, blanks: %d, comments: %d"
@@ -131,7 +136,7 @@ namespace sc
     unsigned int Analyzer::AnalyzeByNothing(_analyze_arg& _aa, const char* start, const list_type& singles, const pair_list& multiples)
     {
         if (*start == 0)
-            return AnalyzeThread::LineType::Blank;
+            return AnalyzeThread::line_t::Blank;
 
         // 查找引号所在位置
         std::ptrdiff_t qkey = -1;
@@ -139,8 +144,8 @@ namespace sc
         // 如果引号在行首，则进入引用模式
         if (qptr == start)
         {
-            _aa._lm = LineStatus::Quoting;
-            return LineType::HasCode | AnalyzeByQuoting(_aa, start + 1, singles, multiples);
+            _aa._lm = status_t::Quoting;
+            return line_t::HasCode | AnalyzeByQuoting(_aa, start + 1, singles, multiples);
         }
         // 如果找到则记录找到的位置
         if (qptr != nullptr)
@@ -164,8 +169,8 @@ namespace sc
         // 如果单行注释符号在行首，直接返回注释行
         if (skey.second == 0)
         {
-            _aa._lm = LineStatus::Nothing;
-            return AnalyzeThread::LineType::HasComment;
+            _aa._lm = status_t::Normal;
+            return AnalyzeThread::line_t::HasComment;
         }
 
         // 查找第一个多行注释的位置
@@ -186,9 +191,9 @@ namespace sc
         // 如果多行注释符号在行首，则进入注释模式
         if (mkey.second == 0)
         {
-            _aa._lm = LineStatus::Annotating;
+            _aa._lm = status_t::Annotating;
             _aa._arg = mkey.first;
-            return LineType::HasComment | AnalyzeByAnnotating(_aa, start + multiples[mkey.first].first.size(), singles, multiples);
+            return line_t::HasComment | AnalyzeByAnnotating(_aa, start + multiples[mkey.first].first.size(), singles, multiples);
         }
 
         unsigned int index = _TellFirstPos({ INT_MAX, qkey, skey.second, mkey.second });
@@ -196,41 +201,41 @@ namespace sc
         {
         case 0:
         {
-            _aa._lm = LineStatus::Nothing;
+            _aa._lm = status_t::Normal;
             // 如果没有找到任何引号、单行注释、多行注释标记，遍历所有字符，有一个非空白符即为有效代码行，否则为空白行。
             for (const unsigned char* ptr = reinterpret_cast<const unsigned char*>(start); *ptr; ++ptr)
                 if (0 == isspace(*ptr))
-                    return LineType::HasCode;
+                    return line_t::HasCode;
 
-            return LineType::Blank;
+            return line_t::Blank;
         }
         case 1:
         {
             // 如果引号标记在最前面，则进入引用模式
-            _aa._lm = LineStatus::Quoting;
-            return AnalyzeThread::LineType::HasCode | AnalyzeByQuoting(_aa, start + qkey + 1, singles, multiples);
+            _aa._lm = status_t::Quoting;
+            return AnalyzeThread::line_t::HasCode | AnalyzeByQuoting(_aa, start + qkey + 1, singles, multiples);
         }
         case 2:
         {
-            _aa._lm = LineStatus::Nothing;
+            _aa._lm = status_t::Normal;
             // 如果单行注释标记在最前面，检查注释之前是否有有效代码
             for (int i = 0; i < skey.second; ++i)
                 if (0 == isspace((unsigned int)start[i]))
-                    return LineType::HasCode | LineType::HasComment;
+                    return line_t::HasCode | line_t::HasComment;
 
-            return LineType::HasComment;
+            return line_t::HasComment;
         }
         case 3:
         {
-            _aa._lm = LineStatus::Annotating;
+            _aa._lm = status_t::Annotating;
             _aa._arg = mkey.first;
             // 如果多行注释标记在最前面，检查注释之前是否有有效代码
-            unsigned int ly = AnalyzeThread::LineType::HasComment;
+            unsigned int ly = AnalyzeThread::line_t::HasComment;
             for (int i = 0; i < mkey.second; ++i)
             {
                 if (0 == isspace((unsigned int)start[i]))
                 {
-                    ly |= LineType::HasCode;
+                    ly |= line_t::HasCode;
                     break;
                 }
             }
@@ -247,23 +252,23 @@ namespace sc
     unsigned int Analyzer::AnalyzeByQuoting(_analyze_arg& _aa, const char* start, const list_type& singles, const pair_list& multiples)
     {
         if (*start == 0)
-            return LineType::HasCode;
+            return line_t::HasCode;
 
         // 查找引号结束标记位置
         const char* ptr = _FindQuotePos(start);
         // 找不到直接返回有效代码行
         if (ptr == nullptr)
-            return LineType::HasCode;
+            return line_t::HasCode;
 
         // 如果找到则结束引用模式，进入普通模式判断
-        _aa._lm = LineStatus::Nothing;
-        return LineType::HasCode | AnalyzeByNothing(_aa, ptr + 1, singles, multiples);
+        _aa._lm = status_t::Normal;
+        return line_t::HasCode | AnalyzeByNothing(_aa, ptr + 1, singles, multiples);
     }
 
     unsigned int Analyzer::AnalyzeByAnnotating(_analyze_arg& _aa, const char* start, const list_type& singles, const pair_list& multiples)
     {
         if (*start == 0)
-            return LineType::Blank;
+            return line_t::Blank;
 
         // 查找对应的多行注释结束标记
         const char* ptr = strstr(start, multiples[_aa._arg].second.c_str());
@@ -272,18 +277,31 @@ namespace sc
         {
             for (ptr = start; *ptr; ++ptr)
                 if (0 == isspace(unsigned int(*ptr)))
-                    return LineType::HasComment;
+                    return line_t::HasComment;
 
-            return LineType::Blank;
+            return line_t::Blank;
         }
         else
         {
             // 如果找到，则结束注释模式，进入普通模式判断
-            _aa._lm = LineStatus::Nothing;
-            return LineType::HasComment | AnalyzeByNothing(_aa, ptr + multiples[_aa._arg].second.size(), singles, multiples);
+            _aa._lm = status_t::Normal;
+            return line_t::HasComment | AnalyzeByNothing(_aa, ptr + multiples[_aa._arg].second.size(), singles, multiples);
         }
     }
     */
+
+    
+    // 从line的index位置前面查找str
+    std::size_t _find_front_position(const std::string_view& line, std::size_t index, const std::string& str)
+    {
+        if (0 == index) return index;
+        auto view = line.substr(0, index + str.size() - 1);
+        auto pos = view.find(str);
+
+        return (std::string::npos == pos ? index : pos);
+    }
+
+
     unsigned int Analyzer::_OnNothing(const std::string& line, std::size_t index)
     {
         return 0;

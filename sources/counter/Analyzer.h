@@ -10,7 +10,7 @@ namespace sc
     public:
 
         // 定义行类型
-        enum LineType
+        enum line_t
         {
             Unknow      = 0x00,     // 未知类型
             Blank       = 0x01,     // 空白行
@@ -19,19 +19,20 @@ namespace sc
         };
 
         // 定义行状态
-        enum class LineStatus : unsigned char
+        enum class status_t : unsigned char
         {
-            Nothing,                    // 无状态
+            Normal,                     // 无状态
             Quoting,                    // 引用中
             Annotating                  // 注释中
         };
 
         // 分析参数对象
+        /*
         struct _analyze_arg {
-            LineStatus _lm{ LineStatus::Nothing };
+            status_t _lm{ status_t::Normal };
             unsigned int _arg{ 0 };
         };
-
+        */
         // 对应模式下的分析方法，下述3个函数将相互配合调用共同分析一行数据的类型。
         /*
         static unsigned int AnalyzeByNothing(_analyze_arg& aa, const char* start, const list_type& singles, const pair_list& multiples);
@@ -39,7 +40,7 @@ namespace sc
         static unsigned int AnalyzeByAnnotating(_analyze_arg& aa, const char* start, const list_type& singles, const pair_list& multiples);
         */
 
-        LineStatus _status{ LineStatus::Nothing };
+        status_t _status{ status_t::Normal };
         std::pair<std::string, std::string> _symbol;
 
         unsigned int _OnNothing(const std::string& line, std::size_t index);

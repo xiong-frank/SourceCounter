@@ -47,13 +47,13 @@ namespace sc
 
     public:
 
+        const std::vector<std::string>& Languages() const { return languages; }
         bool AllowEmpty() const { return empty; }
         const std::string& ConfigFile() const { return configFile; }
         const std::string& InputPath() const { return input; }
         const std::string& OutputPath() const { return output; }
         const std::string& Exclusion() const { return exclusion; }
         unsigned int ThreadNumber() const { return nThread; }
-        const std::vector<std::string>& Languages() const { return languages; }
         bool CheckMode(unsigned int m) const { return false; }
         unsigned int Detail() const { return detail; }
 
