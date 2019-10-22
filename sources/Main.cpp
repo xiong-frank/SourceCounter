@@ -49,8 +49,6 @@ bool _ParseCommandLine(const char* const* argv, unsigned int argc)
      --empty=true
      --explain
     */
-
-
     if (argc < 2)
     {
         std::cout << R"(Missing command line arguments, please specify the necessary arguments or enter "SourceCounter --help" for help.)" << std::endl;

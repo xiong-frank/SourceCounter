@@ -12,18 +12,17 @@ namespace sc
         // 定义行类型
         enum line_t
         {
-            Unknow      = 0x00,     // 未知类型
-            Blank       = 0x01,     // 空白行
-            HasCode     = 0x02,     // 有代码
-            HasComment  = 0x04      // 有注释
+            Blank       = 0x00,     // 空白行
+            HasCode     = 0x01,     // 有代码
+            HasComment  = 0x02      // 有注释
         };
 
         // 定义行状态
         enum class status_t : unsigned char
         {
-            Normal,                     // 无状态
-            Quoting,                    // 引用中
-            Annotating                  // 注释中
+            Normal,                 // 无状态
+            Quoting,                // 引用中
+            Annotating              // 注释中
         };
 
         // 分析参数对象

@@ -18,50 +18,38 @@ namespace sc
         std::ifstream fin(file);
         if (fin.is_open())
         {
-            unsigned int (Analyzer:: * funcs[3])(const std::string&, std::size_t) = { &Analyzer::_OnNothing, &Analyzer::_OnQuoting, &Analyzer::_OnAnnotating };
-
-            std::string line;
-            for (_analyze_arg aa; std::getline(fin, line); )
+            unsigned int (Analyzer::*_funcs[])(const std::string&, std::size_t) = { &Analyzer::_OnNothing, &Analyzer::_OnQuoting, &Analyzer::_OnAnnotating };
+            for (std::string line; std::getline(fin, line); )
             {
-                switch ((this->*funcs[static_cast<unsigned int>(_status)])(line, 0))
+                switch ((this->*_funcs[static_cast<unsigned int>(_status)])(line, 0))
                 {
-                case (line_t::HasCode | line_t::HasComment):
-                {
-                    if (_sc_opt.CheckMode(mode_t::cc_is_code)) report.AddCodes();
-                    if (_sc_opt.CheckMode(mode_t::cc_is_comment)) report.AddComments();
-                    break;
-                }
-                case line_t::Blank:
-                {
-                    switch (_status)
-                    {
-                    case status_t::Quoting:
-                    {
-                        if (_sc_opt.CheckMode(mode_t::ms_is_code)) report.AddCodes();
-                        if (_sc_opt.CheckMode(mode_t::ms_is_blank)) report.AddBlanks();
-                        break;
-                    }
-                    case status_t::Annotating:
-                    {
-                        if (_sc_opt.CheckMode(mode_t::mc_is_blank)) report.AddBlanks();
-                        if (_sc_opt.CheckMode(mode_t::mc_is_comment)) report.AddComments();
-                        break;
-                    }
-                    case status_t::Normal:
-                        report.AddBlanks();
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                }
                 case line_t::HasCode:
                     report.AddCodes();
                     break;
                 case line_t::HasComment:
                     report.AddComments();
                     break;
+                case line_t::Blank:
+                {
+                    switch (_status)
+                    {
+                    case status_t::Quoting:
+                        if (_sc_opt.CheckMode(mode_t::ms_is_code)) report.AddCodes();
+                        if (_sc_opt.CheckMode(mode_t::ms_is_blank)) report.AddBlanks();
+                        break;
+                    case status_t::Annotating:
+                        if (_sc_opt.CheckMode(mode_t::mc_is_blank)) report.AddBlanks();
+                        if (_sc_opt.CheckMode(mode_t::mc_is_comment)) report.AddComments();
+                        break;
+                    default:
+                        report.AddBlanks();
+                        break;
+                    }
+                    break;
+                }
                 default:
+                    if (_sc_opt.CheckMode(mode_t::cc_is_code)) report.AddCodes();
+                    if (_sc_opt.CheckMode(mode_t::cc_is_comment)) report.AddComments();
                     break;
                 }
 
@@ -292,15 +280,17 @@ namespace sc
 
     
     // 从line的index位置前面查找str
-    std::size_t _find_front_position(const std::string_view& line, std::size_t index, const std::string& str)
+    inline std::size_t _find_front_position(const std::string_view& line, std::size_t index, const std::string& str)
     {
-        if (0 == index) return index;
-        auto view = line.substr(0, index + str.size() - 1);
-        auto pos = view.find(str);
+        if (0 < index)
+        {
+            auto view = line.substr(0, index + str.size() - 1);
+            if (auto pos = view.find(str); pos < index)
+                return pos;
+        }
 
-        return (std::string::npos == pos ? index : pos);
+        return index;
     }
-
 
     unsigned int Analyzer::_OnNothing(const std::string& line, std::size_t index)
     {
