@@ -3,18 +3,18 @@
 
 namespace sc
 {
+    using string_type = std::string;
+
+    template<typename _Type>
+    using list_type = std::vector<_Type>;
+
+    template<typename _Key, typename _Value>
+    using pair_list = list_type<std::pair<_Key, _Value>>;
+
     // 配置信息
     class LangRules final
     {
     public:
-
-        using string_type = std::string;
-
-        template<typename _Type>
-        using list_type = std::vector<_Type>;
-
-        template<typename _Key, typename _Value>
-        using pair_list = list_type<std::pair<_Key, _Value>>;
 
         struct Item
         {
@@ -41,7 +41,8 @@ namespace sc
         // 从文件加载配置
         bool Load(const string_type& fromFile);
 
-        std::string Type(const std::string& ext) const;
+        string_type Type(const string_type& ext) const;
+        const Item* GetRule(const string_type& name) const;
 
         static LangRules& Instance() { static LangRules _lrs; return (_lrs); }
 

@@ -15,9 +15,18 @@ namespace sc
         return false;
     }
 
-    std::string LangRules::Type(const std::string& ext) const
+    const LangRules::Item* LangRules::GetRule(const string_type& name) const
     {
-        return std::string();
+        auto iter = m_ItemMap.find(name);
+        if (iter == m_ItemMap.end())
+            return nullptr;
+
+        return &iter->second;
+    }
+
+    string_type LangRules::Type(const string_type& ext) const
+    {
+        return string_type();
     }
 
 }

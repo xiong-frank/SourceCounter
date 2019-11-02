@@ -231,16 +231,18 @@ namespace sc
         return false;
     }
 
-    Analyzer Rapporteur::_GetAnalyzer(const std::string& language)
-    {
-        return Analyzer();
-    }
-
     void Rapporteur::_Analyze()
     {
         // 循环取文件
         for (std::pair<std::string, std::string> item; _PickFile(item); )
-            m_Reports.emplace_back(item.first, item.second, _GetAnalyzer(item.second).Analyze(item.first));
+        {
+            if ("C++" == item.second)
+                m_Reports.emplace_back(item.first, item.second, CppAnalyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
+            else if ("Clojure" == item.second)
+                m_Reports.emplace_back(item.first, item.second, ClojureAnalyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
+            else
+                m_Reports.emplace_back(item.first, item.second, Analyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
+        }
     }
 
 }

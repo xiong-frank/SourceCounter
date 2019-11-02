@@ -2,8 +2,6 @@
 
 namespace sc
 {
-    class Analyzer;
-
     // 分析线程类
     class Rapporteur
     {
@@ -25,9 +23,6 @@ namespace sc
 
         // 分析线程函数
         void _Analyze();
-
-        // 根据语言获取分析器
-        static Analyzer _GetAnalyzer(const std::string& language);
 
     public:
 

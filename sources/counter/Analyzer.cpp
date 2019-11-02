@@ -6,6 +6,7 @@
 #include "third/xf_log_console.h"
 
 #include "config/Option.h"
+#include "config/LangRules.h"
 
 #include "counter/FileReport.h"
 #include "counter/Analyzer.h"
@@ -18,10 +19,15 @@ namespace sc
         std::ifstream fin(file);
         if (fin.is_open())
         {
-            unsigned int (Analyzer::*_funcs[])(const std::string&, std::size_t) = { &Analyzer::_OnNothing, &Analyzer::_OnQuoting, &Analyzer::_OnAnnotating };
+            unsigned int (Analyzer::*_funcs[])(std::string_view&) = {
+                &Analyzer::_OnNormal,
+                &Analyzer::_OnQuoting,
+                &Analyzer::_OnPrimitive,
+                &Analyzer::_OnAnnotating };
+
             for (std::string line; std::getline(fin, line); )
             {
-                switch ((this->*_funcs[static_cast<unsigned int>(_status)])(line, 0))
+                switch ((this->*_funcs[static_cast<unsigned int>(_status)])(std::string_view(line)))
                 {
                 case line_t::HasCode:
                     report.AddCodes();
@@ -73,212 +79,6 @@ namespace sc
         return report;
     }
 
-    // 返回有效的最小值索引
-    static inline unsigned int _TellFirstPos(const long long(&_arr)[4])
-    {
-        int minpos = INT_MAX;
-        unsigned int x = 0;
-
-        for (unsigned int i = 1; i < 4; ++i)
-            if (0 < _arr[i] && _arr[i] < _arr[x])
-                x = i;
-
-        return x;
-    }
-
-    // 查找第一个有效的引号位置
-    static inline const char* _FindQuotePos(const char* start)
-    {
-        if (*start == '\"')
-            return start;
-
-        for (;;)
-        {
-            // 查找引号字符位置
-            const char* ptr = strchr(start, '\"');
-            // 找不到直接返回空
-            if (ptr == nullptr)
-                return nullptr;
-
-            // 统计引号前面连续的反斜杠数量
-            unsigned int n = 0;
-            for (const char* slash = ptr - 1; ; --slash)
-            {
-                if (*slash == '\\')
-                    ++n;
-                else
-                    break;
-
-                if (slash == start)
-                    break;
-            }
-            // 如果前面的反斜杠数量可以抵消，则找到第一个有效的引号位置
-            if (0 == n % 2)
-                return ptr;
-
-            // 递增下次查找位置
-            start = ptr + 1;
-        }
-    }
-    /*
-    unsigned int Analyzer::AnalyzeByNothing(_analyze_arg& _aa, const char* start, const list_type& singles, const pair_list& multiples)
-    {
-        if (*start == 0)
-            return AnalyzeThread::line_t::Blank;
-
-        // 查找引号所在位置
-        std::ptrdiff_t qkey = -1;
-        const char* qptr = _FindQuotePos(start);
-        // 如果引号在行首，则进入引用模式
-        if (qptr == start)
-        {
-            _aa._lm = status_t::Quoting;
-            return line_t::HasCode | AnalyzeByQuoting(_aa, start + 1, singles, multiples);
-        }
-        // 如果找到则记录找到的位置
-        if (qptr != nullptr)
-            qkey = qptr - start;
-
-        // 查找第一个单行注释的位置
-        std::pair<int, std::ptrdiff_t> skey{ -1, -1 };
-        for (unsigned int i = 0; i < singles.size(); ++i)
-        {
-            const char* ptr = strstr(start, singles[i].c_str());
-            if (ptr != nullptr)
-            {
-                auto pos = ptr - start;
-                if (skey.first < 0 || pos < skey.second)
-                {
-                    skey.first = i;
-                    skey.second = pos;
-                }
-            }
-        }
-        // 如果单行注释符号在行首，直接返回注释行
-        if (skey.second == 0)
-        {
-            _aa._lm = status_t::Normal;
-            return AnalyzeThread::line_t::HasComment;
-        }
-
-        // 查找第一个多行注释的位置
-        std::pair<int, std::ptrdiff_t> mkey{ -1, -1 };
-        for (unsigned int i = 0; i < multiples.size(); ++i)
-        {
-            const char* ptr = strstr(start, multiples[i].first.c_str());
-            if (ptr != nullptr)
-            {
-                auto pos = ptr - start;
-                if (mkey.first < 0 || pos < mkey.second)
-                {
-                    mkey.first = i;
-                    mkey.second = pos;
-                }
-            }
-        }
-        // 如果多行注释符号在行首，则进入注释模式
-        if (mkey.second == 0)
-        {
-            _aa._lm = status_t::Annotating;
-            _aa._arg = mkey.first;
-            return line_t::HasComment | AnalyzeByAnnotating(_aa, start + multiples[mkey.first].first.size(), singles, multiples);
-        }
-
-        unsigned int index = _TellFirstPos({ INT_MAX, qkey, skey.second, mkey.second });
-        switch (index)
-        {
-        case 0:
-        {
-            _aa._lm = status_t::Normal;
-            // 如果没有找到任何引号、单行注释、多行注释标记，遍历所有字符，有一个非空白符即为有效代码行，否则为空白行。
-            for (const unsigned char* ptr = reinterpret_cast<const unsigned char*>(start); *ptr; ++ptr)
-                if (0 == isspace(*ptr))
-                    return line_t::HasCode;
-
-            return line_t::Blank;
-        }
-        case 1:
-        {
-            // 如果引号标记在最前面，则进入引用模式
-            _aa._lm = status_t::Quoting;
-            return AnalyzeThread::line_t::HasCode | AnalyzeByQuoting(_aa, start + qkey + 1, singles, multiples);
-        }
-        case 2:
-        {
-            _aa._lm = status_t::Normal;
-            // 如果单行注释标记在最前面，检查注释之前是否有有效代码
-            for (int i = 0; i < skey.second; ++i)
-                if (0 == isspace((unsigned int)start[i]))
-                    return line_t::HasCode | line_t::HasComment;
-
-            return line_t::HasComment;
-        }
-        case 3:
-        {
-            _aa._lm = status_t::Annotating;
-            _aa._arg = mkey.first;
-            // 如果多行注释标记在最前面，检查注释之前是否有有效代码
-            unsigned int ly = AnalyzeThread::line_t::HasComment;
-            for (int i = 0; i < mkey.second; ++i)
-            {
-                if (0 == isspace((unsigned int)start[i]))
-                {
-                    ly |= line_t::HasCode;
-                    break;
-                }
-            }
-            // 如果引号标记在最前面，则进入引用模式
-            return ly | AnalyzeByAnnotating(_aa, start + mkey.second + multiples[mkey.first].first.size(), singles, multiples);
-        }
-        default:
-            break;
-        }
-
-        return 0;
-    }
-
-    unsigned int Analyzer::AnalyzeByQuoting(_analyze_arg& _aa, const char* start, const list_type& singles, const pair_list& multiples)
-    {
-        if (*start == 0)
-            return line_t::HasCode;
-
-        // 查找引号结束标记位置
-        const char* ptr = _FindQuotePos(start);
-        // 找不到直接返回有效代码行
-        if (ptr == nullptr)
-            return line_t::HasCode;
-
-        // 如果找到则结束引用模式，进入普通模式判断
-        _aa._lm = status_t::Normal;
-        return line_t::HasCode | AnalyzeByNothing(_aa, ptr + 1, singles, multiples);
-    }
-
-    unsigned int Analyzer::AnalyzeByAnnotating(_analyze_arg& _aa, const char* start, const list_type& singles, const pair_list& multiples)
-    {
-        if (*start == 0)
-            return line_t::Blank;
-
-        // 查找对应的多行注释结束标记
-        const char* ptr = strstr(start, multiples[_aa._arg].second.c_str());
-        // 如果没有找到
-        if (ptr == nullptr)
-        {
-            for (ptr = start; *ptr; ++ptr)
-                if (0 == isspace(unsigned int(*ptr)))
-                    return line_t::HasComment;
-
-            return line_t::Blank;
-        }
-        else
-        {
-            // 如果找到，则结束注释模式，进入普通模式判断
-            _aa._lm = status_t::Normal;
-            return line_t::HasComment | AnalyzeByNothing(_aa, ptr + multiples[_aa._arg].second.size(), singles, multiples);
-        }
-    }
-    */
-
-    
     // 从line的index位置前面查找str
     inline std::size_t _find_front_position(const std::string_view& line, std::size_t index, const std::string& str)
     {
@@ -292,17 +92,183 @@ namespace sc
         return index;
     }
 
-    unsigned int Analyzer::_OnNothing(const std::string& line, std::size_t index)
+    // 移动到可见字符位置
+    inline void _remove_space(std::string_view& view)
+    {
+        for (auto i = 0; i < view.size(); ++i)
+        {
+            if (0 == std::isspace(view[i]))
+            {
+                view.remove_prefix(i);
+                break;
+            }
+        }
+    }
+
+    // 查找引号结束符位置，同时检查转义字符。
+    inline std::size_t _find_quote(const std::string_view& view, const std::string& quote)
+    {
+        for (std::size_t start = 0;;)
+        {
+            auto index = view.find(quote, start);
+            if (std::string::npos == index)
+                return std::string::npos;
+
+            unsigned int n = 0;
+            for (auto i = index; (0 < i) && ('\\' == view[--i]); ++n);
+
+            if (0 == n % 2)
+                return index;
+
+            start = index + 1;
+        }
+    }
+
+    unsigned int Analyzer::_OnQuoting(std::string_view& line, bool escape)
+    {
+        _remove_space(line);
+
+        if (line.empty())
+            return line_t::Blank;
+
+        auto index = (escape ? _find_quote(line, _arg.second) : line.find(_arg.second));
+        if (std::string::npos == index)
+            return line_t::HasCode;
+
+        _status = status_t::Normal;
+        line.remove_prefix(_arg.second.size() + index);
+        return line_t::HasCode | _OnNormal(line);
+    }
+
+    unsigned int Analyzer::_OnNormal(std::string_view& line)
+    {
+        _remove_space(line);
+
+        if (line.empty())
+            return line_t::Blank;
+
+        // 符号类型：字符串、原生字符串、单行注释、多行注释
+        enum class _first_t : unsigned char { _nothing, _string, _r_str, _slc, _mlc };
+
+        _first_t _ft{ _first_t::_nothing }; // 找到的最前面的符号类型
+        std::size_t index = line.size();    // 找到的最前面的符号位置
+
+        for (const auto& arg : _item.primitives)
+        {
+            auto i = _find_front_position(line, index, arg.first);
+            if (i < index)
+            {
+                index = i;
+                _ft = _first_t::_r_str;
+                _arg = arg;
+            }
+        }
+        for (const auto& arg : _item.quotes)
+        {
+            auto i = _find_front_position(line, index, arg.first);
+            if (i < index)
+            {
+                index = i;
+                _ft = _first_t::_string;
+                _arg = arg;
+            }
+        }
+        for (const auto& arg : _item.multiples)
+        {
+            auto i = _find_front_position(line, index, arg.first);
+            if (i < index)
+            {
+                index = i;
+                _ft = _first_t::_mlc;
+                _arg = arg;
+            }
+        }
+        for (const auto& arg : _item.singles)
+        {
+            auto i = _find_front_position(line, index, arg);
+            if (i < index)
+            {
+                index = i;
+                _ft = _first_t::_slc;
+            }
+        }
+
+        line_t lt = line_t::Blank;
+        if (0 < index) lt = line_t::HasCode;
+
+        switch (_ft)
+        {
+        case _first_t::_string:
+            _status = status_t::Quoting;
+            line.remove_prefix(_arg.first.size() + index);
+            return (lt | _OnQuoting(line));
+        case _first_t::_r_str:
+            _status = status_t::Primitive;
+            line.remove_prefix(_arg.first.size() + index);
+            return (lt | _OnPrimitive(line));
+        case _first_t::_mlc:
+            _status = status_t::Annotating;
+            line.remove_prefix(_arg.first.size() + index);
+            return (lt | line_t::HasComment | _OnAnnotating(line));
+        case _first_t::_slc:
+            return (lt | line_t::HasComment);
+        default:
+            return lt;
+        }
+    }
+
+    unsigned int Analyzer::_OnQuoting(std::string_view& line)
+    {
+        return _OnQuoting(line, true);
+    }
+
+    unsigned int Analyzer::_OnPrimitive(std::string_view& line)
+    {
+        return _OnQuoting(line, false);
+    }
+
+    unsigned int Analyzer::_OnAnnotating(std::string_view& line)
+    {
+        _remove_space(line);
+
+        if (line.empty())
+            return line_t::Blank;
+
+        auto index = line.find(_arg.second);
+        if (std::string::npos == index)
+            return line_t::HasComment;
+
+        _status = status_t::Normal;
+        line.remove_prefix(_arg.second.size() + index);
+        return line_t::HasComment | _OnNormal(line);
+    }
+
+    unsigned int CppAnalyzer::_OnPrimitive(std::string_view& line)
     {
         return 0;
     }
 
-    unsigned int Analyzer::_OnQuoting(const std::string& line, std::size_t index)
+    ReportItem ClojureAnalyzer::Analyze(const std::string& file)
+    {
+        return ReportItem();
+    }
+
+    unsigned int ClojureAnalyzer::_OnNormal(std::string_view& line)
     {
         return 0;
     }
 
-    unsigned int Analyzer::_OnAnnotating(const std::string& line, std::size_t index)
+    unsigned int ClojureAnalyzer::_OnQuoting(std::string_view& line)
+    {
+        return 0;
+    }
+
+    unsigned int ClojureAnalyzer::_OnPrimitive(std::string_view& line)
+    {
+        return 0;
+    }
+
+    unsigned int ClojureAnalyzer::_OnAnnotating(std::string_view& line)
     {
         return 0;
     }
