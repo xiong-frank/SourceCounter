@@ -273,4 +273,14 @@ namespace sc
         return 0;
     }
 
+    ReportItem RubyAnalyzer::Analyze(const std::string& file)
+    {
+        return ReportItem();
+    }
+
+    ReportItem PythonAnalyzer::Analyze(const std::string& file)
+    {
+        return ReportItem();
+    }
+
 }

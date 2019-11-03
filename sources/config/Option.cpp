@@ -145,7 +145,6 @@ namespace sc
         }
 
         _sc_lrs.Load(Instance().ConfigFile());
-        _sc_lrs.BuildInRules();
 
         _sc_rapporteur.Load(Instance().InputPath(), Instance().Languages(), Instance().Exclusion());
 

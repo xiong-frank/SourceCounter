@@ -25,7 +25,7 @@ namespace sc
             pair_list<string_type, string_type> primitives; // 原生字符串符号
         };
 
-        LangRules() = default;
+        LangRules();
         LangRules(const LangRules&) = delete;
         LangRules& operator = (const LangRules&) = delete;
 
@@ -34,9 +34,9 @@ namespace sc
         std::map<string_type, string_type> m_ExtMap;    // 文件扩展名对应的语言
         std::map<string_type, Item>  m_ItemMap;         // 语言对应的配置项
 
-    public:
+        void _AddItem(const string_type& name, const Item& item, const list_type<string_type>& exts);
 
-        void BuildInRules() { }
+    public:
 
         // 从文件加载配置
         bool Load(const string_type& fromFile);

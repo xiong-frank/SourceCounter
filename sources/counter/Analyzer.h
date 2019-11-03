@@ -74,4 +74,24 @@ namespace sc
 
     };  // class ClojureAnalyzer
 
+    class RubyAnalyzer : public Analyzer
+    {
+    public:
+
+        using Analyzer::Analyzer;
+
+        virtual ReportItem Analyze(const std::string& file);
+
+    };  // class ClojureAnalyzer
+
+    class PythonAnalyzer : public Analyzer
+    {
+    public:
+
+        using Analyzer::Analyzer;
+
+        virtual ReportItem Analyze(const std::string& file);
+
+    };  // class ClojureAnalyzer
+
 }

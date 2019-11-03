@@ -185,8 +185,7 @@ namespace xf::cmd
         {
             try {
                 return get<_Type>(key);
-            }
-            catch (const std::exception& /* e */) {
+            } catch (const std::exception& /* e */) {
                 // std::cout << e.what() << std::endl;
                 return value;
             }
@@ -422,7 +421,7 @@ namespace xf::cmd
         {
             return Parse(argv, from, n);
         }
-        
+
         template<size_type n>
         result_t Parse(const const_char_ptr (&argv)[n]) const
         {
