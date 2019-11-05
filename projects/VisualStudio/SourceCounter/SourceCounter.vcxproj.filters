@@ -60,4 +60,9 @@
       <Filter>sources\counter</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\sources\config\_help_info.inl">
+      <Filter>sources\config</Filter>
+    </None>
+  </ItemGroup>
 </Project>

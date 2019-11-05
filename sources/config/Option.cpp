@@ -93,8 +93,7 @@ namespace sc
         return n;
     }
 
-    inline const char* version() { return "1.0.0-snapshot"; }
-    inline const char* app_name() { return "SourceCounter"; }
+#include "_help_info.inl"
 
     bool Option::InitOption(const xf::cmd::result_t& result)
     {
@@ -112,7 +111,11 @@ namespace sc
 
         if (result.is_existing("--help"))
         {
-            // ...
+            if (result.has_value("--help"))
+                _show_help(result.get<std::string>("--help"));
+            else
+                ;
+
             return false;
         }
 

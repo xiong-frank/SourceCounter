@@ -82,7 +82,7 @@ namespace sc
 
         virtual ReportItem Analyze(const std::string& file);
 
-    };  // class ClojureAnalyzer
+    };  // class RubyAnalyzer
 
     class PythonAnalyzer : public Analyzer
     {
@@ -92,6 +92,6 @@ namespace sc
 
         virtual ReportItem Analyze(const std::string& file);
 
-    };  // class ClojureAnalyzer
+    };  // class PythonAnalyzer
 
 }

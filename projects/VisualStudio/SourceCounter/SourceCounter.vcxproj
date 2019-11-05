@@ -36,6 +36,9 @@
     <ClInclude Include="..\..\..\sources\third\json.hpp" />
     <ClInclude Include="..\..\..\sources\third\xf_log_console.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\sources\config\_help_info.inl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{38B33BD3-DD2F-4B00-90C8-93EA4529601B}</ProjectGuid>

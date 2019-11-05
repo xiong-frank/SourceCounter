@@ -65,6 +65,7 @@ bool _ParseCommandLine(const char* const* argv, unsigned int argc)
         .AddOption({ {"--languages", "-l"}, { xf::cmd::value_t::vt_string, false, false, true } })
         .AddOption({ {"--exclude", "-e"}, { xf::cmd::value_t::vt_string, false, false, true } })
         .AddOption({ {"--detail", "-d"}, { xf::cmd::value_t::vt_string, false, false, false, [](const std::string& v) { return (0 < sc::_parser_detail(v)); } } })
+        .AddOption({ {"--empty"}, { xf::cmd::value_t::vt_boolean, false, false, true } })
         .AddOption({ {"--thread", "-t"}, { xf::cmd::value_t::vt_unsigned, false, false, true, "[1-9]{1,2}" } })
         .AddOption({ {"--explain", "-x"}, { false, false } });
 
