@@ -14,20 +14,45 @@ enum _sc_cmd {
     _sc_cmd_explain
 };
 
-const std::map<std::string, unsigned int> _sc_cmd_map{
-    {"--help", _sc_cmd::_sc_cmd_help},  {"-h", _sc_cmd::_sc_cmd_help},
-    {"--version", _sc_cmd::_sc_cmd_version},  {"-v", _sc_cmd::_sc_cmd_version},
-    {"--input", _sc_cmd::_sc_cmd_input},  {"-i", _sc_cmd::_sc_cmd_input},
-    {"--output", _sc_cmd::_sc_cmd_output},  {"-o", _sc_cmd::_sc_cmd_output},
-    {"--config", _sc_cmd::_sc_cmd_config},  {"-c", _sc_cmd::_sc_cmd_config},
-    {"--mode", _sc_cmd::_sc_cmd_mode},  {"-m", _sc_cmd::_sc_cmd_mode},
-    {"--languages", _sc_cmd::_sc_cmd_languages},  {"-l", _sc_cmd::_sc_cmd_languages},
-    {"--exclude", _sc_cmd::_sc_cmd_exclude},  {"-e", _sc_cmd::_sc_cmd_exclude},
-    {"--detail", _sc_cmd::_sc_cmd_detail},  {"-d", _sc_cmd::_sc_cmd_detail},
-    {"--empty", _sc_cmd::_sc_cmd_empty},
-    {"--thread", _sc_cmd::_sc_cmd_thread},  {"-t", _sc_cmd::_sc_cmd_thread},
-    {"--explain", _sc_cmd::_sc_cmd_explain},  {"-x", _sc_cmd::_sc_cmd_explain}
+struct _help_item {
+    std::set<std::string> _names;
+    std::string _summary;
+    std::string _description;
+    std::string _usage;
+    std::string _example;
 };
+
+struct _help_info {
+    static const std::map<unsigned int, _help_item> _help_map;
+    static const std::map<std::string, unsigned int> _cmd_map;
+
+    static const std::map<std::string, unsigned int> _make_cmd_map(const std::map<unsigned int, _help_item>& item_map) {
+        std::map<std::string, unsigned int> _map;
+
+        for (const auto& item : item_map)
+            for (const auto& name : item.second._names)
+                _map.emplace(name, item.first);
+
+        return _map;
+    }
+
+    static const auto& _cmd(unsigned int k) { return _help_map.at(k)._names; }
+
+    static void _show_help(const std::string& k) {
+
+        std::cout << _help_map.at(_cmd_map.at(k))._description << std::endl;
+    }
+
+    static void _show_help() {
+        std::cout << R"(Enter the "--help [command name]" to get more information about a command.)" << std::endl;
+    }
+};
+
+const std::map<unsigned int, _help_item> _help_info::_help_map{
+
+};
+
+const std::map<std::string, unsigned int> _help_info::_cmd_map = _help_info::_make_cmd_map(_help_info::_help_map);
 
 const std::map<unsigned int, std::string> _sc_help_map{
 {_sc_cmd::_sc_cmd_help,
@@ -139,8 +164,3 @@ R"(  --explain, -x: (可选)若指定该选项，则不进行实际的行数统�
 
 inline const char* version() { return "1.0.0-snapshot"; }
 inline const char* app_name() { return "SourceCounter"; }
-
-inline void _show_help(const std::string& k)
-{
-    std::cout << _sc_help_map.at(_sc_cmd_map.at(k)) << std::endl;
-}

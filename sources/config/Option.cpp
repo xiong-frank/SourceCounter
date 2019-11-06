@@ -112,9 +112,9 @@ namespace sc
         if (result.is_existing("--help"))
         {
             if (result.has_value("--help"))
-                _show_help(result.get<std::string>("--help"));
+                _help_info::_show_help(result.get<std::string>("--help"));
             else
-                ;
+                _help_info::_show_help();
 
             return false;
         }
