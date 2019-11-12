@@ -20,7 +20,7 @@ Copyright(c) 2019 Frank Xiong <https://github.com/xf-bnb>.
 
 namespace xf::cmd
 {
-    inline const char* version() { return "1.0.0"; }
+    inline const char* version() { return "1.0.1"; }
 
     using string_t = std::string;
     using size_type = std::size_t;
@@ -38,7 +38,7 @@ namespace xf::cmd
     using map_t = std::map<_KeyType, _ValueType>;
 
     enum class value_t : unsigned char {
-        vt_string, vt_integer, vt_unsigned, vt_float, vt_boolean, vt_nothing
+        vt_nothing, vt_boolean, vt_integer, vt_unsigned, vt_float, vt_string
     };  // enum value_t
 
     class option_t
@@ -171,7 +171,7 @@ namespace xf::cmd
             if (v_iter == _v_map.end())
                 return false;
 
-            return (static_cast<size_type>(value_t::vt_nothing) < v_iter->second.index());
+            return (static_cast<size_type>(value_t::vt_nothing) != v_iter->second.index());
         }
 
         template<typename _Type>

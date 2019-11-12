@@ -111,7 +111,12 @@ namespace sc
         return &iter->second;
     }
 
-    string_type LangRules::Type(const string_type& ext) const
+    list_type<string_type> LangRules::GetLanguage() const
+    {
+        return list_type<string_type>();
+    }
+
+    string_type LangRules::GetLanguage(const string_type& ext) const
     {
         return string_type();
     }

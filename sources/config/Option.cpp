@@ -3,8 +3,6 @@
 #include <map>
 #include <filesystem>
 
-// #include "resources/help_chinese.h"
-
 #include "third/xf_log_console.h"
 #include "third/xf_cmd_parser.h"
 
@@ -95,7 +93,61 @@ namespace sc
 
 #include "_help_info.inl"
 
-    bool Option::InitOption(const xf::cmd::result_t& result)
+    bool Option::ParseCommandLine(const char* const* argv, unsigned int argc)
+    {
+        /*
+         --help=--input
+         --version
+         --input=/home/dir
+         --output=/home/file
+         --config=/home/config.json
+         --languages=c++,java,ruby
+         --exclude=*.h
+         --mode=123
+         --detail=lines|asc
+         --thread=10
+         --empty=true
+         --explain
+        */
+        if (argc < 2)
+        {
+            std::cout << R"(Missing command line arguments, please specify the necessary arguments or enter "SourceCounter --help" for help.)" << std::endl;
+            return false;
+        }
+
+        xf::cmd::Parser parser;
+        parser.AddOption({ _options(_sc_cmd_help), { xf::cmd::value_t::vt_string, true, false, false, [&parser](const std::string& k) { return parser.IsValid(k); } } })
+            .AddOption({ _options(_sc_cmd_version), { true, false } })
+            .AddOption({ _options(_sc_cmd_input), { xf::cmd::value_t::vt_string, false, true, true } })
+            .AddOption({ _options(_sc_cmd_output), { xf::cmd::value_t::vt_string, false, false, true } })
+            .AddOption({ _options(_sc_cmd_config), { xf::cmd::value_t::vt_string, false, false, true } })
+            .AddOption({ _options(_sc_cmd_mode), { xf::cmd::value_t::vt_unsigned, false, false, true} })
+            .AddOption({ _options(_sc_cmd_languages), { xf::cmd::value_t::vt_string, false, false, true } })
+            .AddOption({ _options(_sc_cmd_exclude), { xf::cmd::value_t::vt_string, false, false, true } })
+            .AddOption({ _options(_sc_cmd_detail), { xf::cmd::value_t::vt_string, false, false, false, [](const std::string& v) { return (0 < _parser_detail(v)); } } })
+            .AddOption({ _options(_sc_cmd_empty), { xf::cmd::value_t::vt_boolean, false, false, true } })
+            .AddOption({ _options(_sc_cmd_thread), { xf::cmd::value_t::vt_unsigned, false, false, true, "[1-9]{1,2}" } })
+            .AddOption({ _options(_sc_cmd_explain), { false, false } });
+
+        if (argc < 3)
+            if (std::filesystem::exists(argv[1]))
+                return Instance()._parse_option(parser.Parse({ "--input", argv[1] }));
+
+        if (argc < 4)
+        {
+            if (std::filesystem::exists(argv[1]))
+            {
+                if (std::filesystem::exists(argv[2]))
+                    return Instance()._parse_option(parser.Parse({ "--input", argv[1], "--ouput", argv[2] }));
+                else
+                    return Instance()._parse_option(parser.Parse({ "--input", argv[1], argv[2] }));
+            }
+        }
+
+        return Instance()._parse_option(parser.Parse(argv, 1, argc));
+    }
+
+    bool Option::_parse_option(const xf::cmd::result_t& result)
     {
         if (!result.is_valid())
         {
@@ -112,57 +164,61 @@ namespace sc
         if (result.is_existing("--help"))
         {
             if (result.has_value("--help"))
-                _help_info::_show_help(result.get<std::string>("--help"));
+                _help::_show_help(result.get<std::string>("--help"));
             else
-                _help_info::_show_help();
+                _help::_show_help();
 
             return false;
         }
 
-        Instance().input = result.get<std::string>("--input");
+        input = result.get<std::string>("--input");
 
         if (result.is_existing("--output"))
-            Instance().output = result.get<std::string>("--output");
+            output = result.get<std::string>("--output");
 
         if (result.is_existing("--config"))
-            Instance().configFile = result.get<std::string>("--config");
+            configFile = result.get<std::string>("--config");
 
         if (result.is_existing("--exclude"))
-            Instance().exclusion = result.get<std::string>("--exclude");
+            exclusion = result.get<std::string>("--exclude");
 
         if (result.is_existing("--mode"))
-            Instance().mode = result.get<unsigned int>("--mode");
+            mode = result.get<unsigned int>("--mode");
 
         if (result.is_existing("--empty"))
-            Instance().empty = result.get<bool>("--empty");
+            empty = result.get<bool>("--empty");
 
         if (result.is_existing("--languages"))
-            _split_string(Instance().languages, result.get<std::string>("--languages"), ',');
+            _split_string(languages, result.get<std::string>("--languages"), ',');
 
         if (result.is_existing("--detail"))
         {
             if (result.has_value("--detail"))
-                Instance().detail = _parser_detail(result.get<std::string>("--detail"));
+                detail = _parser_detail(result.get<std::string>("--detail"));
             else
-                Instance().detail = order_t::by_nothing;
+                detail = order_t::by_nothing;
         }
 
-        _sc_lrs.Load(Instance().ConfigFile());
+        _sc_lrs.Load(ConfigFile());
 
-        _sc_rapporteur.Load(Instance().InputPath(), Instance().Languages(), Instance().Exclusion());
+        _sc_rapporteur.Load(input, languages, exclusion);
 
-        if (result.is_existing("--thread"))
-            Instance().nThread = result.get<unsigned int>("--thread");
-        else
-            Instance().nThread = (_sc_rapporteur.Files().size() < 0x0010 ? 0x01
-                                  : _sc_rapporteur.Files().size() < 0x0020 ? 0x02
-                                  : _sc_rapporteur.Files().size() < 0x0040 ? 0x04
-                                  : _sc_rapporteur.Files().size() < 0x0080 ? 0x08
-                                  : _sc_rapporteur.Files().size() < 0x0200 ? 0x10 : 0x20);
+        if (result.is_existing("--thread")) {
+            nThread = result.get<unsigned int>("--thread");
+            if (0x20 < nThread) nThread = 0x20;
+        } else {
+            nThread = (_sc_rapporteur.Files().size() < 0x0010 ? 0x01
+                       : _sc_rapporteur.Files().size() < 0x0020 ? 0x02
+                       : _sc_rapporteur.Files().size() < 0x0040 ? 0x04
+                       : _sc_rapporteur.Files().size() < 0x0080 ? 0x08
+                       : _sc_rapporteur.Files().size() < 0x0200 ? 0x10 : 0x20);
+        }
+
+        if (_sc_rapporteur.Files().size() < nThread) nThread = _sc_rapporteur.Files().size();
 
         if (result.is_existing("--explain"))
         {
-            Instance().Explain();
+            Explain();
             return false;
         }
 

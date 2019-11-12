@@ -45,21 +45,22 @@ namespace sc
         Option(const Option&) = delete;
         Option& operator = (const Option&) = delete;
 
+        bool _parse_option(const xf::cmd::result_t& result);
+
     public:
 
         const std::vector<std::string>& Languages() const { return languages; }
         bool AllowEmpty() const { return empty; }
+        bool CheckMode(unsigned int m) const { return false; }
         const std::string& ConfigFile() const { return configFile; }
         const std::string& InputPath() const { return input; }
         const std::string& OutputPath() const { return output; }
         const std::string& Exclusion() const { return exclusion; }
         unsigned int ThreadNumber() const { return nThread; }
-        bool CheckMode(unsigned int m) const { return false; }
         unsigned int Detail() const { return detail; }
-
         void Explain() const;
 
-        static bool InitOption(const xf::cmd::result_t& result);
+        static bool ParseCommandLine(const char* const* argv, unsigned int argc);
 
         static Option& Instance() { static Option _opt; return (_opt); }
 

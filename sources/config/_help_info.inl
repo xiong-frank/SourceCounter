@@ -1,32 +1,35 @@
 ﻿
-enum _sc_cmd {
-    _sc_cmd_help,
-    _sc_cmd_version,
-    _sc_cmd_input,
-    _sc_cmd_output,
-    _sc_cmd_config,
-    _sc_cmd_mode,
-    _sc_cmd_languages,
-    _sc_cmd_exclude,
-    _sc_cmd_detail,
-    _sc_cmd_empty,
-    _sc_cmd_thread,
-    _sc_cmd_explain
-};
+inline const char* version() { return "1.0.0-snapshot"; }
+inline const char* app_name() { return "SourceCounter"; }
 
-struct _help_item {
-    std::set<std::string> _names;
-    std::string _summary;
-    std::string _description;
-    std::string _usage;
-    std::string _example;
-};
+namespace _help
+{
+    enum _sc_cmd {
+        _sc_cmd_help,
+        _sc_cmd_version,
+        _sc_cmd_input,
+        _sc_cmd_output,
+        _sc_cmd_config,
+        _sc_cmd_mode,
+        _sc_cmd_languages,
+        _sc_cmd_exclude,
+        _sc_cmd_detail,
+        _sc_cmd_thread,
+        _sc_cmd_explain,
+        _sc_cmd_empty
+    };
 
-struct _help_info {
-    static const std::map<unsigned int, _help_item> _help_map;
-    static const std::map<std::string, unsigned int> _cmd_map;
+    struct _help_item {
+        std::vector<std::string> _names;
+        std::string _summary;
+        std::string _description;
+        std::string _usage;
+        std::string _example;
+    };
 
-    static const std::map<std::string, unsigned int> _make_cmd_map(const std::map<unsigned int, _help_item>& item_map) {
+    constexpr std::size_t _indent_number(0x0f);
+
+    inline std::map<std::string, unsigned int> _make_cmd_map(const std::map<unsigned int, _help_item>& item_map) {
         std::map<std::string, unsigned int> _map;
 
         for (const auto& item : item_map)
@@ -36,131 +39,152 @@ struct _help_info {
         return _map;
     }
 
-    static const auto& _cmd(unsigned int k) { return _help_map.at(k)._names; }
+    inline std::string _to_string(const std::vector<std::string>& strs) {
+        if (strs.empty()) return std::string();
 
-    static void _show_help(const std::string& k) {
+        std::string str = strs[0];
+        for (std::size_t i = 1; i < strs.size(); str.append(", ").append(strs[i++]));
 
-        std::cout << _help_map.at(_cmd_map.at(k))._description << std::endl;
+        return str;
     }
 
-    static void _show_help() {
-        std::cout << R"(Enter the "--help [command name]" to get more information about a command.)" << std::endl;
+    const std::map<unsigned int, _help_item> _help_map{
+        { _sc_cmd::_sc_cmd_help, _help_item({{"--help", "-h"}, 
+        "For help information.",
+        "",
+        "--help [command]",
+        R"(--help
+                 --help --input
+                 --help --config)" })},
+
+        { _sc_cmd::_sc_cmd_version, _help_item({{"--version", "-v"},
+        "Show version information.",
+        "",
+        "--version",
+        "--version" })},
+
+        { _sc_cmd::_sc_cmd_input, _help_item({{"--input", "-i"},
+        "[required] Specify the path of the source to be counted, can be a file or directory.",
+        "",
+        "--input [path]",
+        R"(--input ./main.cpp
+                 --input ./sources/)" })},
+
+        { _sc_cmd::_sc_cmd_output, _help_item({{"--output", "-o"},
+        "[optional] Specify the file path for the output statistics, the output is in JSON format.",
+        R"(Contains the statistics of each source file and the summarized statistics.
+                 If not specified, it will not be output.)",
+        "--output [path]",
+        "--output ./output/sc.json" })},
+
+        { _sc_cmd::_sc_cmd_config, _help_item({{"--config", "-c"},
+        "[optional] Specifies the config path for language syntax rules.",
+        R"(If not specified, only built-in rules are used.
+                 The config is in JSON format.
+                 Example:
+                    [
+                        {"name": "Python",
+                         }
+                    ])",
+        "--config [path]",
+        "--config ./languages.json" })},
+
+        { _sc_cmd::_sc_cmd_mode, _help_item({{"--mode", "-m"},
+        "[optional] Specify statistical rules to explain the ambiguous lines.",
+        R"(Ambiguous lines refers to a line contains multiple situations.
+                 Specifically refer to:
+                   Case1: Empty lines in multiple lines of comments.
+                   Case2: Empty lines in multiple lines of strings.
+                   Case3: There are code and comments in one line.
+
+                 Specify "mode" for ambiguous lines to get clear statistical results.
+                 The value of "mode" are as follows:
+
+                   name            value   exlpain
+                   --------------------------------------------------
+                   mc_is_blank     1       Case1 is Blank Line.
+                   mc_is_comment   2       Case1 is Comment Line.
+                   ms_is_code      4       Case2 is Code Line.
+                   ms_is_blank     8       Case2 is Blank Line.
+                   cc_is_code      16      Case3 is Code Line.
+                   cc_is_comment   32      Case3 is Comment Line.
+
+                 Different rules can be used in combination.
+                 Use the result of bit-or (or addition) as the value of "mode")",
+        "--mode [number]",
+        "--mode 7" })},
+
+        { _sc_cmd::_sc_cmd_languages, _help_item({{"--language", "-l"},
+        "[optional] Specify the language for Statistics.",
+        "Multiple languages are separated by commas,and language names are not case sensitive.",
+        "--languages [name list]",
+        "--languages C++,Java,Python" })},
+
+        { _sc_cmd::_sc_cmd_exclude, _help_item({{"--exclude", "-e"},
+        "[optional] A regular expression, specify paths to exclude.",
+        "File paths that match the regular expression are not counted.",
+        "--exclude [regular expression]",
+        "--exclude *.h" })},
+
+        { _sc_cmd::_sc_cmd_detail, _help_item({{"--detail", "-d"},
+        "[optional] Show statistics by language, and you can also specify sorting rules.",
+        R"(Sort columns: files, lines, codes, comments, blanks.
+                 Sort order: asc[ending], des[cending])",
+        "--detail [command]",
+        R"(--detail
+                 --detail codes|asc)" })},
+
+        { _sc_cmd::_sc_cmd_empty, _help_item({{"--empty"},
+        "[optional] Specifies whether to count empty files. default: true.",
+        "",
+        "--empty [bool]",
+        "--empty true" })},
+
+        { _sc_cmd::_sc_cmd_thread, _help_item({{"--thread", "-t"},
+        "[optional] suggested number of threads used.",
+        R"(The program automatically adjusts the number of threads based on the number of files it recognizes.
+                 If the number of threads specified is too large, will be ignored.)",
+        "--thread [number]",
+        "--thread 4" })},
+
+        { _sc_cmd::_sc_cmd_explain, _help_item({{"--explain", "-x"},
+        "[optional] explain parameters to be used during program execution.",
+        "If this option is specified, statistical process will not be excuted.",
+        "--explain",
+        "--explain" })}
+    };
+
+    const std::map<std::string, unsigned int> _cmd_map = _make_cmd_map(_help_map);
+
+    std::set<std::string> _get_options(unsigned int k)
+    {
+        const auto& keys = _help::_help_map.at(k)._names;
+        return { keys.begin(), keys.end() };
     }
-};
 
-const std::map<unsigned int, _help_item> _help_info::_help_map{
+    inline void _show_help(const std::string& k) {
+        const auto& item = _help_map.at(_cmd_map.at(k));
+        std::cout << std::endl;
+        std::cout << std::right << std::setw(_indent_number) << _to_string(item._names) << ": " << item._summary << std::endl;
+        if (!item._description.empty()) std::cout << std::string(_indent_number + 2, ' ') << item._description << std::endl;
+        std::cout << std::endl;
+        std::cout << std::setw(_indent_number) << "usage" << ": " << item._usage << std::endl;
+        std::cout << std::endl;
+        std::cout << std::setw(_indent_number) << "example" << ": " << item._example << std::endl;
+        std::cout << std::endl;
+    }
 
-};
+    inline void _show_help() {
+        std::cout << std::endl;
+        std::cout << R"(Enter the "--help [command]" for more information.)" << std::endl;
+        std::cout << std::endl;
 
-const std::map<std::string, unsigned int> _help_info::_cmd_map = _help_info::_make_cmd_map(_help_info::_help_map);
+        for (const auto& h : _help_map)
+            std::cout << std::right << std::setw(_indent_number) << _to_string(h.second._names) << "  " << h.second._summary << std::endl;
+        
+        std::cout << std::endl;
+    }
 
-const std::map<unsigned int, std::string> _sc_help_map{
-{_sc_cmd::_sc_cmd_help,
-R"(  --help, -h: 获取帮助信息
-    用法：--help [command]
-    示例：--help
-          --help --input
-          --help --config
-)"},
+}
 
-{_sc_cmd::_sc_cmd_version,
-R"(  --version, -v: 查看版本信息
-    用法：--version
-    示例：--version
-)"},
-
-{_sc_cmd::_sc_cmd_input,
-R"(  --input, -i: (必需)指定要进行统计的输入路径，可以是一个文件或者目录。
-    用法：--input [path]
-    示例：--input /Users/Name/main.cpp
-          --input /Users/Name/Sources/
-)"},
-
-{_sc_cmd::_sc_cmd_output,
-R"(  --output, -o: (可选)指定统计信息输出的文件，输出信息为json格式。
-                 包含每个文件的统计结果和汇总的统计结果，若不指定则不输出。
-    用法：--output [command]
-    示例：--output /Users/Name/sc.json
-)"},
-
-{_sc_cmd::_sc_cmd_config,
-R"(  --config, -c: (可选)指定不同语言语法规则的配置文件路径
-                 若不指定，统计程序仅采用内置规则。
-                 文件配置以json格式，示例：
-                [
-                   {"name": "Python",
-                    }
-                ]
-    用法：--config [path]
-    示例：--config /Users/Name/languages.json
-)"},
-
-{_sc_cmd::_sc_cmd_mode,
-R"(  --mode, -m: (可选)指定统计规则，仅针对具有歧义的行进行解释。
-               具有歧义的行是指一行中包含多种属性的情况，例如：
-               一行中同时有代码和注释，或者多行注释中的空行，以及多行字符串中的空行。
-               针对具有歧义的行指定统计规则以得到明确的统计结果，规则值如下：
-
-               name           value  exlpain
-               mc_is_blank    1      对于多行注释中的空行，此行算作空白行。
-               mc_is_comment  2      对于多行注释中的空行，此行算作注释行。
-               ms_is_code     4      对于跨行字符串中的空行，此行算作代码行。
-               ms_is_blank    8      对于跨行字符串中的空行，此行算作空白行。
-               cc_is_code     16     对于同时包含代码和注释的行，此行算作代码行。
-               cc_is_comment  32     对于同时包含代码和注释的行，此行算作注释行。
-
-               不同规则可以组合使用，按其值的位或运算(或加法运算)得到的结果作为"--mode"参数的值。
-               例如：若要将多行注释中的空行算作空白行，跨行字符串中的空行算作代码行，
-                     同时包含注释和代码的行，既算作代码行也算作注释行。
-               可以给"--mode"参数指定值:(1|4|16|32) = 53。即："--mode=53"
-    用法：--mode [number]
-    示例：--mode 7
-)"},
-
-{_sc_cmd::_sc_cmd_languages,
-R"(  --languages, -l: (可选)指定统计的语言
-                    可指定的语言包括内置语言和配置文件中配置的语言。
-                    多个语言之间使用逗号分隔，语言名称不区分大小写。
-    用法：--languages [name list]
-    示例：--languages C++,Java,Python
-)"},
-
-{_sc_cmd::_sc_cmd_exclude,
-R"(  --exclude, -e: (可选)一个正则表达式字符串，指定要排除的路径。
-                  对于匹配该正则表达式的文件路径，将不会进行统计。
-    用法：--exclude [regular expression]
-    示例：--exclude *.h
-)"},
-
-{_sc_cmd::_sc_cmd_detail,
-R"(  --detail, -d: (可选)按语言分类在终端中展示统计结果，可以同时指定排序规则。
-                 排序列可以指定：files, lines, codes, comments, blanks
-                 排序方式可以指定：(升序)asc[ending], (降序)des[cending]
-    用法：--detail [command]
-    示例：--detail
-          --detail codes|asc
-)"},
-
-{_sc_cmd::_sc_cmd_empty,
-R"(  --empty: (可选)指定是否统计空文件，默认为：true。
-    用法：--empty [bool]
-    示例：--empty true
-)"},
-
-{_sc_cmd::_sc_cmd_thread,
-R"(  --thread, -t: (可选)建议使用的线程数量
-                 统计程序本身会根据识别到的文件数量自动调整线程数。
-                 如果指定的线程数太大将忽略指定的值。
-    用法：--thread [number]
-    示例：--thread 4
-)"},
-
-{_sc_cmd::_sc_cmd_explain,
-R"(  --explain, -x: (可选)若指定该选项，则不进行实际的行数统计，仅对当前程序准备统计使用的参数进行解释。
-    用法：--explain
-    示例：--explain
-)"}
-};
-
-inline const char* version() { return "1.0.0-snapshot"; }
-inline const char* app_name() { return "SourceCounter"; }
+#define _options(k) _help::_get_options(_help::_sc_cmd::k)

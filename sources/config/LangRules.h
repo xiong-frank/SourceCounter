@@ -41,7 +41,8 @@ namespace sc
         // 从文件加载配置
         bool Load(const string_type& fromFile);
 
-        string_type Type(const string_type& ext) const;
+        list_type<string_type> GetLanguage() const;
+        string_type GetLanguage(const string_type& ext) const;
         const Item* GetRule(const string_type& name) const;
 
         static LangRules& Instance() { static LangRules _lrs; return (_lrs); }

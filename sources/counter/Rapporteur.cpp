@@ -219,7 +219,7 @@ namespace sc
         {
             if (excludes.empty() || !std::regex_match(file.generic_string(), std::regex(excludes)))
             {
-                auto t = _sc_lrs.Type(file.extension().generic_string());
+                auto t = _sc_lrs.GetLanguage(file.extension().generic_string());
                 if (!t.empty() && (langs.empty() || _contains(langs, t)))
                 {
                     m_Files.emplace_back(std::filesystem::canonical(file).generic_string(), t);
