@@ -225,9 +225,30 @@ namespace sc
         return true;
     }
 
+    inline std::string _make_detail_text(unsigned int detail) {
+        std::string _order_str[]{"", "by_nothing", "by_lines", "by_codes", "by_comments", "by_blanks", "by_files" };
+
+        unsigned int order = (order_t::order_mask & detail);
+        if (order_t::no_show == order || order_t::by_nothing == order)
+            return _order_str[order];
+
+        std::string _dir_str[]{ "ascending", "descending" };
+
+        return _order_str[order] + " | " + _dir_str[(order_t::order_direction & detail) >> 3];
+    }
+
     void Option::Explain() const
     {
-        // ...
+        std::cout << std::setw(_help::_indent_number) << "input"         << ": " << input << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "config file"   << ": " << configFile << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "languages"     << ": " << xf::log::to_string(languages) << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "exclusion"     << ": " << exclusion << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "allow empty"   << ": " << (empty ? "true" : "false") << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "files"         << ": " << _sc_rapporteur.Files().size() << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "thread number" << ": " << nThread << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "mode"          << ": " << mode << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "output"        << ": " << output << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "detail"        << ": " << _make_detail_text(detail) << std::endl;
     }
 
 }

@@ -7,6 +7,7 @@ namespace xf::cmd {
 namespace sc
 {
     enum order_t {
+        no_show     = 0x00,
         by_nothing  = 0x01,
         by_lines    = 0x02,
         by_codes    = 0x03,
