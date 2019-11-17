@@ -26,7 +26,7 @@ namespace sc
             Annotating              // 注释中
         };
 
-        const LangRules::Item& _item;
+        const LangRules::item_t& _item;
         status_t _status{ status_t::Normal };
         std::pair<std::string, std::string> _arg;
 
@@ -39,7 +39,7 @@ namespace sc
 
     public:
 
-        explicit Analyzer(const LangRules::Item& item) : _item(item) { }
+        explicit Analyzer(const LangRules::item_t& item) : _item(item) { }
 
         virtual ReportItem Analyze(const std::string& file);
 

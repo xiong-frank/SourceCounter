@@ -64,5 +64,8 @@
     <None Include="..\..\..\sources\config\_help_info.inl">
       <Filter>sources\config</Filter>
     </None>
+    <None Include="..\..\..\sources\config\_build_in.inl">
+      <Filter>sources\config</Filter>
+    </None>
   </ItemGroup>
 </Project>

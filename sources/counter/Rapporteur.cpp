@@ -178,9 +178,9 @@ namespace sc
     std::vector<std::string> Rapporteur::Files(const std::string& language) const
     {
         std::vector<std::string> vtr;
-        for (const auto& item : m_Files)
-            if (item.second == language)
-                vtr.push_back(item.first);
+        for (const auto& [filename, lang] : m_Files)
+            if (lang == language)
+                vtr.push_back(filename);
 
         return vtr;
     }

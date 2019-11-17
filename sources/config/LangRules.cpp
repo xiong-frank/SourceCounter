@@ -9,56 +9,56 @@
 
 namespace sc
 {
-    inline std::pair<string_type, LangRules::Item> _make_item_for_cpp() {
-        return { string_type("C++"),
-            LangRules::Item({ {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" } }, { { R"x(R"()x", R"x()")x" } } }) };
+    inline std::pair<string_type, LangRules::item_t> _make_item_for_cpp() {
+        return { string_type("C++"), { {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" } }, { { R"x(R"()x", R"x()")x" } } } };
     }
 
-    inline std::pair<string_type, LangRules::Item> _make_item_for_c() {
-        return { string_type("C"),
-            LangRules::Item({ {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" } }, { } }) };
+    inline std::pair<string_type, LangRules::item_t> _make_item_for_c() {
+        return { string_type("C"), { {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" } }, { } } };
     }
 
-    inline std::pair<string_type, LangRules::Item> _make_item_for_java() {
-        return { string_type("Java"),
-            LangRules::Item({ {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" } }, { } }) };
+    inline std::pair<string_type, LangRules::item_t> _make_item_for_java() {
+        return { string_type("Java"), { {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" } }, { } } };
     }
 
-    inline std::pair<string_type, LangRules::Item> _make_item_for_csharp() {
-        return { string_type("C#"),
-            LangRules::Item({ {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" } }, { { R"(@")", R"(")" } } }) };
+    inline std::pair<string_type, LangRules::item_t> _make_item_for_csharp() {
+        return { string_type("C#"), { {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" } }, { { R"(@")", R"(")" } } } };
     }
 
-    inline std::pair<string_type, LangRules::Item> _make_item_for_python() {
+    inline std::pair<string_type, LangRules::item_t> _make_item_for_python() {
         return { string_type("Python"),
-            LangRules::Item({ {"#"},
+            { {"#"},
                                { { R"(""")", R"(""")" }, { R"(''')", R"(''')" } },
                                { { R"(")", R"(")" }, { R"(')", R"(')" }, { R"(""")", R"(""")" }, { R"(''')", R"(''')" } },
-                               { { R"(R")", R"(")" }, { R"(r")", R"(")" }, { R"(R')", R"(')" }, { R"(r')", R"(')" } } }) };
+                               { { R"(R")", R"(")" }, { R"(r")", R"(")" }, { R"(R')", R"(')" }, { R"(r')", R"(')" } } } };
     }
 
-    inline std::pair<string_type, LangRules::Item> _make_item_for_ruby() {
-        return { string_type("Ruby"),
-            LangRules::Item({ {"#"}, { {"=begin", "=end"} }, { { R"(")", R"(")" }, { R"(')", R"(')" } }, { } }) };
+    inline std::pair<string_type, LangRules::item_t> _make_item_for_ruby() {
+        return { string_type("Ruby"), { {"#"}, { {"=begin", "=end"} }, { { R"(")", R"(")" }, { R"(')", R"(')" } }, { } } };
     }
 
-    inline std::pair<string_type, LangRules::Item> _make_item_for_javascript() {
-        return { string_type("JavaScript"),
-            LangRules::Item({ {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" }, { "'", "'" }, { "`", "`" } }, { } }) };
+    inline std::pair<string_type, LangRules::item_t> _make_item_for_javascript() {
+        return { string_type("JavaScript"), { {"//"}, { {"/*", "*/"} }, { { R"(")", R"(")" }, { "'", "'" }, { "`", "`" } }, { } } };
     }
 
-    inline std::pair<string_type, LangRules::Item> _make_item_for_clojure() {
-        return { string_type("Clojure"),
-            LangRules::Item({ { ";", "#_" }, { { "(comment", ")" } }, { { R"(")", R"(")" } }, { } }) };
+    inline std::pair<string_type, LangRules::item_t> _make_item_for_clojure() {
+        return { string_type("Clojure"), { { ";", "#_" }, { { "(comment", ")" } }, { { R"(")", R"(")" } }, { } } };
     }
 
-    inline std::pair<string_type, LangRules::Item> _make_item_for_clojurescript() {
-        return { string_type("ClojureScript"),
-            LangRules::Item({ { ";", "#_" }, { { "(comment", ")" } }, { { R"(")", R"(")" } }, { } }) };
+    inline std::pair<string_type, LangRules::item_t> _make_item_for_clojurescript() {
+        return { string_type("ClojureScript"), { { ";", "#_" }, { { "(comment", ")" } }, { { R"(")", R"(")" } }, { } } };
     }
 
     LangRules::LangRules()
     {
+#include "_build_in.inl"
+
+        for (const auto& [name, item ] : _build_in_map)
+        {
+
+        }
+
+
         m_ItemMap.emplace(_make_item_for_cpp());
         m_ItemMap.emplace(_make_item_for_c());
         m_ItemMap.emplace(_make_item_for_csharp());
@@ -102,7 +102,7 @@ namespace sc
         return false;
     }
 
-    const LangRules::Item* LangRules::GetRule(const string_type& name) const
+    const LangRules::item_t* LangRules::GetRule(const string_type& name) const
     {
         auto iter = m_ItemMap.find(name);
         if (iter == m_ItemMap.end())
@@ -121,7 +121,7 @@ namespace sc
         return string_type();
     }
 
-    void LangRules::_AddItem(const string_type& name, const Item& item, const list_type<string_type>& exts)
+    void LangRules::_AddItem(const string_type& name, const item_t& item, const list_type<string_type>& exts)
     {
         auto iter = m_ItemMap.find(name);
         if (iter != m_ItemMap.end())

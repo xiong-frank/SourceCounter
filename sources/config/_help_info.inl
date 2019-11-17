@@ -32,9 +32,9 @@ namespace _help
     inline std::map<std::string, unsigned int> _make_cmd_map(const std::map<unsigned int, _help_item>& item_map) {
         std::map<std::string, unsigned int> _map;
 
-        for (const auto& item : item_map)
-            for (const auto& name : item.second._names)
-                _map.emplace(name, item.first);
+        for (const auto& [_id, _item] : item_map)
+            for (const auto& name : _item._names)
+                _map.emplace(name, _id);
 
         return _map;
     }
@@ -163,14 +163,14 @@ namespace _help
     }
 
     inline void _show_help(const std::string& k) {
-        const auto& item = _help_map.at(_cmd_map.at(k));
+        const auto& [_names, _summary, _description, _usage, _example] = _help_map.at(_cmd_map.at(k));
         std::cout << std::endl;
-        std::cout << std::right << std::setw(_indent_number) << _to_string(item._names) << ": " << item._summary << std::endl;
-        if (!item._description.empty()) std::cout << std::string(_indent_number + 2, ' ') << item._description << std::endl;
+        std::cout << std::right << std::setw(_indent_number) << _to_string(_names) << ": " << _summary << std::endl;
+        if (!_description.empty()) std::cout << std::string(_indent_number + 2, ' ') << _description << std::endl;
         std::cout << std::endl;
-        std::cout << std::setw(_indent_number) << "usage" << ": " << item._usage << std::endl;
+        std::cout << std::setw(_indent_number) << "usage" << ": " << _usage << std::endl;
         std::cout << std::endl;
-        std::cout << std::setw(_indent_number) << "example" << ": " << item._example << std::endl;
+        std::cout << std::setw(_indent_number) << "example" << ": " << _example << std::endl;
         std::cout << std::endl;
     }
 

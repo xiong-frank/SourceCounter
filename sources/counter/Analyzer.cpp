@@ -152,8 +152,9 @@ namespace sc
 
         _first_t _ft{ _first_t::_nothing }; // 找到的最前面的符号类型
         std::size_t index = line.size();    // 找到的最前面的符号位置
+        const auto& [singles, multiples, quotes, primitives] = _item;
 
-        for (const auto& arg : _item.primitives)
+        for (const auto& arg : primitives)
         {
             auto i = _find_front_position(line, index, arg.first);
             if (i < index)
@@ -163,7 +164,7 @@ namespace sc
                 _arg = arg;
             }
         }
-        for (const auto& arg : _item.quotes)
+        for (const auto& arg : quotes)
         {
             auto i = _find_front_position(line, index, arg.first);
             if (i < index)
@@ -173,7 +174,7 @@ namespace sc
                 _arg = arg;
             }
         }
-        for (const auto& arg : _item.multiples)
+        for (const auto& arg : multiples)
         {
             auto i = _find_front_position(line, index, arg.first);
             if (i < index)
@@ -183,7 +184,7 @@ namespace sc
                 _arg = arg;
             }
         }
-        for (const auto& arg : _item.singles)
+        for (const auto& arg : singles)
         {
             auto i = _find_front_position(line, index, arg);
             if (i < index)

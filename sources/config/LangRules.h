@@ -16,14 +16,9 @@ namespace sc
     {
     public:
 
-        struct Item
-        {
-            // list_type<string_type> exts;                    // 文件扩展名
-            list_type<string_type> singles;                 // 单行注释符号
-            pair_list<string_type, string_type> multiples;  // 多行注释符号
-            pair_list<string_type, string_type> quotes;     // 字符串符号
-            pair_list<string_type, string_type> primitives; // 原生字符串符号
-        };
+        using list_t = list_type<string_type>;
+        using pairs_t = pair_list<string_type, string_type>;
+        using item_t = std::tuple<list_t, pairs_t, pairs_t, pairs_t>;
 
         LangRules();
         LangRules(const LangRules&) = delete;
@@ -32,9 +27,9 @@ namespace sc
     private:
 
         std::map<string_type, string_type> m_ExtMap;    // 文件扩展名对应的语言
-        std::map<string_type, Item>  m_ItemMap;         // 语言对应的配置项
+        std::map<string_type, item_t>  m_ItemMap;         // 语言对应的配置项
 
-        void _AddItem(const string_type& name, const Item& item, const list_type<string_type>& exts);
+        void _AddItem(const string_type& name, const item_t& item, const list_type<string_type>& exts);
 
     public:
 
@@ -43,7 +38,7 @@ namespace sc
 
         list_type<string_type> GetLanguage() const;
         string_type GetLanguage(const string_type& ext) const;
-        const Item* GetRule(const string_type& name) const;
+        const item_t* GetRule(const string_type& name) const;
 
         static LangRules& Instance() { static LangRules _lrs; return (_lrs); }
 
