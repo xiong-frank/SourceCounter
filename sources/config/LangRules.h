@@ -34,7 +34,7 @@ namespace sc
     public:
 
         // 从文件加载配置
-        bool Load(const string_type& fromFile);
+        bool Load(const string_type& filename);
 
         list_type<string_type> GetLanguage() const;
         string_type GetLanguage(const string_type& ext) const;
