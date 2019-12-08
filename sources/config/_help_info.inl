@@ -114,7 +114,7 @@ namespace _help
         "--mode [number]",
         "--mode 7" })},
 
-        { _sc_cmd::_sc_cmd_languages, _help_item({{"--language", "-l"},
+        { _sc_cmd::_sc_cmd_languages, _help_item({{"--languages", "-l"},
         "[optional] Specify the language for Statistics.",
         "Multiple languages are separated by commas,and language names are not case sensitive.",
         "--languages [name list]",

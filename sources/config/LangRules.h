@@ -35,8 +35,8 @@ namespace sc
 
         // 从文件加载配置
         bool Load(const string_type& filename);
-
-        list_type<string_type> GetLanguage() const;
+        bool IsSupport(const string_type& name) const;
+        list_t GetLanguages() const;
         string_type GetLanguage(const string_type& ext) const;
         const item_t* GetRule(const string_type& name) const;
 

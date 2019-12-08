@@ -94,9 +94,14 @@ namespace sc
     }
 
     template<typename _LessType>
-    void _InsertReport(std::list<report_pair_t> reports, const report_pair_t& item, _LessType lt)
+    void _InsertReport(std::list<report_pair_t>& reports, const report_pair_t& item, _LessType lt)
     {
+        auto iter = reports.begin();
+        for (; iter != reports.end(); ++iter)
+            if (!lt(*iter, item))
+                break;
 
+        reports.insert(iter, item);
     }
 
     void Rapporteur::Report(const std::string& filename, unsigned int detail) const
@@ -114,7 +119,6 @@ namespace sc
                 iter->second += item.GetReport();
         }
 
-        ;
         if (unsigned int rank = (order_t::order_mask & detail); 0 < rank)
         {
             std::list<report_pair_t> reports;
@@ -236,11 +240,13 @@ namespace sc
         // 循环取文件
         for (std::pair<std::string, std::string> item; _PickFile(item); )
         {
+            /*
             if ("C++" == item.second)
                 m_Reports.emplace_back(item.first, item.second, CppAnalyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
             else if ("Clojure" == item.second)
                 m_Reports.emplace_back(item.first, item.second, ClojureAnalyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
             else
+            */
                 m_Reports.emplace_back(item.first, item.second, Analyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
         }
     }

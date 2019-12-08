@@ -15,21 +15,14 @@ namespace sc
     {
 #include "_build_in.inl"
 
+        /*
         for (const auto& [name, item] : _build_in_map)
         {
             m_ItemMap.emplace(name, std::get<1>(item));
             for (auto ext : std::get<0>(item))
                 m_ExtMap.emplace(ext, name);
         }
-    }
-
-    LangRules::pairs_t _to_pairs(const nlohmann::json& v)
-    {
-        LangRules::pairs_t pairs;
-        for (const auto& [k, v] : v.items())
-            pairs.emplace_back(k, v.get<std::string>());
-
-        return pairs;
+        */
     }
 
     bool LangRules::Load(const string_type& filename)
@@ -49,7 +42,7 @@ namespace sc
                 if (_build_in_languages.find(key) == _build_in_languages.end())
                 {
                     const auto& options = value.at("options");
-                    m_ItemMap.emplace(key, item_t(options[0].get<list_t>(), _to_pairs(options[1]), _to_pairs(options[2]), _to_pairs(options[3])));
+                    m_ItemMap.emplace(key, item_t{ options[0], options[1], options[2], options[3] });
                 }
 
                 for (const auto& ext : value.at("extensions"))
@@ -62,6 +55,11 @@ namespace sc
         return false;
     }
 
+    bool LangRules::IsSupport(const string_type& name) const
+    {
+        return (m_ItemMap.find(name) != m_ItemMap.end());
+    }
+
     const LangRules::item_t* LangRules::GetRule(const string_type& name) const
     {
         auto iter = m_ItemMap.find(name);
@@ -71,13 +69,20 @@ namespace sc
         return &iter->second;
     }
 
-    list_type<string_type> LangRules::GetLanguage() const
+    LangRules::list_t LangRules::GetLanguages() const
     {
-        return list_type<string_type>();
+        list_t result;
+        for (const auto& item : m_ItemMap)
+            result.emplace_back(item.first);
+
+        return result;
     }
 
     string_type LangRules::GetLanguage(const string_type& ext) const
     {
+        if (auto iter = m_ExtMap.find(ext); iter != m_ExtMap.end())
+            return iter->second;
+
         return string_type();
     }
 

@@ -68,27 +68,23 @@ namespace sc
         return 0;
     }
 
-    inline size_t _split_string(std::vector<std::string>& strs, const std::string& str, char symbol)
+    inline std::vector<std::string> _split_string(const std::string& str, char symbol)
     {
-        size_t n = 0, start = 0;
+        std::vector<std::string> strs;
+
+        size_t start = 0;
         for (size_t pos = str.find(symbol, start); std::string::npos != pos; pos = str.find(symbol, start))
         {
             if (start < pos)
-            {
                 strs.emplace_back(str, start, pos - start);
-                ++n;
-            }
 
             start = pos + 1;
         }
 
         if (start < str.size())
-        {
             strs.emplace_back(str, start);
-            ++n;
-        }
 
-        return n;
+        return strs;
     }
 
 #include "_help_info.inl"
@@ -188,8 +184,20 @@ namespace sc
         if (result.is_existing("--empty"))
             empty = result.get<bool>("--empty");
 
+        _sc_lrs.Load(ConfigFile());
+        languages = _sc_lrs.GetLanguages();
+
         if (result.is_existing("--languages"))
-            _split_string(languages, result.get<std::string>("--languages"), ',');
+        {
+            languages = _split_string(result.get<std::string>("--languages"), ',');
+            languages.erase(std::remove_if(languages.begin(), languages.end(), [](const auto& v) { return !_sc_lrs.IsSupport(v); }), languages.end());
+        }
+
+        if (languages.empty())
+        {
+            std::cout << "No valid language name matched." << std::endl;
+            return false;
+        }
 
         if (result.is_existing("--detail"))
         {
@@ -199,22 +207,20 @@ namespace sc
                 detail = order_t::by_nothing;
         }
 
-        _sc_lrs.Load(ConfigFile());
-
         _sc_rapporteur.Load(input, languages, exclusion);
 
         if (result.is_existing("--thread")) {
             nThread = result.get<unsigned int>("--thread");
             if (0x20 < nThread) nThread = 0x20;
         } else {
-            nThread = (_sc_rapporteur.Files().size() < 0x0010 ? 0x01
+            nThread =   (_sc_rapporteur.Files().size() < 0x0010 ? 0x01
                        : _sc_rapporteur.Files().size() < 0x0020 ? 0x02
                        : _sc_rapporteur.Files().size() < 0x0040 ? 0x04
                        : _sc_rapporteur.Files().size() < 0x0080 ? 0x08
                        : _sc_rapporteur.Files().size() < 0x0200 ? 0x10 : 0x20);
         }
 
-        if (_sc_rapporteur.Files().size() < nThread) nThread = _sc_rapporteur.Files().size();
+        if (_sc_rapporteur.Files().size() < nThread) nThread = unsigned int(_sc_rapporteur.Files().size());
 
         if (result.is_existing("--explain"))
         {
