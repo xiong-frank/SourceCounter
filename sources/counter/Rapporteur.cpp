@@ -16,6 +16,8 @@
 
 namespace sc
 {
+    constexpr unsigned int _indent_number(10);
+
     unsigned int Rapporteur::Load(const std::string& input, const std::vector<std::string>& langs, const std::string& excludes)
     {
         unsigned int n = 0;
@@ -84,8 +86,13 @@ namespace sc
 
     inline void _ShowReport(const std::string& name, const _report_t& report)
     {
-        std::printf("| %-10s | %-10u | %-10u | %-10u | %-10u | %-10u |",
-                    name.c_str(), report.Files(), report.Lines(), report.Codes(), report.Comments(), report.Blanks());
+        std::cout << "| " << std::setw(_indent_number) << name.c_str()
+            << " | " << std::setw(_indent_number) << report.Files()
+            << " | " << std::setw(_indent_number) << report.Lines()
+            << " | " << std::setw(_indent_number) << report.Codes()
+            << " | " << std::setw(_indent_number) << report.Comments()
+            << " | " << std::setw(_indent_number) << report.Blanks()
+            << " |" << std::endl;
     }
 
     inline void _OutputToFile(const std::string& filename, const std::vector<FileReport>& reports, const report_map_t& reportMap, const _report_t& total)
@@ -162,8 +169,12 @@ namespace sc
             std::cout << "+------------+------------+------------+------------+------------+" << std::endl;
             std::cout << "|      Files |      Lines |      Codes |   Comments |     Blanks |" << std::endl;
             std::cout << "+------------+------------+------------+------------+------------+" << std::endl;
-            std::printf("| %-10u | %-10u | %-10u | %-10u | %-10u |",
-                        total.Files(), total.Lines(), total.Codes(), total.Comments(), total.Blanks());
+            std::cout << "| " << std::setw(_indent_number) << total.Files()
+                << " | " << std::setw(_indent_number) << total.Lines()
+                << " | " << std::setw(_indent_number) << total.Codes()
+                << " | " << std::setw(_indent_number) << total.Comments()
+                << " | " << std::setw(_indent_number) << total.Blanks() 
+                << " |" << std::endl;
             std::cout << "+------------+------------+------------+------------+------------+" << std::endl;
         }
 

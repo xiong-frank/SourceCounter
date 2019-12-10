@@ -39,7 +39,7 @@ namespace sc
         std::string exclusion;
         unsigned int nThread{ 0 };
         unsigned int detail{ 0 };
-        unsigned int mode{ mode_t::mc_is_blank | mode_t::ms_is_blank | mode_t::cc_is_code };
+        unsigned int mode{ mode_t::mc_is_blank | mode_t::ms_is_code | mode_t::cc_is_code };
         bool empty{ true };
 
         Option() = default;
@@ -52,7 +52,7 @@ namespace sc
 
         const std::vector<std::string>& Languages() const { return languages; }
         bool AllowEmpty() const { return empty; }
-        bool CheckMode(unsigned int m) const { return false; }
+        bool CheckMode(unsigned int m) const { return ((mode & m) == m); }
         const std::string& ConfigFile() const { return configFile; }
         const std::string& InputPath() const { return input; }
         const std::string& OutputPath() const { return output; }

@@ -16,16 +16,11 @@ int main(int argc, char *argv[])
 {
     if (sc::Option::ParseCommandLine(argv, argc))
     {
-        sc::Analyzer a(*_sc_lrs.GetRule("C"));
-        auto r = a.Analyze("demo.c");
-        /*
         auto t1 = std::chrono::system_clock::now();
         _sc_rapporteur.Start(_sc_opt.ThreadNumber());
         auto t2 = std::chrono::system_clock::now();
 
         _sc_rapporteur.Report(_sc_opt.OutputPath(), _sc_opt.Detail());
-        */
-
     }
     
     return 0;

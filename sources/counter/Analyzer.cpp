@@ -95,14 +95,11 @@ namespace sc
     // 移动到可见字符位置
     inline void _remove_space(std::string_view& view)
     {
-        for (auto i = 0; i < view.size(); ++i)
-        {
-            if (0 == std::isspace(view[i]))
-            {
-                view.remove_prefix(i);
-                break;
-            }
-        }
+        std::size_t i = 0;
+        while (i < view.size() && std::isspace(view[i]))
+            ++i;
+
+        view.remove_prefix(i);
     }
 
     // 查找引号结束符位置，同时检查转义字符。
