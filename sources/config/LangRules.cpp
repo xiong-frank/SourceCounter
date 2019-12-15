@@ -15,14 +15,12 @@ namespace sc
     {
 #include "_build_in.inl"
 
-        /*
         for (const auto& [name, item] : _build_in_map)
         {
             m_ItemMap.emplace(name, std::get<1>(item));
             for (auto ext : std::get<0>(item))
                 m_ExtMap.emplace(ext, name);
         }
-        */
     }
 
     bool LangRules::Load(const string_type& filename)

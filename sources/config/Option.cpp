@@ -27,12 +27,12 @@ namespace sc
             { "blanks",     order_t::by_blanks },
             { "comments",   order_t::by_comments },
             { "asc",        order_t::ascending },
-            { "des",        order_t::descending },
             { "ascending",  order_t::ascending },
+            { "des",        order_t::descending },
             { "descending", order_t::descending }
         };
 
-        auto pos = detail.find('|', 3);
+        auto pos = detail.find(':', 3);
         if (std::string::npos == pos)
         {
             auto iter = order_map.find(detail);
@@ -45,7 +45,7 @@ namespace sc
         else
         {
             auto a = detail.substr(0, pos);
-            auto b = detail.substr(pos);
+            auto b = detail.substr(pos + 1);
             if (a != b)
             {
                 auto iter1 = order_map.find(a);
@@ -122,7 +122,7 @@ namespace sc
             .AddOption({ _options(_sc_cmd_exclude), { xf::cmd::value_t::vt_string, false, false, true } })
             .AddOption({ _options(_sc_cmd_detail), { xf::cmd::value_t::vt_string, false, false, false, [](const std::string& v) { return (0 < _parser_detail(v)); } } })
             .AddOption({ _options(_sc_cmd_empty), { xf::cmd::value_t::vt_boolean, false, false, true } })
-            .AddOption({ _options(_sc_cmd_thread), { xf::cmd::value_t::vt_unsigned, false, false, true, "[1-9]{1,2}" } })
+            .AddOption({ _options(_sc_cmd_thread), { xf::cmd::value_t::vt_unsigned, false, false, true, "[1-9][0-9]?" } })
             .AddOption({ _options(_sc_cmd_explain), { false, false } });
 
         if (argc < 3)

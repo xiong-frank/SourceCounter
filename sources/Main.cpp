@@ -8,10 +8,6 @@
 #include "counter/FileReport.h"
 #include "counter/Rapporteur.h"
 
-#include <map>
-#include "config/LangRules.h"
-#include "counter/Analyzer.h"
-
 int main(int argc, char *argv[])
 {
     if (sc::Option::ParseCommandLine(argv, argc))

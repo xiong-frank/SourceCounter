@@ -100,7 +100,7 @@ namespace _help
                  Specify "mode" for ambiguous lines to get clear statistical results.
                  The value of "mode" are as follows:
 
-                   name            value   exlpain
+                   name            value   explain
                    --------------------------------------------------
                    mc_is_blank     1       Case1 is Blank Line.
                    mc_is_comment   2       Case1 is Comment Line.
@@ -132,7 +132,7 @@ namespace _help
                  Sort order: asc[ending], des[cending])",
         "--detail [command]",
         R"(--detail
-                 --detail codes|asc)" })},
+                 --detail codes:asc)" })},
 
         { _sc_cmd::_sc_cmd_empty, _help_item({{"--empty"},
         "[optional] Specifies whether to count empty files. default: true.",

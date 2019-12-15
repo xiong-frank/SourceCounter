@@ -3,9 +3,11 @@
 #include <regex>
 #include <map>
 #include <iostream>
+#include <fstream>
 #include <filesystem>
 
 #include "third/xf_log_console.h"
+#include "third/json.hpp"
 
 #include "config/Option.h"
 #include "config/LangRules.h"
@@ -42,12 +44,19 @@ namespace sc
     {
         if (0 < nThread && !m_Files.empty())
         {
-            std::vector<std::thread> vtrThread;
-            for (unsigned int i = 0; i < nThread; ++i)
-                vtrThread.emplace_back(std::thread([this]() { this->_Analyze(); }));
+            if (1 < nThread)
+            {
+                std::vector<std::thread> vtrThread;
+                for (unsigned int i = 0; i < nThread; ++i)
+                    vtrThread.emplace_back(std::thread([this]() { this->_Analyze(); }));
 
-            for (std::thread& t : vtrThread)
-                t.join();
+                for (std::thread& t : vtrThread)
+                    t.join();
+            }
+            else
+            {
+                _Analyze();
+            }
 
             return true;
         }
@@ -95,11 +104,52 @@ namespace sc
             << " |" << std::endl;
     }
 
-    inline void _OutputToFile(const std::string& filename, const std::vector<FileReport>& reports, const report_map_t& reportMap, const _report_t& total)
+    inline nlohmann::json _to_json(const ReportItem& item)
     {
-
+        return { {"Lines", item.Lines() },
+                 {"Codes", item.Codes() },
+                 {"Blanks", item.Blanks() },
+                 {"Comments", item.Comments() } };
     }
 
+    inline nlohmann::json _to_json(const _report_t& item)
+    {
+        auto j = _to_json(ReportItem(item));
+        j.emplace("Files", item.Files());
+        return j;
+    }
+
+    inline bool _OutputToFile(const std::string& filename, const std::vector<FileReport>& reports, const report_map_t& reportMap, const _report_t& total)
+    {
+        std::ofstream fout(filename);
+        if (fout.is_open())
+        {
+            nlohmann::json file_report;
+            for (const auto& report : reports)
+            {
+                auto j = _to_json(report.GetReport());
+                j.emplace("Language", report.GetType());
+                file_report.emplace(report.GetFilePath(), j);
+            }
+            
+            nlohmann::json lang_report;
+            for (const auto& [lang, report] : reportMap)
+               lang_report.emplace(lang, _to_json(report));
+            
+            nlohmann::json total_report = { { "total.report",    _to_json(total) },
+                                            { "language.report", lang_report },
+                                            { "file.report",     file_report } };
+
+            fout << std::setw(4) << total_report << std::endl;
+            
+            fout.close();
+
+            return true;
+        }
+
+        return false;
+    }
+    
     template<typename _LessType>
     void _InsertReport(std::list<report_pair_t>& reports, const report_pair_t& item, _LessType lt)
     {
