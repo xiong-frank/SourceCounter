@@ -13,21 +13,35 @@
 
 namespace sc
 {
+    unsigned int Analyzer::_AnalyzeLine(const std::string& line, Analyzer::_arg_t& arg)
+    {
+        std::string_view view(line);
+
+        switch (_status)
+        {
+        case status_t::Normal:
+            return _OnNormal(view, arg);
+        case status_t::Quoting:
+            return _OnQuoting(view, arg);
+        case status_t::Primitive:
+            return _OnPrimitive(view, arg);
+        case status_t::Annotating:
+            return _OnAnnotating(view, arg);
+        default:
+            return 0;
+        }
+    }
+
     ReportItem Analyzer::Analyze(const std::string& file)
     {
         ReportItem report;
         std::ifstream fin(file);
         if (fin.is_open())
         {
-            unsigned int (Analyzer::*_funcs[])(std::string_view&) = {
-                &Analyzer::_OnNormal,
-                &Analyzer::_OnQuoting,
-                &Analyzer::_OnPrimitive,
-                &Analyzer::_OnAnnotating };
-
+            _arg_t arg;
             for (std::string line; std::getline(fin, line); )
             {
-                switch ((this->*_funcs[static_cast<unsigned int>(_status)])(std::string_view(line)))
+                switch (_AnalyzeLine(line, arg))
                 {
                 case line_t::has_code:
                     report.AddCodes();
@@ -121,102 +135,122 @@ namespace sc
         return index;
     }
 
-#define _GetPositionWithPair(_st_k, _st, _arg, _pairs, _line, _index)   \
-    for (const auto& v : _pairs) {                                      \
-        auto i = _find_front_position(_line, _index, v.first);          \
-        if (i < _index) {                                               \
-            _index = i; _st = _symbol_t::_st_k; _arg = v;               \
-        }                                                               \
+    template<typename _Type> struct is_pair : public std::false_type { };
+    template<typename _KeyT, typename _ValueT> struct is_pair<std::pair<_KeyT, _ValueT>> : public std::true_type { };
+
+    template<typename _Type>
+    bool _MatchElement(std::string_view& line, std::size_t& index, const list_type<_Type>& seq, Analyzer::_arg_t& arg) {
+        bool found{ false };
+        for (const auto& v : seq) {
+            if constexpr (is_pair<_Type>::value) {
+                if (auto i = _find_front_position(line, index, v.first); i < index) {
+                    index = i;
+                    arg = v;
+                    found = true;
+                }
+            }
+            else {
+                if (auto i = _find_front_position(line, index, v); i < index) {
+                    index = i;
+                    found = true;
+                }
+            }
+        }
+
+        return found;
     }
 
-#define _GetPositionWithSingle(_st_k, _st, _arg, _list, _line, _index)  \
-    for (const auto& v : _list) {                                       \
-        auto i = _find_front_position(_line, _index, v);                \
-        if (i < _index) {                                               \
-            _index = i; _st = _symbol_t::_st_k;                         \
-        }                                                               \
+    Analyzer::_symbol_t Analyzer::_FindBegin(std::string_view& line, std::size_t& index, _arg_t& arg)
+    {
+        _symbol_t st{ _symbol_t::_nothing };
+        const auto& [singles, multiples, quotes, primitives] = _item;
+
+        if (_MatchElement(line, index, primitives, arg))
+            st = _symbol_t::_st_4;
+        if (_MatchElement(line, index, quotes, arg))
+            st = _symbol_t::_st_3;
+        if (_MatchElement(line, index, multiples, arg))
+            st = _symbol_t::_st_2;
+        if (_MatchElement(line, index, singles, arg))
+            st = _symbol_t::_st_1;
+
+        if (_symbol_t::_st_1 < st)
+            line.remove_prefix(arg.first.size() + index);
+
+        return st;
     }
 
-    unsigned int Analyzer::_OnQuoting(std::string_view& line, bool escape)
+    unsigned int Analyzer::_OnQuoting(std::string_view& line, _arg_t& arg, bool escape)
     {
         _remove_space(line);
 
         if (line.empty())
             return line_t::is_blank;
 
-        auto index = (escape ? _find_quote(line, _arg.second) : line.find(_arg.second));
+        auto index = (escape ? _find_quote(line, arg.second) : line.find(arg.second));
         if (std::string::npos == index)
             return line_t::has_code;
 
         _status = status_t::Normal;
-        line.remove_prefix(_arg.second.size() + index);
-        return line_t::has_code | _OnNormal(line);
+        line.remove_prefix(arg.second.size() + index);
+        return line_t::has_code | _OnNormal(line, arg);
     }
 
-    unsigned int Analyzer::_OnNormal(std::string_view& line)
+    unsigned int Analyzer::_OnNormal(std::string_view& line, Analyzer::_arg_t& arg)
     {
         _remove_space(line);
 
         if (line.empty())
             return line_t::is_blank;
 
-        _symbol_t st{ _symbol_t::_nothing };    // 找到的最前面的符号类型
-        std::size_t index = line.size();        // 找到的最前面的符号位置
-        const auto& [singles, multiples, quotes, primitives] = _item;
-
-        _GetPositionWithPair(_st_2, st, _arg, primitives, line, index)
-        _GetPositionWithPair(_st_1, st, _arg, quotes, line, index)
-        _GetPositionWithPair(_st_4, st, _arg, multiples, line, index)
-        _GetPositionWithSingle(_st_3, st, _arg, singles, line, index)
-
+        std::size_t index = line.size();                // 找到的最前面的符号位置
+        _symbol_t st = _FindBegin(line, index, arg);    // 找到的最前面的符号类型
         line_t lt = line_t::is_blank;
+
         if (0 < index) lt = line_t::has_code;
 
         switch (st)
         {
-        case _symbol_t::_st_1:
-            _status = status_t::Quoting;
-            line.remove_prefix(_arg.first.size() + index);
-            return (lt | _OnQuoting(line));
-        case _symbol_t::_st_2:
-            _status = status_t::Primitive;
-            line.remove_prefix(_arg.first.size() + index);
-            return (lt | _OnPrimitive(line));
         case _symbol_t::_st_4:
-            _status = status_t::Annotating;
-            line.remove_prefix(_arg.first.size() + index);
-            return (lt | line_t::has_comment | _OnAnnotating(line));
+            _status = status_t::Primitive;
+            return (lt | _OnPrimitive(line, arg));
         case _symbol_t::_st_3:
+            _status = status_t::Quoting;
+            return (lt | _OnQuoting(line, arg));
+        case _symbol_t::_st_2:
+            _status = status_t::Annotating;
+            return (lt | line_t::has_comment | _OnAnnotating(line, arg));
+        case _symbol_t::_st_1:
             return (lt | line_t::has_comment);
         default:
             return lt;
         }
     }
 
-    unsigned int Analyzer::_OnQuoting(std::string_view& line)
+    unsigned int Analyzer::_OnQuoting(std::string_view& line, _arg_t& arg)
     {
-        return _OnQuoting(line, true);
+        return _OnQuoting(line, arg, true);
     }
 
-    unsigned int Analyzer::_OnPrimitive(std::string_view& line)
+    unsigned int Analyzer::_OnPrimitive(std::string_view& line, _arg_t& arg)
     {
-        return _OnQuoting(line, false);
+        return _OnQuoting(line, arg, false);
     }
 
-    unsigned int Analyzer::_OnAnnotating(std::string_view& line)
+    unsigned int Analyzer::_OnAnnotating(std::string_view& line, _arg_t& arg)
     {
         _remove_space(line);
 
         if (line.empty())
             return line_t::is_blank;
 
-        auto index = line.find(_arg.second);
+        auto index = line.find(arg.second);
         if (std::string::npos == index)
             return line_t::has_comment;
 
         _status = status_t::Normal;
-        line.remove_prefix(_arg.second.size() + index);
-        return line_t::has_comment | _OnNormal(line);
+        line.remove_prefix(arg.second.size() + index);
+        return line_t::has_comment | _OnNormal(line, arg);
     }
 
     unsigned int CppAnalyzer::_OnPrimitive(std::string_view& line)

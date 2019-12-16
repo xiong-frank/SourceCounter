@@ -27,21 +27,24 @@ namespace sc
         };
 
         enum class _symbol_t : unsigned char {
-            // 默认符号顺序：无、字符串、原生字符串、单行注释、多行注释
+            // 默认符号顺序：无、单行注释、多行注释、字符串、原生字符串
             _nothing, _st_1, _st_2, _st_3, _st_4
         };
 
+        using _arg_t = std::pair<std::string, std::string>;
 
         const LangRules::item_t& _item;
         status_t _status{ status_t::Normal };
-        std::pair<std::string, std::string> _arg;
 
-        unsigned int _OnQuoting(std::string_view& line, bool escape);
+        virtual unsigned int _AnalyzeLine(const std::string& line, _arg_t& arg);
+        virtual unsigned int _OnQuoting(std::string_view& line, _arg_t& arg, bool escape);
 
-        virtual unsigned int _OnNormal(std::string_view& line);
-        virtual unsigned int _OnQuoting(std::string_view& line);
-        virtual unsigned int _OnPrimitive(std::string_view& line);
-        virtual unsigned int _OnAnnotating(std::string_view& line);
+        virtual unsigned int _OnNormal(std::string_view& line, _arg_t& arg);
+        virtual unsigned int _OnQuoting(std::string_view& line, _arg_t& arg);
+        virtual unsigned int _OnPrimitive(std::string_view& line, _arg_t& arg);
+        virtual unsigned int _OnAnnotating(std::string_view& line, _arg_t& arg);
+
+        virtual _symbol_t _FindBegin(std::string_view& line, std::size_t& index, _arg_t& arg);
 
     public:
 
