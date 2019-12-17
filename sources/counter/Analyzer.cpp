@@ -1,6 +1,7 @@
-﻿#include <string>
+﻿#include <fstream>
+#include <functional>
+#include <string>
 #include <vector>
-#include <fstream>
 #include <map>
 
 #include "third/xf_log_console.h"
@@ -13,35 +14,23 @@
 
 namespace sc
 {
-    unsigned int Analyzer::_AnalyzeLine(const std::string& line, Analyzer::_arg_t& arg)
-    {
-        std::string_view view(line);
-
-        switch (_status)
-        {
-        case status_t::Normal:
-            return _OnNormal(view, arg);
-        case status_t::Quoting:
-            return _OnQuoting(view, arg);
-        case status_t::Primitive:
-            return _OnPrimitive(view, arg);
-        case status_t::Annotating:
-            return _OnAnnotating(view, arg);
-        default:
-            return 0;
-        }
-    }
-
     ReportItem Analyzer::Analyze(const std::string& file)
     {
         ReportItem report;
         std::ifstream fin(file);
         if (fin.is_open())
         {
+            std::function<unsigned int(std::string_view&, _arg_t&)> _status_funcs[4]{
+                [this](std::string_view& line, _arg_t& arg) { return this->_OnNormal(line, arg); },
+                [this](std::string_view& line, _arg_t& arg) { return this->_OnQuoting(line, arg); },
+                [this](std::string_view& line, _arg_t& arg) { return this->_OnPrimitive(line, arg); },
+                [this](std::string_view& line, _arg_t& arg) { return this->_OnAnnotating(line, arg); }
+            };
+
             _arg_t arg;
             for (std::string line; std::getline(fin, line); )
             {
-                switch (_AnalyzeLine(line, arg))
+                switch (_status_funcs[static_cast<unsigned int>(_status)](std::string_view(line), arg))
                 {
                 case line_t::has_code:
                     report.AddCodes();
@@ -160,24 +149,43 @@ namespace sc
         return found;
     }
 
-    Analyzer::_symbol_t Analyzer::_FindBegin(std::string_view& line, std::size_t& index, _arg_t& arg)
+    Analyzer::_symbol_t Analyzer::_search_begin(std::string_view& line, std::size_t& index, Analyzer::_arg_t& arg)
     {
         _symbol_t st{ _symbol_t::_nothing };
-        const auto& [singles, multiples, quotes, primitives] = _item;
 
-        if (_MatchElement(line, index, primitives, arg))
-            st = _symbol_t::_st_4;
-        if (_MatchElement(line, index, quotes, arg))
-            st = _symbol_t::_st_3;
-        if (_MatchElement(line, index, multiples, arg))
-            st = _symbol_t::_st_2;
-        if (_MatchElement(line, index, singles, arg))
-            st = _symbol_t::_st_1;
+        _search_st_4(st, line, index, arg);
+        _search_st_3(st, line, index, arg);
+        _search_st_2(st, line, index, arg);
+        _search_st_1(st, line, index, arg);
 
         if (_symbol_t::_st_1 < st)
             line.remove_prefix(arg.first.size() + index);
 
         return st;
+    }
+
+    void Analyzer::_search_st_1(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, Analyzer::_arg_t& arg)
+    {
+        if (_MatchElement(line, index, std::get<0>(_item), arg))
+            st = _symbol_t::_st_1;
+    }
+
+    void Analyzer::_search_st_2(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, Analyzer::_arg_t& arg)
+    {
+        if (_MatchElement(line, index, std::get<1>(_item), arg))
+            st = _symbol_t::_st_2;
+    }
+
+    void Analyzer::_search_st_3(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, Analyzer::_arg_t& arg)
+    {
+        if (_MatchElement(line, index, std::get<2>(_item), arg))
+            st = _symbol_t::_st_3;
+    }
+
+    void Analyzer::_search_st_4(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, Analyzer::_arg_t& arg)
+    {
+        if (_MatchElement(line, index, std::get<3>(_item), arg))
+            st = _symbol_t::_st_4;
     }
 
     unsigned int Analyzer::_OnQuoting(std::string_view& line, _arg_t& arg, bool escape)
@@ -204,7 +212,7 @@ namespace sc
             return line_t::is_blank;
 
         std::size_t index = line.size();                // 找到的最前面的符号位置
-        _symbol_t st = _FindBegin(line, index, arg);    // 找到的最前面的符号类型
+        _symbol_t st = _search_begin(line, index, arg);    // 找到的最前面的符号类型
         line_t lt = line_t::is_blank;
 
         if (0 < index) lt = line_t::has_code;
@@ -283,9 +291,44 @@ namespace sc
         return 0;
     }
 
-    ReportItem RubyAnalyzer::Analyze(const std::string& file)
+    Analyzer::_symbol_t RubyAnalyzer::_search_begin(std::string_view& line, std::size_t& index, Analyzer::_arg_t& arg)
     {
-        return ReportItem();
+        _symbol_t st{ _symbol_t::_nothing };
+
+        _search_st_2(st, line, index, arg);
+        _search_st_4(st, line, index, arg);
+        _search_st_3(st, line, index, arg);
+        _search_st_1(st, line, index, arg);
+
+        if (_symbol_t::_st_1 < st)
+            line.remove_prefix(arg.first.size() + index);
+
+        return st;
+    }
+
+    unsigned int RubyAnalyzer::_OnAnnotating(std::string_view& line, Analyzer::_arg_t& arg)
+    {
+        if (0 == line.compare(0, arg.second.size(), arg.second))
+        {
+            _status = status_t::Normal;
+            line.remove_prefix(arg.second.size());
+            return line_t::has_comment | _OnNormal(line, arg);
+        }
+
+        _remove_space(line);
+
+        return line.empty() ? line_t::is_blank : line_t::has_comment;
+    }
+
+    void RubyAnalyzer::_search_st_2(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, Analyzer::_arg_t& arg)
+    {
+        const auto& symbol = std::get<1>(_item).front();
+        if (0 == line.compare(0, symbol.first.size(), symbol.first))
+        {
+            index = 0;
+            arg = symbol;
+            st = _symbol_t::_st_2;
+        }
     }
 
     ReportItem PythonAnalyzer::Analyze(const std::string& file)

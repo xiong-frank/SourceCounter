@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-
 namespace sc
 {
     class ReportItem;
@@ -32,11 +31,10 @@ namespace sc
         };
 
         using _arg_t = std::pair<std::string, std::string>;
-
+        
         const LangRules::item_t& _item;
         status_t _status{ status_t::Normal };
 
-        virtual unsigned int _AnalyzeLine(const std::string& line, _arg_t& arg);
         virtual unsigned int _OnQuoting(std::string_view& line, _arg_t& arg, bool escape);
 
         virtual unsigned int _OnNormal(std::string_view& line, _arg_t& arg);
@@ -44,7 +42,11 @@ namespace sc
         virtual unsigned int _OnPrimitive(std::string_view& line, _arg_t& arg);
         virtual unsigned int _OnAnnotating(std::string_view& line, _arg_t& arg);
 
-        virtual _symbol_t _FindBegin(std::string_view& line, std::size_t& index, _arg_t& arg);
+        virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, _arg_t& arg);
+        virtual void _search_st_1(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
+        virtual void _search_st_2(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
+        virtual void _search_st_3(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
+        virtual void _search_st_4(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
 
     public:
 
@@ -52,6 +54,17 @@ namespace sc
 
         virtual ReportItem Analyze(const std::string& file);
 
+        enum _analyzer_type {
+            at_default,
+            at_ruby,
+            at_python,
+            at_max
+        };
+
+        static unsigned int GetType(const std::string& name)
+        {
+            return 0;
+        }
     };  // class Analyzer
 
     class CppAnalyzer : public Analyzer
@@ -89,7 +102,11 @@ namespace sc
 
         using Analyzer::Analyzer;
 
-        virtual ReportItem Analyze(const std::string& file);
+        virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, _arg_t& arg);
+
+        virtual unsigned int _OnAnnotating(std::string_view& line, _arg_t& arg);
+
+        virtual void _search_st_2(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
 
     };  // class RubyAnalyzer
 

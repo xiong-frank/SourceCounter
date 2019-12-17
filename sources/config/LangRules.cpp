@@ -11,9 +11,10 @@
 namespace sc
 {
 
+#include "_build_in.inl"
+
     LangRules::LangRules()
     {
-#include "_build_in.inl"
 
         for (const auto& [name, item] : _build_in_map)
         {

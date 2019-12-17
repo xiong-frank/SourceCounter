@@ -1,5 +1,17 @@
 
-const std::map<std::string, std::tuple<std::vector<std::string>, item_t>> _build_in_map{
+inline auto _make_symbol_for_ruby(const std::string& a, const std::string& b)
+{
+    LangRules::pairs_t symbols;
+    for (auto i = 0; i < a.size(); ++i)
+    {
+        symbols.emplace_back(string_type("%q").append(1, a[i]), string_type(1, b[i]));
+        symbols.emplace_back(string_type("%Q").append(1, a[i]), string_type(1, b[i]));
+    }
+
+    return symbols;
+}
+
+const std::map<std::string, std::tuple<std::vector<std::string>, LangRules::item_t>> _build_in_map{
     {"C++",         { { ".h", ".cpp", ".hpp", ".inl", ".cc" },
                       { { "//" },
                         { {"/*", "*/"} },
@@ -27,9 +39,9 @@ const std::map<std::string, std::tuple<std::vector<std::string>, item_t>> _build
                         { { R"(R")", R"(")" }, { R"(r")", R"(")" }, { R"(R')", R"(')" }, { R"(r')", R"(')" } } } } },
     {"Ruby",        { { ".rb" },
                       { { "#" }, 
-                        { {"=begin", "=end"} },
-                        { { R"(")", R"(")" }, { R"(')", R"(')" } },
-                        { } } } },
+                        { { "=begin", "=end "} },
+                        { { R"(")", R"(")" }, { R"(')", R"(')" }, { R"(%q')", R"(')" }, { R"(%Q')", R"(')" }, { R"(%Q")", R"(")" } },
+                        _make_symbol_for_ruby(R"({[<(`~!@#$%^&*":;-_+=,.\/ )", R"(}]>)`~!@#$%^&*":;-_+=,.\/ )") } } },
     {"JavaScript",  { { ".js" },
                       { { "//" },
                         { {"/*", "*/"} },

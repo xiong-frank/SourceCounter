@@ -296,11 +296,23 @@ namespace sc
         return false;
     }
 
+    inline Analyzer _GetAnalyzer(const std::string& name)
+    {
+        switch (Analyzer::GetType(name))
+        {
+        case Analyzer::at_ruby: return RubyAnalyzer(*_sc_lrs.GetRule("Ruby"));
+        case Analyzer::at_python: return RubyAnalyzer(*_sc_lrs.GetRule("Python"));
+        default:
+            return Analyzer(*_sc_lrs.GetRule(name));
+        }
+    }
+
     void Rapporteur::_Analyze()
     {
         // 循环取文件
         for (std::pair<std::string, std::string> item; _PickFile(item); )
         {
+            Analyzer x = CppAnalyzer(*_sc_lrs.GetRule(item.second));
             /*
             if ("C++" == item.second)
                 m_Reports.emplace_back(item.first, item.second, CppAnalyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
@@ -308,7 +320,7 @@ namespace sc
                 m_Reports.emplace_back(item.first, item.second, ClojureAnalyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
             else
             */
-                m_Reports.emplace_back(item.first, item.second, Analyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
+                m_Reports.emplace_back(item.first, item.second, _GetAnalyzer(item.second).Analyze(item.first));
         }
     }
 
