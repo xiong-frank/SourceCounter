@@ -30,71 +30,37 @@ namespace sc
             _nothing, _st_1, _st_2, _st_3, _st_4
         };
 
-        using _arg_t = std::pair<std::string, std::string>;
-        
-        const LangRules::item_t& _item;
+        using pair_t = std::pair<std::string, std::string>;
+        using list_t = LangRules::list_t;
+        using pairs_t = LangRules::pairs_t;
+        using item_t = LangRules::item_t;
+
         status_t _status{ status_t::Normal };
 
-        virtual unsigned int _OnQuoting(std::string_view& line, _arg_t& arg, bool escape);
 
-        virtual unsigned int _OnNormal(std::string_view& line, _arg_t& arg);
-        virtual unsigned int _OnQuoting(std::string_view& line, _arg_t& arg);
-        virtual unsigned int _OnPrimitive(std::string_view& line, _arg_t& arg);
-        virtual unsigned int _OnAnnotating(std::string_view& line, _arg_t& arg);
+        virtual unsigned int _OnNormal(std::string_view& line, pair_t& arg, const item_t& item);
+        virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const item_t& item);
+        virtual unsigned int _OnPrimitive(std::string_view& line, pair_t& arg, const item_t& item);
+        virtual unsigned int _OnAnnotating(std::string_view& line, pair_t& arg, const item_t& item);
 
-        virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, _arg_t& arg);
-        virtual void _search_st_1(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
-        virtual void _search_st_2(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
-        virtual void _search_st_3(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
-        virtual void _search_st_4(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
+        virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const item_t& item, bool escape);
+        virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item);
 
     public:
 
-        explicit Analyzer(const LangRules::item_t& item) : _item(item) { }
+        Analyzer() = default;
+        virtual ~Analyzer() { }
 
-        virtual ReportItem Analyze(const std::string& file);
+        virtual ReportItem Analyze(const std::string& file, const item_t& item);
 
-        enum _analyzer_type {
-            at_default,
-            at_ruby,
-            at_python,
-            at_max
-        };
+        static Analyzer& GetAnalyzer(const std::string& name);
 
-        static unsigned int GetType(const std::string& name)
-        {
-            return 0;
-        }
     };  // class Analyzer
 
     class CppAnalyzer : public Analyzer
     {
-    protected:
-
-        virtual unsigned int _OnPrimitive(std::string_view& line);
-
-    public:
-
-        using Analyzer::Analyzer;
 
     };  // class CppAnalyzer
-
-    class ClojureAnalyzer : public Analyzer
-    {
-    protected:
-
-        virtual unsigned int _OnNormal(std::string_view& line);
-        virtual unsigned int _OnQuoting(std::string_view& line);
-        virtual unsigned int _OnPrimitive(std::string_view& line);
-        virtual unsigned int _OnAnnotating(std::string_view& line);
-
-    public:
-
-        using Analyzer::Analyzer;
-
-        virtual ReportItem Analyze(const std::string& file);
-
-    };  // class ClojureAnalyzer
 
     class RubyAnalyzer : public Analyzer
     {
@@ -102,22 +68,20 @@ namespace sc
 
         using Analyzer::Analyzer;
 
-        virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, _arg_t& arg);
+        virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item);
 
-        virtual unsigned int _OnAnnotating(std::string_view& line, _arg_t& arg);
-
-        virtual void _search_st_2(_symbol_t& st, std::string_view& line, std::size_t& index, _arg_t& arg);
+        virtual unsigned int _OnAnnotating(std::string_view& line, pair_t& arg, const item_t& item);
 
     };  // class RubyAnalyzer
 
     class PythonAnalyzer : public Analyzer
     {
-    public:
-
-        using Analyzer::Analyzer;
-
-        virtual ReportItem Analyze(const std::string& file);
 
     };  // class PythonAnalyzer
+
+    class ClojureAnalyzer : public Analyzer
+    {
+
+    };  // class ClojureAnalyzer
 
 }

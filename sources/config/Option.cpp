@@ -112,18 +112,18 @@ namespace sc
         }
 
         xf::cmd::Parser parser;
-        parser.AddOption({ _options(_sc_cmd_help), { xf::cmd::value_t::vt_string, true, false, false, [&parser](const std::string& k) { return parser.IsValid(k); } } })
-            .AddOption({ _options(_sc_cmd_version), { true, false } })
-            .AddOption({ _options(_sc_cmd_input), { xf::cmd::value_t::vt_string, false, true, true } })
-            .AddOption({ _options(_sc_cmd_output), { xf::cmd::value_t::vt_string, false, false, true } })
-            .AddOption({ _options(_sc_cmd_config), { xf::cmd::value_t::vt_string, false, false, true } })
-            .AddOption({ _options(_sc_cmd_mode), { xf::cmd::value_t::vt_unsigned, false, false, true} })
-            .AddOption({ _options(_sc_cmd_languages), { xf::cmd::value_t::vt_string, false, false, true } })
-            .AddOption({ _options(_sc_cmd_exclude), { xf::cmd::value_t::vt_string, false, false, true } })
-            .AddOption({ _options(_sc_cmd_detail), { xf::cmd::value_t::vt_string, false, false, false, [](const std::string& v) { return (0 < _parser_detail(v)); } } })
-            .AddOption({ _options(_sc_cmd_empty), { xf::cmd::value_t::vt_boolean, false, false, true } })
-            .AddOption({ _options(_sc_cmd_thread), { xf::cmd::value_t::vt_unsigned, false, false, true, "[1-9][0-9]?" } })
-            .AddOption({ _options(_sc_cmd_explain), { false, false } });
+        parser.AddOption({ _opt_keys(_sc_cmd_help), { xf::cmd::value_t::vt_string, true, false, false, [&parser](const std::string& k) { return parser.IsValid(k); } } })
+            .AddOption({ _opt_keys(_sc_cmd_version), { true, false } })
+            .AddOption({ _opt_keys(_sc_cmd_input), { xf::cmd::value_t::vt_string, false, true, true } })
+            .AddOption({ _opt_keys(_sc_cmd_output), { xf::cmd::value_t::vt_string, false, false, true } })
+            .AddOption({ _opt_keys(_sc_cmd_config), { xf::cmd::value_t::vt_string, false, false, true } })
+            .AddOption({ _opt_keys(_sc_cmd_mode), { xf::cmd::value_t::vt_unsigned, false, false, true} })
+            .AddOption({ _opt_keys(_sc_cmd_languages), { xf::cmd::value_t::vt_string, false, false, true } })
+            .AddOption({ _opt_keys(_sc_cmd_exclude), { xf::cmd::value_t::vt_string, false, false, true } })
+            .AddOption({ _opt_keys(_sc_cmd_detail), { xf::cmd::value_t::vt_string, false, false, false, [](const std::string& v) { return (0 < _parser_detail(v)); } } })
+            .AddOption({ _opt_keys(_sc_cmd_empty), { xf::cmd::value_t::vt_boolean, false, false, true } })
+            .AddOption({ _opt_keys(_sc_cmd_thread), { xf::cmd::value_t::vt_unsigned, false, false, true, "[1-9][0-9]?" } })
+            .AddOption({ _opt_keys(_sc_cmd_explain), { false, false } });
 
         if (argc < 3)
             if (std::filesystem::exists(argv[1]))

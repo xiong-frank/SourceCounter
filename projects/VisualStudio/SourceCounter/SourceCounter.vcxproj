@@ -23,7 +23,6 @@
     <ClCompile Include="..\..\..\sources\config\Option.cpp" />
     <ClCompile Include="..\..\..\sources\counter\Analyzer.cpp" />
     <ClCompile Include="..\..\..\sources\counter\Rapporteur.cpp" />
-    <ClCompile Include="..\..\..\sources\counter\FileReport.cpp" />
     <ClCompile Include="..\..\..\sources\Main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\sources\counter\FileReport.cpp">
-      <Filter>sources\counter</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sources\config\LangRules.cpp">
       <Filter>sources\config</Filter>
     </ClCompile>

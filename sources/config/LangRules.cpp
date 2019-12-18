@@ -15,7 +15,6 @@ namespace sc
 
     LangRules::LangRules()
     {
-
         for (const auto& [name, item] : _build_in_map)
         {
             m_ItemMap.emplace(name, std::get<1>(item));

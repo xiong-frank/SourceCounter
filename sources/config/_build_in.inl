@@ -1,7 +1,7 @@
 
 inline auto _make_symbol_for_ruby(const std::string& a, const std::string& b)
 {
-    LangRules::pairs_t symbols;
+    LangRules::pairs_t symbols{ { R"(%q")", R"(")"} };
     for (auto i = 0; i < a.size(); ++i)
     {
         symbols.emplace_back(string_type("%q").append(1, a[i]), string_type(1, b[i]));
@@ -12,17 +12,17 @@ inline auto _make_symbol_for_ruby(const std::string& a, const std::string& b)
 }
 
 const std::map<std::string, std::tuple<std::vector<std::string>, LangRules::item_t>> _build_in_map{
-    {"C++",         { { ".h", ".cpp", ".hpp", ".inl", ".cc" },
+    {"C",           { { ".h", ".c" },
+                      { { "//" },
+                        { {"/*", "*/"} },
+                        { { R"(")", R"(")" } },
+                        { } } } },
+    {"C++",         { { ".h", ".cpp", ".hpp", ".inl" },
                       { { "//" },
                         { {"/*", "*/"} },
                         { { R"(")", R"(")" } },
                         { { R"x(R"()x", R"x()")x" } } } } },
     {"Java",        { { ".java" },
-                      { { "//" },
-                        { {"/*", "*/"} },
-                        { { R"(")", R"(")" } },
-                        { } } } },
-    {"C",           { { ".h", ".c" },
                       { { "//" },
                         { {"/*", "*/"} },
                         { { R"(")", R"(")" } },
@@ -39,9 +39,9 @@ const std::map<std::string, std::tuple<std::vector<std::string>, LangRules::item
                         { { R"(R")", R"(")" }, { R"(r")", R"(")" }, { R"(R')", R"(')" }, { R"(r')", R"(')" } } } } },
     {"Ruby",        { { ".rb" },
                       { { "#" }, 
-                        { { "=begin", "=end "} },
+                        { { "=begin", "=end" } },
                         { { R"(")", R"(")" }, { R"(')", R"(')" }, { R"(%q')", R"(')" }, { R"(%Q')", R"(')" }, { R"(%Q")", R"(")" } },
-                        _make_symbol_for_ruby(R"({[<(`~!@#$%^&*":;-_+=,.\/ )", R"(}]>)`~!@#$%^&*":;-_+=,.\/ )") } } },
+                        _make_symbol_for_ruby(R"({[<(`~!@#$%^&*:;-_+=,.\/ )", R"(}]>)`~!@#$%^&*:;-_+=,.\/ )") } } },
     {"JavaScript",  { { ".js" },
                       { { "//" },
                         { {"/*", "*/"} },

@@ -187,4 +187,4 @@ namespace _help
 
 }
 
-#define _options(k) _help::_get_options(_help::_sc_cmd::k)
+#define _opt_keys(k) _help::_get_options(_help::_sc_cmd::k)

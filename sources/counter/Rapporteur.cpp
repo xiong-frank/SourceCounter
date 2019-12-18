@@ -282,7 +282,7 @@ namespace sc
     {
         if (_sc_opt.AllowEmpty() || 0 < std::filesystem::file_size(file))
         {
-            if (excludes.empty() || !std::regex_match(file.generic_string(), std::regex(excludes)))
+            if (excludes.empty() || !std::regex_search(file.generic_string(), std::regex(excludes)))
             {
                 auto t = _sc_lrs.GetLanguage(file.extension().generic_string());
                 if (!t.empty() && (langs.empty() || _contains(langs, t)))
@@ -296,32 +296,11 @@ namespace sc
         return false;
     }
 
-    inline Analyzer _GetAnalyzer(const std::string& name)
-    {
-        switch (Analyzer::GetType(name))
-        {
-        case Analyzer::at_ruby: return RubyAnalyzer(*_sc_lrs.GetRule("Ruby"));
-        case Analyzer::at_python: return RubyAnalyzer(*_sc_lrs.GetRule("Python"));
-        default:
-            return Analyzer(*_sc_lrs.GetRule(name));
-        }
-    }
-
     void Rapporteur::_Analyze()
     {
-        // 循环取文件
         for (std::pair<std::string, std::string> item; _PickFile(item); )
-        {
-            Analyzer x = CppAnalyzer(*_sc_lrs.GetRule(item.second));
-            /*
-            if ("C++" == item.second)
-                m_Reports.emplace_back(item.first, item.second, CppAnalyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
-            else if ("Clojure" == item.second)
-                m_Reports.emplace_back(item.first, item.second, ClojureAnalyzer(*_sc_lrs.GetRule(item.second)).Analyze(item.first));
-            else
-            */
-                m_Reports.emplace_back(item.first, item.second, _GetAnalyzer(item.second).Analyze(item.first));
-        }
+            m_Reports.emplace_back(item.first, item.second,
+                                   Analyzer::GetAnalyzer(item.second).Analyze(item.first, *_sc_lrs.GetRule(item.second)));
     }
 
 }
