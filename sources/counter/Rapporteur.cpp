@@ -1,5 +1,4 @@
-﻿#include <thread>
-#include <mutex>
+﻿#include <future>
 #include <regex>
 #include <map>
 #include <iostream>
@@ -46,12 +45,12 @@ namespace sc
         {
             if (1 < nThread)
             {
-                std::vector<std::thread> vtrThread;
+                std::vector<std::future<void>> vf;
                 for (unsigned int i = 0; i < nThread; ++i)
-                    vtrThread.emplace_back(std::thread([this]() { this->_Analyze(); }));
+                    vf.emplace_back(std::async(std::launch::async, [this]() { this->_Analyze(); }));
 
-                for (std::thread& t : vtrThread)
-                    t.join();
+                for (auto& f : vf)
+                    f.wait();
             }
             else
             {
@@ -268,11 +267,11 @@ namespace sc
         return true;
     }
 
-    template<typename _Type>
-    bool _contains(const std::vector<_Type>& vtr, const _Type& value)
+    template<typename _Type, typename _Equal>
+    bool _contains(const std::vector<_Type>& vtr, const _Type& value, _Equal equal)
     {
         for (const auto& v : vtr)
-            if (v == value)
+            if (equal(v, value))
                 return true;
 
         return false;
@@ -285,7 +284,7 @@ namespace sc
             if (excludes.empty() || !std::regex_search(file.generic_string(), std::regex(excludes)))
             {
                 auto t = _sc_lrs.GetLanguage(file.extension().generic_string());
-                if (!t.empty() && (langs.empty() || _contains(langs, t)))
+                if (!t.empty() && (langs.empty() || _contains(langs, t, _StringEqual)))
                 {
                     m_Files.emplace_back(std::filesystem::canonical(file).generic_string(), t);
                     return true;
