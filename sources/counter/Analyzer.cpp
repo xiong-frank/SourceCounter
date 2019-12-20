@@ -80,11 +80,15 @@ namespace sc
         return report;
     }
 
+    inline bool _is_space(char c) {
+        return (0x20 == c || 0x09 == c || 0x0d == c || 0x0a == c || 0x0c == c || 0x0b == c);
+    }
+
     // 移动到可见字符位置
     inline void _remove_space(std::string_view& view)
     {
         std::size_t i = 0;
-        while (i < view.size() && std::isspace(view[i]))
+        while (i < view.size() && _is_space(view[i]))
             ++i;
 
         view.remove_prefix(i);
@@ -266,27 +270,26 @@ namespace sc
     }
 
     template<typename _AnalyzerType>
-    Analyzer& AnalyzerInstance() {
-        static _AnalyzerType _analyzer_inst;
-        return (_analyzer_inst);
+    ReportItem _Analyze(const std::string& file, const LangRules::item_t& item) {
+        return (_AnalyzerType().Analyze(file, item));
     }
 
-    const std::map<string_type, Analyzer& (*)(), _str_compare> _analyzerMap{
-        { "C++",            AnalyzerInstance<CppAnalyzer> },
-        { "CPlusPlus",      AnalyzerInstance<CppAnalyzer> },
-        { "Clojure",        AnalyzerInstance<ClojureAnalyzer> },
-        { "ClojureScript",  AnalyzerInstance<ClojureAnalyzer> },
-        { "Ruby",           AnalyzerInstance<RubyAnalyzer> },
-        { "Python",         AnalyzerInstance<PythonAnalyzer> }
+    const std::map<string_type, ReportItem (*)(const std::string&, const LangRules::item_t&), _str_compare> _analyzerMap{
+        { "C++",            _Analyze<CppAnalyzer> },
+        { "CPlusPlus",      _Analyze<CppAnalyzer> },
+        { "Clojure",        _Analyze<ClojureAnalyzer> },
+        { "ClojureScript",  _Analyze<ClojureAnalyzer> },
+        { "Ruby",           _Analyze<RubyAnalyzer> },
+        { "Python",         _Analyze<PythonAnalyzer> }
     };
 
-    Analyzer& Analyzer::GetAnalyzer(const std::string& name)
+    ReportItem Analyzer::Analyze(const std::string& file, const std::string& type)
     {
-        auto iter = _analyzerMap.find(name);
+        auto iter = _analyzerMap.find(type);
         if (iter != _analyzerMap.end())
-            return iter->second();
+            return iter->second(file, *_sc_lrs.GetRule(type));
         else
-            return AnalyzerInstance<Analyzer>();
+            return Analyzer().Analyze(file, *_sc_lrs.GetRule(type));
     }
 
 }

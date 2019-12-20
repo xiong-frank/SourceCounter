@@ -213,11 +213,11 @@ namespace sc
             nThread = result.get<unsigned int>("--thread");
             if (0x20 < nThread) nThread = 0x20;
         } else {
-            nThread =   (_sc_rapporteur.Files().size() < 0x0010 ? 0x01
-                       : _sc_rapporteur.Files().size() < 0x0020 ? 0x02
-                       : _sc_rapporteur.Files().size() < 0x0040 ? 0x04
-                       : _sc_rapporteur.Files().size() < 0x0080 ? 0x08
-                       : _sc_rapporteur.Files().size() < 0x0200 ? 0x10 : 0x20);
+            nThread =   (_sc_rapporteur.Files().size() < 0x0020 ? 0x01
+                       : _sc_rapporteur.Files().size() < 0x0040 ? 0x02
+                       : _sc_rapporteur.Files().size() < 0x0080 ? 0x04
+                       : _sc_rapporteur.Files().size() < 0x0200 ? 0x08
+                       : _sc_rapporteur.Files().size() < 0x0800 ? 0x10 : 0x20);
         }
 
         if (_sc_rapporteur.Files().size() < nThread) nThread = unsigned int(_sc_rapporteur.Files().size());

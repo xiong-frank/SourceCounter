@@ -37,14 +37,19 @@ namespace sc
 
             for (const auto& [key, value] : rules.items())
             {
-                if (_build_in_languages.find(key) == _build_in_languages.end())
+                if (auto iter = _build_in_map.find(key); iter != _build_in_map.end())
+                {
+                    for (auto ext : std::get<0>(iter->second))
+                        m_ExtMap.erase(ext);
+                }
+                else
                 {
                     const auto& options = value.at("options");
                     m_ItemMap.emplace(key, item_t{ options[0], options[1], options[2], options[3] });
                 }
 
                 for (const auto& ext : value.at("extensions"))
-                    m_ExtMap.emplace(ext.get<std::string>(), key);
+                    m_ExtMap[ext.get<std::string>()] = key;
             }
 
             fin.close();

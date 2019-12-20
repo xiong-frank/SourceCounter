@@ -22,7 +22,7 @@ namespace sc
         bool _AddFile(const std::filesystem::path& file, const std::vector<std::string>& langs, const std::string& excludes);
 
         // 分析线程函数
-        void _Analyze();
+        std::vector<FileReport> _Analyze();
 
     public:
 

@@ -45,16 +45,19 @@ namespace sc
         {
             if (1 < nThread)
             {
-                std::vector<std::future<void>> vf;
+                std::vector<std::future<std::vector<FileReport>>> vtr;
                 for (unsigned int i = 0; i < nThread; ++i)
-                    vf.emplace_back(std::async(std::launch::async, [this]() { this->_Analyze(); }));
+                    vtr.emplace_back(std::async(std::launch::async, [this]() { return this->_Analyze(); }));
 
-                for (auto& f : vf)
-                    f.wait();
+                for (auto& f : vtr)
+                {
+                    auto reports = f.get();
+                    std::copy(reports.begin(), reports.end(), std::back_inserter(m_Reports));
+                }
             }
             else
             {
-                _Analyze();
+                m_Reports = _Analyze();
             }
 
             return true;
@@ -295,11 +298,13 @@ namespace sc
         return false;
     }
 
-    void Rapporteur::_Analyze()
+    std::vector<FileReport> Rapporteur::_Analyze()
     {
+        std::vector<FileReport> vtr;
         for (std::pair<std::string, std::string> item; _PickFile(item); )
-            m_Reports.emplace_back(item.first, item.second,
-                                   Analyzer::GetAnalyzer(item.second).Analyze(item.first, *_sc_lrs.GetRule(item.second)));
+            vtr.emplace_back(item.first, item.second, Analyzer::Analyze(item.first, item.second));
+
+        return vtr;
     }
 
 }

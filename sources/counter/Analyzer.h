@@ -53,7 +53,7 @@ namespace sc
 
         virtual ReportItem Analyze(const std::string& file, const item_t& item);
 
-        static Analyzer& GetAnalyzer(const std::string& name);
+        static ReportItem Analyze(const std::string& file, const std::string& type);
 
     };  // class Analyzer
 
