@@ -93,26 +93,27 @@ namespace _help
         "[optional] Specify statistical rules to explain the ambiguous lines.",
         R"(Ambiguous lines refers to a line contains multiple situations.
                  Specifically refer to:
-                   Case1: Empty lines in multiple lines of comments.
-                   Case2: Empty lines in multiple lines of strings.
-                   Case3: There are code and comments in one line.
+                   Case1: There are code and comments in one line.
+                   Case2: Empty lines in multiple lines of comments.
+                   Case3: Empty lines in multiple lines of strings.
 
                  Specify "mode" for ambiguous lines to get clear statistical results.
                  The value of "mode" are as follows:
 
                    name            value   explain
                    --------------------------------------------------
-                   mc_is_blank     1       Case1 is Blank Line.
-                   mc_is_comment   2       Case1 is Comment Line.
-                   ms_is_code      4       Case2 is Code Line.
-                   ms_is_blank     8       Case2 is Blank Line.
-                   cc_is_code      16      Case3 is Code Line.
-                   cc_is_comment   32      Case3 is Comment Line.
+                   cc_is_code      1       Case1 is Code Line.
+                   cc_is_comment   2       Case1 is Comment Line.
+                   mc_is_blank     4       Case2 is Blank Line.
+                   mc_is_comment   8       Case2 is Comment Line.
+                   ms_is_blank     16      Case3 is Blank Line.
+                   ms_is_code      32      Case3 is Code Line.
 
                  Different rules can be used in combination.
-                 Use the result of bit-or (or addition) as the value of "mode")",
+                 Use the result of bit-or (or addition) as the value of "mode".
+                 If not specified, the default value is 37.)",
         "--mode [number]",
-        "--mode 7" })},
+        "--mode 53" })},
 
         { _sc_cmd::_sc_cmd_languages, _help_item({{"--languages", "-l"},
         "[optional] Specify the language for Statistics.",

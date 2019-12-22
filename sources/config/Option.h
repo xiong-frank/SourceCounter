@@ -22,12 +22,12 @@ namespace sc
     };
 
     enum mode_t {
-        mc_is_blank     = 0x01,
-        mc_is_comment   = 0x02,
-        ms_is_code      = 0x04,
-        ms_is_blank     = 0x08,
-        cc_is_code      = 0x10,
-        cc_is_comment   = 0x20
+        cc_is_code      = 0x01,
+        cc_is_comment   = 0x02,
+        mc_is_blank     = 0x04,
+        mc_is_comment   = 0x08,
+        ms_is_blank     = 0x10,
+        ms_is_code      = 0x20
     };
 
     class Option final
