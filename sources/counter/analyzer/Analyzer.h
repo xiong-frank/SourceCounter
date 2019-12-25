@@ -37,7 +37,6 @@ namespace sc
 
         status_t _status{ status_t::Normal };
 
-
         virtual unsigned int _OnNormal(std::string_view& line, pair_t& arg, const item_t& item);
         virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const item_t& item);
         virtual unsigned int _OnPrimitive(std::string_view& line, pair_t& arg, const item_t& item);
@@ -56,32 +55,5 @@ namespace sc
         static ReportItem Analyze(const std::string& file, const std::string& type);
 
     };  // class Analyzer
-
-    class CppAnalyzer : public Analyzer
-    {
-
-    };  // class CppAnalyzer
-
-    class RubyAnalyzer : public Analyzer
-    {
-    public:
-
-        using Analyzer::Analyzer;
-
-        virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item);
-
-        virtual unsigned int _OnAnnotating(std::string_view& line, pair_t& arg, const item_t& item);
-
-    };  // class RubyAnalyzer
-
-    class PythonAnalyzer : public Analyzer
-    {
-
-    };  // class PythonAnalyzer
-
-    class ClojureAnalyzer : public Analyzer
-    {
-
-    };  // class ClojureAnalyzer
 
 }

@@ -11,7 +11,7 @@
 #include "config/Option.h"
 #include "config/LangRules.h"
 
-#include "counter/Analyzer.h"
+#include "counter/analyzer/Analyzer.h"
 #include "counter/FileReport.h"
 #include "counter/Rapporteur.h"
 

@@ -21,7 +21,7 @@ const std::map<std::string, std::tuple<std::vector<std::string>, LangRules::item
                       { { "//" },
                         { {"/*", "*/"} },
                         { { R"(")", R"(")" } },
-                        { { R"x(R"()x", R"x()")x" } } } } },
+                        { { R"(R")", R"(")" } } } } },
     {"Java",        { { ".java" },
                       { { "//" },
                         { {"/*", "*/"} },

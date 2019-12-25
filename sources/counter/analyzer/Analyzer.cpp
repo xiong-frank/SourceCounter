@@ -10,7 +10,8 @@
 #include "config/LangRules.h"
 
 #include "counter/FileReport.h"
-#include "counter/Analyzer.h"
+
+#include "Analyzer.h"
 
 namespace sc
 {
@@ -235,39 +236,10 @@ namespace sc
         return line_t::has_code | _OnNormal(line, arg, item);
     }
 
-    Analyzer::_symbol_t RubyAnalyzer::_search_begin(std::string_view& line, std::size_t& index, Analyzer::pair_t& arg, const item_t& item)
-    {
-        _symbol_t st{ _symbol_t::_nothing };
-
-        if (const auto& symbol = std::get<1>(item).front(); 0 == line.compare(0, symbol.first.size(), symbol.first))
-        {
-            index = 0;
-            arg = symbol;
-            st = _symbol_t::_st_2;
-        }
-        _MatchElement<_symbol_t::_st_4>(st, line, index, std::get<3>(item), arg);
-        _MatchElement<_symbol_t::_st_3>(st, line, index, std::get<2>(item), arg);
-        _MatchElement<_symbol_t::_st_1>(st, line, index, std::get<0>(item), arg);
-
-        if (_symbol_t::_st_1 < st)
-            line.remove_prefix(arg.first.size() + index);
-
-        return st;
-    }
-
-    unsigned int RubyAnalyzer::_OnAnnotating(std::string_view& line, Analyzer::pair_t& arg, const Analyzer::item_t& item)
-    {
-        if (0 == line.compare(0, arg.second.size(), arg.second))
-        {
-            _status = status_t::Normal;
-            line.remove_prefix(arg.second.size());
-            return line_t::has_comment | _OnNormal(line, arg, item);
-        }
-
-        _remove_space(line);
-
-        return line.empty() ? line_t::is_blank : line_t::has_comment;
-    }
+#include "CppAnalyzer.inl"
+#include "RubyAnalyzer.inl"
+#include "PythonAnalyzer.inl"
+#include "ClojureAnalyzer.inl"
 
     template<typename _AnalyzerType>
     ReportItem _Analyze(const std::string& file, const LangRules::item_t& item) {

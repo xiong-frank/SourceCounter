@@ -21,14 +21,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\sources\config\LangRules.cpp" />
     <ClCompile Include="..\..\..\sources\config\Option.cpp" />
-    <ClCompile Include="..\..\..\sources\counter\Analyzer.cpp" />
+    <ClCompile Include="..\..\..\sources\counter\analyzer\Analyzer.cpp" />
     <ClCompile Include="..\..\..\sources\counter\Rapporteur.cpp" />
     <ClCompile Include="..\..\..\sources\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\sources\config\LangRules.h" />
     <ClInclude Include="..\..\..\sources\config\Option.h" />
-    <ClInclude Include="..\..\..\sources\counter\Analyzer.h" />
+    <ClInclude Include="..\..\..\sources\counter\analyzer\Analyzer.h" />
     <ClInclude Include="..\..\..\sources\counter\Rapporteur.h" />
     <ClInclude Include="..\..\..\sources\counter\FileReport.h" />
     <ClInclude Include="..\..\..\sources\third\xf_cmd_parser.h" />
@@ -38,6 +38,10 @@
   <ItemGroup>
     <None Include="..\..\..\sources\config\_build_in.inl" />
     <None Include="..\..\..\sources\config\_help_info.inl" />
+    <None Include="..\..\..\sources\counter\analyzer\ClojureAnalyzer.inl" />
+    <None Include="..\..\..\sources\counter\analyzer\CppAnalyzer.inl" />
+    <None Include="..\..\..\sources\counter\analyzer\PythonAnalyzer.inl" />
+    <None Include="..\..\..\sources\counter\analyzer\RubyAnalyzer.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
