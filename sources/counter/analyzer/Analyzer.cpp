@@ -4,12 +4,12 @@
 #include <vector>
 #include <map>
 
-#include "third/xf_log_console.h"
+#include "../../third/xf_log_console.h"
 
-#include "config/Option.h"
-#include "config/LangRules.h"
+#include "../../config/Option.h"
+#include "../../config/LangRules.h"
 
-#include "counter/FileReport.h"
+#include "../../counter/FileReport.h"
 
 #include "Analyzer.h"
 

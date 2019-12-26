@@ -5,15 +5,15 @@
 #include <fstream>
 #include <filesystem>
 
-#include "third/xf_log_console.h"
-#include "third/json.hpp"
+#include "../third/xf_log_console.h"
+#include "../third/json.hpp"
 
-#include "config/Option.h"
-#include "config/LangRules.h"
+#include "../config/Option.h"
+#include "../config/LangRules.h"
 
-#include "counter/analyzer/Analyzer.h"
-#include "counter/FileReport.h"
-#include "counter/Rapporteur.h"
+#include "analyzer/Analyzer.h"
+#include "FileReport.h"
+#include "Rapporteur.h"
 
 namespace sc
 {

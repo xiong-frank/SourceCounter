@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "third/json.hpp"
+#include "../third/json.hpp"
 #include "LangRules.h"
 
 namespace sc

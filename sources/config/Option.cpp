@@ -3,14 +3,14 @@
 #include <map>
 #include <filesystem>
 
-#include "third/xf_log_console.h"
-#include "third/xf_cmd_parser.h"
+#include "../third/xf_log_console.h"
+#include "../third/xf_cmd_parser.h"
 
-#include "config/Option.h"
-#include "config/LangRules.h"
+#include "Option.h"
+#include "LangRules.h"
 
-#include "counter/FileReport.h"
-#include "counter/Rapporteur.h"
+#include "../counter/FileReport.h"
+#include "../counter/Rapporteur.h"
 
 namespace sc
 {
