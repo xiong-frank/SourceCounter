@@ -41,6 +41,14 @@ namespace xf::cmd
         vt_nothing, vt_boolean, vt_integer, vt_unsigned, vt_float, vt_string
     };  // enum value_t
 
+    template<typename _ValueType> struct _type_mapper;
+    template<> struct _type_mapper<bool> { static constexpr value_t _value = value_t::vt_boolean; };
+    template<> struct _type_mapper<int> { static constexpr value_t _value = value_t::vt_integer; };
+    template<> struct _type_mapper<unsigned int> { static constexpr value_t _value = value_t::vt_unsigned; };
+    template<> struct _type_mapper<double> { static constexpr value_t _value = value_t::vt_float; };
+    template<> struct _type_mapper<string_t> { static constexpr value_t _value = value_t::vt_string; };
+    template<> struct _type_mapper<nullptr_t> { static constexpr value_t _value = value_t::vt_nothing; };
+
     class option_t
     {
     public:
@@ -60,14 +68,6 @@ namespace xf::cmd
         bool _k_required;
         bool _v_required;
         _CallType _check;
-
-        template<typename _ValueType> struct _type_mapper;
-        template<> struct _type_mapper<bool> { static constexpr value_t _value = value_t::vt_boolean; };
-        template<> struct _type_mapper<int> { static constexpr value_t _value = value_t::vt_integer; };
-        template<> struct _type_mapper<unsigned int> { static constexpr value_t _value = value_t::vt_unsigned; };
-        template<> struct _type_mapper<double> { static constexpr value_t _value = value_t::vt_float; };
-        template<> struct _type_mapper<string_t> { static constexpr value_t _value = value_t::vt_string; };
-        template<> struct _type_mapper<nullptr_t> { static constexpr value_t _value = value_t::vt_nothing; };
 
         static constexpr bool (*_func_list[])(const string_t&){ nullptr, is_boolean, is_integer, is_unsigned, is_float, is_string };
 
@@ -108,9 +108,10 @@ namespace xf::cmd
         }
 
         template<typename _ValueType> static option_t make(bool, bool);
-        template<> static option_t make<nullptr_t>(bool u, bool k) { return option_t(u, k); }
 
     };  // class option_t
+
+    template<> option_t option_t::make<nullptr_t>(bool u, bool k) { return option_t(u, k); }
 
     enum state_t {
         s_ok,                   // ok
@@ -124,20 +125,21 @@ namespace xf::cmd
         s_v_error               // 参数值错误
     };  // enum state_t
 
+    template<typename _Type> string_t _to_string(const _Type& v) { return std::to_string(v); }
+    template<> string_t _to_string(const nullptr_t& v) { return ""; }
+    template<> string_t _to_string(const bool& v) { return (v ? "true" : "false"); }
+    template<> string_t _to_string(const string_t& v) { return v; }
+
     class result_t
     {
         friend class Parser;
 
         using variant_t = std::variant<nullptr_t, bool, int, unsigned int, double, string_t>;
 
-        template<typename _Type> static string_t _to_string(const _Type& v) { return std::to_string(v); }
-        template<> static string_t _to_string(const nullptr_t& v) { return ""; }
-        template<> static string_t _to_string(const bool& v) { return (v ? "true" : "false"); }
-        template<> static string_t _to_string(const string_t& v) { return v; }
-        template<> static string_t _to_string(const variant_t& v)
+        static string_t _to_string(const variant_t& v)
         {
             string_t x;
-            std::visit([&](auto&& t) mutable { x = result_t::_to_string(t); }, v);
+            std::visit([&](auto&& t) mutable { x = xf::cmd::_to_string(t); }, v);
             return x;
         }
 
@@ -294,7 +296,7 @@ namespace xf::cmd
                 _add_value(key, std::stoi(value), keys);
                 break;
             case value_t::vt_unsigned:
-                _add_value(key, unsigned int(std::stoul(value)), keys);
+                _add_value(key, (unsigned int)(std::stoul(value)), keys);
                 break;
             case value_t::vt_nothing:
                 _add_value(key, nullptr, keys);

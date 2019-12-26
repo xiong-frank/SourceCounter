@@ -24,7 +24,12 @@ namespace xf::log
             auto tp = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
             auto tt = std::chrono::system_clock::to_time_t(tp);
             struct tm lt;
+            
+        #ifdef _MSC_VER
             localtime_s(&lt, &tt);
+        #else
+            localtime_r(&tt, &lt);
+        #endif
 
             // auto lt = std::localtime(&tt);
 

@@ -32,7 +32,8 @@ namespace sc
             pair_t arg;
             for (std::string line; std::getline(fin, line); )
             {
-                switch (_status_funcs[static_cast<unsigned int>(_status)](std::string_view(line), arg, item))
+                std::string_view view(line);
+                switch (_status_funcs[static_cast<unsigned int>(_status)](view, arg, item))
                 {
                 case line_t::has_code:
                     report.AddCodes();

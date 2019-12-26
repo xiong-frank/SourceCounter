@@ -220,7 +220,7 @@ namespace sc
                        : _sc_rapporteur.Files().size() < 0x0800 ? 0x10 : 0x20);
         }
 
-        if (_sc_rapporteur.Files().size() < nThread) nThread = unsigned int(_sc_rapporteur.Files().size());
+        if (_sc_rapporteur.Files().size() < nThread) nThread = (unsigned int)(_sc_rapporteur.Files().size());
 
         if (result.is_existing("--explain"))
         {

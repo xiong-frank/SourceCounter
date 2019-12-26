@@ -1,6 +1,7 @@
 ﻿#include <future>
 #include <regex>
 #include <map>
+#include <list>
 #include <iostream>
 #include <fstream>
 #include <filesystem>

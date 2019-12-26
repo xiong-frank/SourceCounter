@@ -23,7 +23,8 @@ protected:
             if (auto k = line.find(left, i + n); std::string::npos != k)
             {
                 index = i;
-                arg = { line.substr(i, k - i + left.size()), right.append(line.substr(i + n, k - i - n)).append(v.second) };
+                arg.first = line.substr(i, k - i + left.size());
+                arg.second = right.append(line.substr(i + n, k - i - n)).append(v.second);
                 st = _symbol_t::_st_4;
             }
         }
