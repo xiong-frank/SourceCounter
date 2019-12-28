@@ -1,6 +1,8 @@
 
 class CppAnalyzer : public Analyzer
 {
+    static constexpr std::size_t _delimiter_length{ 0x10 };
+
 public:
 
     using Analyzer::Analyzer;
@@ -15,16 +17,16 @@ protected:
         _MatchElement<_symbol_t::_st_2>(st, line, index, std::get<1>(item), arg);
         _MatchElement<_symbol_t::_st_1>(st, line, index, std::get<0>(item), arg);
 
-        const auto& v = std::get<3>(item).front();
+        const auto& v = std::get<3>(item)[0];
+        const auto& x = std::get<3>(item)[1];
         if (auto i = sc::_find_front_position(line, index, v.first); i < index)
         {
-            std::string left("("), right(")");
             auto n = v.first.size();
-            if (auto k = line.find(left, i + n); std::string::npos != k)
+            if (auto k = line.find(x.first, i + n); (std::string::npos != k && (k - i - n) <= _delimiter_length))
             {
                 index = i;
-                arg.first = line.substr(i, k - i + left.size());
-                arg.second = right.append(line.substr(i + n, k - i - n)).append(v.second);
+                arg.first = line.substr(i, k - i + x.first.size());
+                arg.second = std::string(x.second).append(line.substr(i + n, k - i - n)).append(v.second);
                 st = _symbol_t::_st_4;
             }
         }

@@ -1,8 +1,8 @@
 COMPILE_CMD='g++-9 --std=c++17'
 PROJECT_NAME=SourceCounter
-PROJECT_DIR=../..
+PROJECT_DIR=../../..
 SOURCE_DIR=${PROJECT_DIR}/sources
-OUTPUT_DIR=${PROJECT_DIR}/output
+OUTPUT_DIR=${PROJECT_DIR}/outputs
 
 if [ ! -d ${OUTPUT_DIR} ]; then
   mkdir ${OUTPUT_DIR}
@@ -14,4 +14,8 @@ ${COMPILE_CMD} $1 -c ${SOURCE_DIR}/counter/analyzer/Analyzer.cpp -o ${OUTPUT_DIR
 ${COMPILE_CMD} $1 -c ${SOURCE_DIR}/counter/Rapporteur.cpp        -o ${OUTPUT_DIR}/Rapporteur.o 
 ${COMPILE_CMD} $1 -c ${SOURCE_DIR}/Main.cpp                      -o ${OUTPUT_DIR}/Main.o 
 
-${COMPILE_CMD} ${OUTPUT_DIR}/*.o -o ${OUTPUT_DIR}/${PROJECT_NAME}
+if [ -n "$2" ]; then
+    ${COMPILE_CMD} ${OUTPUT_DIR}/*.o -o ${OUTPUT_DIR}/${PROJECT_NAME} $2
+else
+    ${COMPILE_CMD} ${OUTPUT_DIR}/*.o -o ${OUTPUT_DIR}/${PROJECT_NAME}
+fi

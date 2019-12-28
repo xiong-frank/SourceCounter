@@ -98,5 +98,18 @@ $> ./SourceCounter --input demo.c --mode=63
 * **--explain, -x** 一旦指定该选项，统计工具将不会真正执行统计工作，仅对当前使用的参数信息进行解释输出，前提是所有的选项和参数都指定正确。例如想在真正运行前查看输入的选项或参数是否和预期的一致，可以添加该选项查看。
 
 ### 如何构建
-* 目前仅提供了 `Visual Studio 2019` 的工程文件，使用 VS2019 打开位于 `projects` 的目录中的 `.sln` 工程文件，直接编译即可。
-* 项目需要的所有代码均在仓库中提供，除引用的第三方库以外，实现统计工具本身的处理代码仅使用 `C++17` 编写，且未使用任何包含特定平台的代码，因此理论上是支持跨平台编译的。待后续在其他操作系统上测试通过后将会提供对应平台的构建方式。
+* 依赖的第三方库：
+  * [NielsLohmann/json](https://github.com/nlohmann/json) 3.7.3
+  * [FrankXiong/CommandLineParser](https://github.com/xf-bnb/CommandLineParser) 1.0.1
+  * FrankXiong/ConsoleLog 1.0.0
+* 除依赖的外部库以外，项目其他部分完全采用`C++17`编写，理论上支持`C++17`的编译器均可编译，但受于开发环境限制，目前仅在部分机器和编译器上测试通过，以下是经过验证的编译环境：
+
+  | platform | compiler |
+  | --- | --- |
+  | Windows | VisualStudio2019 16.4 |
+  | Mac | GCC 9.2 |
+  | Linux | GCC 9.1 |
+* 在 [projects](./projects) 目录中提供了对应环境的工程配置文件(构建成功都将输出在 ./outputs 目录中)：
+  * **Windows:** 打开位于 [projects/VisualStudio/](./projects/VisualStudio/) 目录中的 `.sln`工程文件，在菜单中选择构建即可。
+  * **Mac:** 执行位于 [projects/GCC/Mac/](./projects/GCC/Mac/) 目录中的 `release.sh`/`debug.sh` 脚本即可。
+  * **Linux:** 执行位于 [projects/GCC/Linux/](./projects/GCC/Linux/) 目录中的 `release.sh`/`debug.sh` 脚本即可。

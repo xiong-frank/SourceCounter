@@ -4,6 +4,7 @@
 #include <sstream>
 #include <cstdarg>
 #include <mutex>
+#include <thread>
 #include <chrono>
 #include <ctime>
 
@@ -30,8 +31,6 @@ namespace xf::log
         #else
             localtime_r(&tt, &lt);
         #endif
-
-            // auto lt = std::localtime(&tt);
 
             char text[32]{ 0 };
             std::snprintf(text, 32, "%02d:%02d:%02d.%03d", lt.tm_hour, lt.tm_min, lt.tm_sec, int(tp.time_since_epoch().count() % 1000));
