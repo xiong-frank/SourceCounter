@@ -31,9 +31,6 @@ protected:
             }
         }
 
-        if (_symbol_t::_st_1 < st)
-            line.remove_prefix(arg.first.size() + index);
-
         return st;
     }
 

@@ -21,9 +21,6 @@ protected:
         _MatchElement<_symbol_t::_st_3>(st, line, index, std::get<2>(item), arg);
         _MatchElement<_symbol_t::_st_1>(st, line, index, std::get<0>(item), arg);
 
-        if (_symbol_t::_st_1 < st)
-            line.remove_prefix(arg.first.size() + index);
-
         return st;
     }
 
@@ -31,7 +28,7 @@ protected:
     {
         if (0 == line.compare(0, arg.second.size(), arg.second))
         {
-            _status = status_t::Normal;
+            _status = status_t::normal;
             line.remove_prefix(arg.second.size());
             return line_t::has_comment | _OnNormal(line, arg, item);
         }

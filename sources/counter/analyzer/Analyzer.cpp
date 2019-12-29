@@ -45,12 +45,12 @@ namespace sc
                 {
                     switch (_status)
                     {
-                    case status_t::Quoting:
-                    case status_t::Primitive:
+                    case status_t::quoting:
+                    case status_t::primitive:
                         if (_sc_opt.CheckMode(mode_t::ms_is_code)) report.AddCodes();
                         if (_sc_opt.CheckMode(mode_t::ms_is_blank)) report.AddBlanks();
                         break;
-                    case status_t::Annotating:
+                    case status_t::annotating:
                         if (_sc_opt.CheckMode(mode_t::mc_is_blank)) report.AddBlanks();
                         if (_sc_opt.CheckMode(mode_t::mc_is_comment)) report.AddComments();
                         break;
@@ -132,7 +132,7 @@ namespace sc
     template<typename _KeyT, typename _ValueT> struct is_pair<std::pair<_KeyT, _ValueT>> : public std::true_type { };
 
     template<Analyzer::_symbol_t _Key, typename _Type>
-    void _MatchElement(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, const list_type<_Type>& seq, Analyzer::pair_t& arg) {
+    void _MatchElement(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, const list_type<_Type>& seq, std::pair<std::string, std::string>& arg) {
         for (const auto& v : seq) {
             if constexpr (is_pair<_Type>::value) {
                 if (auto i = _find_front_position(line, index, v.first); i < index) {
@@ -158,9 +158,6 @@ namespace sc
         _MatchElement<_symbol_t::_st_2>(st, line, index, std::get<1>(item), arg);
         _MatchElement<_symbol_t::_st_1>(st, line, index, std::get<0>(item), arg);
 
-        if (_symbol_t::_st_1 < st)
-            line.remove_prefix(arg.first.size() + index);
-
         return st;
     }
 
@@ -174,19 +171,23 @@ namespace sc
         std::size_t index = line.size();                        // 找到的最前面的符号位置
         _symbol_t st = _search_begin(line, index, arg, item);   // 找到的最前面的符号类型
 
+        if (_symbol_t::_st_1 < st)
+            line.remove_prefix(arg.first.size() + index);
+
         line_t lt = line_t::is_blank;
-        if (0 < index) lt = line_t::has_code;
+        if (0 < index)
+            lt = line_t::has_code;
 
         switch (st)
         {
         case _symbol_t::_st_4:
-            _status = status_t::Primitive;
+            _status = status_t::primitive;
             return (lt | _OnPrimitive(line, arg, item));
         case _symbol_t::_st_3:
-            _status = status_t::Quoting;
+            _status = status_t::quoting;
             return (lt | _OnQuoting(line, arg, item));
         case _symbol_t::_st_2:
-            _status = status_t::Annotating;
+            _status = status_t::annotating;
             return (lt | line_t::has_comment | _OnAnnotating(line, arg, item));
         case _symbol_t::_st_1:
             return (lt | line_t::has_comment);
@@ -216,7 +217,7 @@ namespace sc
         if (std::string::npos == index)
             return line_t::has_comment;
 
-        _status = status_t::Normal;
+        _status = status_t::normal;
         line.remove_prefix(arg.second.size() + index);
         return line_t::has_comment | _OnNormal(line, arg, item);
     }
@@ -232,7 +233,7 @@ namespace sc
         if (std::string::npos == index)
             return line_t::has_code;
 
-        _status = status_t::Normal;
+        _status = status_t::normal;
         line.remove_prefix(arg.second.size() + index);
         return line_t::has_code | _OnNormal(line, arg, item);
     }

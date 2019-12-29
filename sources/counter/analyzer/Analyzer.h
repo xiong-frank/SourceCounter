@@ -6,16 +6,7 @@ namespace sc
 
     class Analyzer
     {
-    protected:
-
-        // 定义行状态
-        enum class status_t : unsigned char
-        {
-            Normal,                 // 无状态
-            Quoting,                // 引用中
-            Primitive,              // 引用中
-            Annotating              // 注释中
-        };
+    public:
 
         // 定义行类型
         enum line_t
@@ -25,17 +16,28 @@ namespace sc
             has_comment = 0x02      // 有注释
         };
 
+        // 定义行状态
+        enum class status_t : unsigned char
+        {
+            normal,                 // 无状态
+            quoting,                // 引用中
+            primitive,              // 引用中
+            annotating              // 注释中
+        };
+
         enum class _symbol_t : unsigned char {
             // 默认符号顺序：无、单行注释、多行注释、字符串、原生字符串
             _nothing, _st_1, _st_2, _st_3, _st_4
         };
+
+    protected:
 
         using pair_t = std::pair<std::string, std::string>;
         using list_t = LangRules::list_t;
         using pairs_t = LangRules::pairs_t;
         using item_t = LangRules::item_t;
 
-        status_t _status{ status_t::Normal };
+        status_t _status{ status_t::normal };
 
         virtual unsigned int _OnNormal(std::string_view& line, pair_t& arg, const item_t& item);
         virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const item_t& item);

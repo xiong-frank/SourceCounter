@@ -47,7 +47,7 @@ namespace xf::cmd
     template<> struct _type_mapper<unsigned int> { static constexpr value_t _value = value_t::vt_unsigned; };
     template<> struct _type_mapper<double> { static constexpr value_t _value = value_t::vt_float; };
     template<> struct _type_mapper<string_t> { static constexpr value_t _value = value_t::vt_string; };
-    template<> struct _type_mapper<nullptr_t> { static constexpr value_t _value = value_t::vt_nothing; };
+    template<> struct _type_mapper<std::nullptr_t> { static constexpr value_t _value = value_t::vt_nothing; };
 
     class option_t
     {
@@ -111,7 +111,7 @@ namespace xf::cmd
 
     };  // class option_t
 
-    template<> option_t option_t::make<nullptr_t>(bool u, bool k) { return option_t(u, k); }
+    template<> option_t option_t::make<std::nullptr_t>(bool u, bool k) { return option_t(u, k); }
 
     enum state_t {
         s_ok,                   // ok
@@ -126,7 +126,7 @@ namespace xf::cmd
     };  // enum state_t
 
     template<typename _Type> string_t _to_string(const _Type& v) { return std::to_string(v); }
-    template<> string_t _to_string(const nullptr_t& v) { return ""; }
+    template<> string_t _to_string(const std::nullptr_t& v) { return ""; }
     template<> string_t _to_string(const bool& v) { return (v ? "true" : "false"); }
     template<> string_t _to_string(const string_t& v) { return v; }
 
@@ -134,7 +134,7 @@ namespace xf::cmd
     {
         friend class Parser;
 
-        using variant_t = std::variant<nullptr_t, bool, int, unsigned int, double, string_t>;
+        using variant_t = std::variant<std::nullptr_t, bool, int, unsigned int, double, string_t>;
 
         static string_t _to_string(const variant_t& v)
         {
