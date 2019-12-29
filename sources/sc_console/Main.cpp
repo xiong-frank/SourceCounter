@@ -3,10 +3,10 @@
 
 // #include "third/xf_log_console.h"
 
-#include "config/Option.h"
+#include "Option.h"
 
-#include "counter/FileReport.h"
-#include "counter/Rapporteur.h"
+#include "../sc_analyzer/Counter.h"
+#include "Rapporteur.h"
 
 int main(int argc, char *argv[])
 {

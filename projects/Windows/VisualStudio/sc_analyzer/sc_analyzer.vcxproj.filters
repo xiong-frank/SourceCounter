@@ -38,6 +38,9 @@
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportItem.h">
       <Filter>sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportType.h">
+      <Filter>sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\sources\sc_analyzer\LangRules.cpp">

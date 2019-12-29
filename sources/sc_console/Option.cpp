@@ -6,14 +6,13 @@
 #include "../third/xf_log_console.h"
 #include "../third/xf_cmd_parser.h"
 
-#include "Option.h"
-#include "LangRules.h"
+#include "../sc_analyzer/Counter.h"
 
-#include "FileReport.h"
-#include "Rapporteur.h"
+#include "Option.h"
 
 namespace sc
 {
+    Counter _g_counter;
 
     unsigned int _parser_detail(const std::string& detail)
     {
@@ -184,20 +183,8 @@ namespace sc
         if (result.is_existing("--empty"))
             empty = result.get<bool>("--empty");
 
-        _sc_lrs.Load(ConfigFile());
-        languages = _sc_lrs.GetLanguages();
-
         if (result.is_existing("--languages"))
-        {
             languages = _split_string(result.get<std::string>("--languages"), ',');
-            languages.erase(std::remove_if(languages.begin(), languages.end(), [](const auto& v) { return !_sc_lrs.IsSupport(v); }), languages.end());
-        }
-
-        if (languages.empty())
-        {
-            std::cout << "No valid language name matched." << std::endl;
-            return false;
-        }
 
         if (result.is_existing("--detail"))
         {
@@ -207,20 +194,20 @@ namespace sc
                 detail = order_t::by_nothing;
         }
 
-        _sc_rapporteur.Load(input, languages, exclusion);
+        _g_counter.Load(input, configFile, languages, exclusion, empty);
 
         if (result.is_existing("--thread")) {
             nThread = result.get<unsigned int>("--thread");
             if (0x20 < nThread) nThread = 0x20;
         } else {
-            nThread =   (_sc_rapporteur.Files().size() < 0x0020 ? 0x01
-                       : _sc_rapporteur.Files().size() < 0x0040 ? 0x02
-                       : _sc_rapporteur.Files().size() < 0x0080 ? 0x04
-                       : _sc_rapporteur.Files().size() < 0x0200 ? 0x08
-                       : _sc_rapporteur.Files().size() < 0x0800 ? 0x10 : 0x20);
+            nThread =   (_g_counter.Files().size() < 0x0020 ? 0x01
+                       : _g_counter.Files().size() < 0x0040 ? 0x02
+                       : _g_counter.Files().size() < 0x0080 ? 0x04
+                       : _g_counter.Files().size() < 0x0200 ? 0x08
+                       : _g_counter.Files().size() < 0x0800 ? 0x10 : 0x20);
         }
 
-        if (_sc_rapporteur.Files().size() < nThread) nThread = (unsigned int)(_sc_rapporteur.Files().size());
+        if (_g_counter.Files().size() < nThread) nThread = (unsigned int)(_g_counter.Files().size());
 
         if (result.is_existing("--explain"))
         {
@@ -250,7 +237,7 @@ namespace sc
         std::cout << std::setw(_help::_indent_number) << "languages"     << ": " << xf::log::to_string(languages) << std::endl;
         std::cout << std::setw(_help::_indent_number) << "exclusion"     << ": " << exclusion << std::endl;
         std::cout << std::setw(_help::_indent_number) << "allow empty"   << ": " << (empty ? "true" : "false") << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "files"         << ": " << _sc_rapporteur.Files().size() << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "files"         << ": " << _g_counter.Files().size() << std::endl;
         std::cout << std::setw(_help::_indent_number) << "thread number" << ": " << nThread << std::endl;
         std::cout << std::setw(_help::_indent_number) << "mode"          << ": " << mode << std::endl;
         std::cout << std::setw(_help::_indent_number) << "output"        << ": " << output << std::endl;

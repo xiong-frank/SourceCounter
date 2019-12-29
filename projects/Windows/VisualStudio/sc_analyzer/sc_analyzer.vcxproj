@@ -30,6 +30,7 @@
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportItem.h" />
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\LangRules.h" />
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\Counter.h" />
+    <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\sources\sc_analyzer\analyzer\Analyzer.cpp" />
@@ -91,25 +92,25 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\outputs\</OutDir>
+    <OutDir>$(SolutionDir)..\..\..\outputs\$(ProjectName)\</OutDir>
     <IntDir>$(OutDir)Intermediate\</IntDir>
     <TargetName>sc_analyzer</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\outputs\</OutDir>
+    <OutDir>$(SolutionDir)..\..\..\outputs\$(ProjectName)\</OutDir>
     <IntDir>$(OutDir)Intermediate\</IntDir>
     <TargetName>sc_analyzer</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\outputs\</OutDir>
+    <OutDir>$(SolutionDir)..\..\..\outputs\$(ProjectName)\</OutDir>
     <IntDir>$(OutDir)Intermediate\</IntDir>
     <TargetName>sc_analyzer</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)..\..\..\outputs\</OutDir>
+    <OutDir>$(SolutionDir)..\..\..\outputs\$(ProjectName)\</OutDir>
     <IntDir>$(OutDir)Intermediate\</IntDir>
     <TargetName>sc_analyzer</TargetName>
   </PropertyGroup>

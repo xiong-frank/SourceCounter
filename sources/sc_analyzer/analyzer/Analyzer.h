@@ -8,17 +8,6 @@ namespace sc
     {
     public:
 
-        // 定义行解释模式
-        enum mode_t
-        {
-            cc_is_code      = 0x01,
-            cc_is_comment   = 0x02,
-            mc_is_blank     = 0x04,
-            mc_is_comment   = 0x08,
-            ms_is_blank     = 0x10,
-            ms_is_code      = 0x20
-        };
-
         // 定义行类型
         enum line_t
         {
@@ -43,11 +32,6 @@ namespace sc
 
     protected:
 
-        using pair_t = std::pair<std::string, std::string>;
-        // using list_t = LangRules::list_t;
-        // using pairs_t = LangRules::pairs_t;
-        using item_t = LangRules::item_t;
-
         status_t _status{ status_t::normal };
 
         virtual unsigned int _OnNormal(std::string_view& line, pair_t& arg, const item_t& item);
@@ -57,8 +41,6 @@ namespace sc
 
         virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const item_t& item, bool escape);
         virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item);
-
-        static bool _check_mode(unsigned int m, unsigned int k) { return ((m & k) == k); }
 
     public:
 

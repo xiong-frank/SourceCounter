@@ -9,10 +9,9 @@
 #include "../third/xf_log_console.h"
 #include "../third/json.hpp"
 
-
+#include "ReportType.h"
 #include "ReportItem.h"
 #include "LangRules.h"
-
 #include "analyzer/Analyzer.h"
 
 #include "Counter.h"
@@ -21,22 +20,35 @@ namespace sc
 {
     constexpr unsigned int _indent_number(10);
 
-    unsigned int Counter::Load(const std::string& input, const std::string& config, const std::vector<std::string>& langs, const std::string& excludes, bool allowEmpty)
+    unsigned int Counter::Load(const std::string& input, const std::string& config, const std::vector<std::string>& includes, const std::string& excludes, bool allowEmpty)
     {
         m_Rules.Load(config);
+        auto languages = m_Rules.GetLanguages();
+
+        if (!includes.empty())
+        {
+            languages = includes;
+            languages.erase(std::remove_if(languages.begin(), languages.end(), [this](const auto& v) { return !m_Rules.IsSupport(v); }), languages.end());
+        }
+
+        if (languages.empty())
+        {
+            std::cout << "No valid language name matched." << std::endl;
+            return 0;
+        }
 
         unsigned int n = 0;
         std::filesystem::path p(input);
 
         if (std::filesystem::is_regular_file(p))
         {
-            if (_AddFile(p, langs, excludes, allowEmpty))
+            if (_AddFile(p, languages, excludes, allowEmpty))
                 ++n;
         }
         else
         {
             for (const auto& iter : std::filesystem::recursive_directory_iterator(p))
-                if (iter.is_regular_file() && _AddFile(iter.path(), langs, excludes, allowEmpty))
+                if (iter.is_regular_file() && _AddFile(iter.path(), languages, excludes, allowEmpty))
                     ++n;
         }
 

@@ -6,14 +6,14 @@
 
 #include "../../third/xf_log_console.h"
 
+#include "../ReportType.h"
 #include "../ReportItem.h"
-#include "../LangRules.h"
 
 #include "Analyzer.h"
 
 namespace sc
 {
-    ReportItem Analyzer::Analyze(const std::string& file, const Analyzer::item_t& item, unsigned int mode)
+    ReportItem Analyzer::Analyze(const std::string& file, const item_t& item, unsigned int mode)
     {
         ReportItem report;
 
@@ -130,7 +130,7 @@ namespace sc
     template<typename _KeyT, typename _ValueT> struct is_pair<std::pair<_KeyT, _ValueT>> : public std::true_type { };
 
     template<Analyzer::_symbol_t _Key, typename _Type>
-    void _MatchElement(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, const list_type<_Type>& seq, std::pair<std::string, std::string>& arg) {
+    void _MatchElement(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, const list_type<_Type>& seq, pair_t& arg) {
         for (const auto& v : seq) {
             if constexpr (is_pair<_Type>::value) {
                 if (auto i = _find_front_position(line, index, v.first); i < index) {
@@ -147,7 +147,7 @@ namespace sc
         }
     }
 
-    Analyzer::_symbol_t Analyzer::_search_begin(std::string_view& line, std::size_t& index, Analyzer::pair_t& arg, const Analyzer::item_t& item)
+    Analyzer::_symbol_t Analyzer::_search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item)
     {
         _symbol_t st{ _symbol_t::_nothing };
 
@@ -159,7 +159,7 @@ namespace sc
         return st;
     }
 
-    unsigned int Analyzer::_OnNormal(std::string_view& line, Analyzer::pair_t& arg, const Analyzer::item_t& item)
+    unsigned int Analyzer::_OnNormal(std::string_view& line, pair_t& arg, const item_t& item)
     {
         _remove_space(line);
 
@@ -194,17 +194,17 @@ namespace sc
         }
     }
 
-    unsigned int Analyzer::_OnQuoting(std::string_view& line, Analyzer::pair_t& arg, const Analyzer::item_t& item)
+    unsigned int Analyzer::_OnQuoting(std::string_view& line, pair_t& arg, const item_t& item)
     {
         return _OnQuoting(line, arg, item, true);
     }
 
-    unsigned int Analyzer::_OnPrimitive(std::string_view& line, Analyzer::pair_t& arg, const Analyzer::item_t& item)
+    unsigned int Analyzer::_OnPrimitive(std::string_view& line, pair_t& arg, const item_t& item)
     {
         return _OnQuoting(line, arg, item, false);
     }
 
-    unsigned int Analyzer::_OnAnnotating(std::string_view& line, Analyzer::pair_t& arg, const Analyzer::item_t& item)
+    unsigned int Analyzer::_OnAnnotating(std::string_view& line, pair_t& arg, const item_t& item)
     {
         _remove_space(line);
 
@@ -220,7 +220,7 @@ namespace sc
         return line_t::has_comment | _OnNormal(line, arg, item);
     }
 
-    unsigned int Analyzer::_OnQuoting(std::string_view& line, Analyzer::pair_t& arg, const Analyzer::item_t& item, bool escape)
+    unsigned int Analyzer::_OnQuoting(std::string_view& line, pair_t& arg, const item_t& item, bool escape)
     {
         _remove_space(line);
 
@@ -242,11 +242,11 @@ namespace sc
 #include "ClojureAnalyzer.inl"
 
     template<typename _AnalyzerType>
-    ReportItem _Analyze(const std::string& file, const LangRules::item_t& item, unsigned int mode) {
+    ReportItem _Analyze(const std::string& file, const item_t& item, unsigned int mode) {
         return (_AnalyzerType().Analyze(file, item, mode));
     }
 
-    const std::map<string_type, ReportItem (*)(const std::string&, const LangRules::item_t&, unsigned int), _str_compare> _analyzerMap{
+    const std::map<string_type, ReportItem (*)(const std::string&, const item_t&, unsigned int), _str_compare> _analyzerMap{
         { "C++",            _Analyze<CppAnalyzer> },
         { "CPlusPlus",      _Analyze<CppAnalyzer> },
         { "Clojure",        _Analyze<ClojureAnalyzer> },
@@ -255,7 +255,7 @@ namespace sc
         { "Python",         _Analyze<PythonAnalyzer> }
     };
 
-    ReportItem Analyzer::Analyze(const std::string& file, const std::string& type, const Analyzer::item_t& item, unsigned int mode)
+    ReportItem Analyzer::Analyze(const std::string& file, const std::string& type, const item_t& item, unsigned int mode)
     {
         auto iter = _analyzerMap.find(type);
         if (iter != _analyzerMap.end())

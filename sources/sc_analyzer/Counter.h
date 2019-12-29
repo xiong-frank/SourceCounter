@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+#include "ReportType.h"
+#include "ReportItem.h"
+#include "LangRules.h"
+
 namespace sc
 {
     // 分析线程类
@@ -9,16 +13,14 @@ namespace sc
 
         using FileReport = std::tuple<std::string, std::string, ReportItem>;
 
+        Counter() = default;
+
     private:
 
         std::mutex m_Mutex;
         std::vector<std::pair<std::string, std::string>> m_Files;
         std::vector<FileReport> m_Reports;
         LangRules m_Rules;
-
-        Counter() = default;
-        Counter(const Counter&) = delete;
-        Counter& operator=(const Counter&) = delete;
 
         // 取出一个文件
         bool _PickFile(std::pair<std::string, std::string>& file);
@@ -33,6 +35,7 @@ namespace sc
 
         std::vector<std::string> Files() const;
         std::vector<std::string> Files(const std::string& language) const;
+        const LangRules& Rules() const { return m_Rules; }
 
         // 加载文件
         unsigned int Load(const std::string& input, const std::string& config, const std::vector<std::string>& langs, const std::string& excludes, bool allowEmpty);
@@ -40,10 +43,6 @@ namespace sc
         // 启动线程
         bool Start(unsigned int nThread, unsigned int mode);
 
-        static Counter& Instance() { static Counter _rapporteur; return (_rapporteur); }
-
     };  // class Counter
 
 }   // namespace sc
-
-#define _sc_rapporteur sc::Counter::Instance()

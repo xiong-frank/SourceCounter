@@ -6,6 +6,8 @@
 #include <iostream>
 
 #include "../third/json.hpp"
+
+#include "ReportType.h"
 #include "LangRules.h"
 
 namespace sc
@@ -63,7 +65,7 @@ namespace sc
         return (m_ItemMap.find(name) != m_ItemMap.end());
     }
 
-    const LangRules::item_t* LangRules::GetRule(const string_type& name) const
+    const item_t* LangRules::GetRule(const string_type& name) const
     {
         auto iter = m_ItemMap.find(name);
         if (iter == m_ItemMap.end())
@@ -72,7 +74,7 @@ namespace sc
         return &iter->second;
     }
 
-    LangRules::list_t LangRules::GetLanguages() const
+    list_t LangRules::GetLanguages() const
     {
         list_t result;
         for (const auto& item : m_ItemMap)
