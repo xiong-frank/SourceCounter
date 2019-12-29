@@ -40,6 +40,7 @@ namespace sc
 
     };  // class ReportItem
 
+    /*
     class FileReport
     {
     private:
@@ -64,5 +65,5 @@ namespace sc
         const ReportItem& GetReport() const { return m_Report; }
         ReportItem& GetReport() { return m_Report; }
     };  // class FileReport
-
+    */
 }   // namespace sc

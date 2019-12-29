@@ -6,16 +6,14 @@
 
 #include "../../third/xf_log_console.h"
 
-#include "../../config/Option.h"
-#include "../../config/LangRules.h"
-
-#include "../../counter/FileReport.h"
+#include "../ReportItem.h"
+#include "../LangRules.h"
 
 #include "Analyzer.h"
 
 namespace sc
 {
-    ReportItem Analyzer::Analyze(const std::string& file, const Analyzer::item_t& item)
+    ReportItem Analyzer::Analyze(const std::string& file, const Analyzer::item_t& item, unsigned int mode)
     {
         ReportItem report;
 
@@ -47,12 +45,12 @@ namespace sc
                     {
                     case status_t::quoting:
                     case status_t::primitive:
-                        if (_sc_opt.CheckMode(mode_t::ms_is_code)) report.AddCodes();
-                        if (_sc_opt.CheckMode(mode_t::ms_is_blank)) report.AddBlanks();
+                        if (_check_mode(mode, mode_t::ms_is_code)) report.AddCodes();
+                        if (_check_mode(mode, mode_t::ms_is_blank)) report.AddBlanks();
                         break;
                     case status_t::annotating:
-                        if (_sc_opt.CheckMode(mode_t::mc_is_blank)) report.AddBlanks();
-                        if (_sc_opt.CheckMode(mode_t::mc_is_comment)) report.AddComments();
+                        if (_check_mode(mode, mode_t::mc_is_blank)) report.AddBlanks();
+                        if (_check_mode(mode, mode_t::mc_is_comment)) report.AddComments();
                         break;
                     default:
                         report.AddBlanks();
@@ -61,8 +59,8 @@ namespace sc
                     break;
                 }
                 default:
-                    if (_sc_opt.CheckMode(mode_t::cc_is_code)) report.AddCodes();
-                    if (_sc_opt.CheckMode(mode_t::cc_is_comment)) report.AddComments();
+                    if (_check_mode(mode, mode_t::cc_is_code)) report.AddCodes();
+                    if (_check_mode(mode, mode_t::cc_is_comment)) report.AddComments();
                     break;
                 }
 
@@ -244,11 +242,11 @@ namespace sc
 #include "ClojureAnalyzer.inl"
 
     template<typename _AnalyzerType>
-    ReportItem _Analyze(const std::string& file, const LangRules::item_t& item) {
-        return (_AnalyzerType().Analyze(file, item));
+    ReportItem _Analyze(const std::string& file, const LangRules::item_t& item, unsigned int mode) {
+        return (_AnalyzerType().Analyze(file, item, mode));
     }
 
-    const std::map<string_type, ReportItem (*)(const std::string&, const LangRules::item_t&), _str_compare> _analyzerMap{
+    const std::map<string_type, ReportItem (*)(const std::string&, const LangRules::item_t&, unsigned int), _str_compare> _analyzerMap{
         { "C++",            _Analyze<CppAnalyzer> },
         { "CPlusPlus",      _Analyze<CppAnalyzer> },
         { "Clojure",        _Analyze<ClojureAnalyzer> },
@@ -257,13 +255,13 @@ namespace sc
         { "Python",         _Analyze<PythonAnalyzer> }
     };
 
-    ReportItem Analyzer::Analyze(const std::string& file, const std::string& type)
+    ReportItem Analyzer::Analyze(const std::string& file, const std::string& type, const Analyzer::item_t& item, unsigned int mode)
     {
         auto iter = _analyzerMap.find(type);
         if (iter != _analyzerMap.end())
-            return iter->second(file, *_sc_lrs.GetRule(type));
+            return iter->second(file, item, mode);
         else
-            return Analyzer().Analyze(file, *_sc_lrs.GetRule(type));
+            return Analyzer().Analyze(file, item, mode);
     }
 
 }

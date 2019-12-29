@@ -8,6 +8,17 @@ namespace sc
     {
     public:
 
+        // 定义行解释模式
+        enum mode_t
+        {
+            cc_is_code      = 0x01,
+            cc_is_comment   = 0x02,
+            mc_is_blank     = 0x04,
+            mc_is_comment   = 0x08,
+            ms_is_blank     = 0x10,
+            ms_is_code      = 0x20
+        };
+
         // 定义行类型
         enum line_t
         {
@@ -33,8 +44,8 @@ namespace sc
     protected:
 
         using pair_t = std::pair<std::string, std::string>;
-        using list_t = LangRules::list_t;
-        using pairs_t = LangRules::pairs_t;
+        // using list_t = LangRules::list_t;
+        // using pairs_t = LangRules::pairs_t;
         using item_t = LangRules::item_t;
 
         status_t _status{ status_t::normal };
@@ -47,14 +58,16 @@ namespace sc
         virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const item_t& item, bool escape);
         virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item);
 
+        static bool _check_mode(unsigned int m, unsigned int k) { return ((m & k) == k); }
+
     public:
 
         Analyzer() = default;
         virtual ~Analyzer() { }
 
-        virtual ReportItem Analyze(const std::string& file, const item_t& item);
+        virtual ReportItem Analyze(const std::string& file, const item_t& item, unsigned int mode);
 
-        static ReportItem Analyze(const std::string& file, const std::string& type);
+        static ReportItem Analyze(const std::string& file, const std::string& type, const item_t& item, unsigned int mode);
 
     };  // class Analyzer
 

@@ -1,7 +1,7 @@
 ﻿#include <vector>
 #include <filesystem>
 
-#include "third/xf_log_console.h"
+// #include "third/xf_log_console.h"
 
 #include "config/Option.h"
 

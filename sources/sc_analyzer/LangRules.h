@@ -47,8 +47,8 @@ namespace sc
         using item_t = std::tuple<list_t, pairs_t, pairs_t, pairs_t>;
 
         LangRules();
-        LangRules(const LangRules&) = delete;
-        LangRules& operator = (const LangRules&) = delete;
+        // LangRules(const LangRules&) = delete;
+        // LangRules& operator = (const LangRules&) = delete;
 
     private:
 
@@ -66,12 +66,12 @@ namespace sc
         string_type GetLanguage(const string_type& ext) const;
         const item_t* GetRule(const string_type& name) const;
 
-        static LangRules& Instance() { static LangRules _lrs; return (_lrs); }
+        // static LangRules& Instance() { static LangRules _lrs; return (_lrs); }
 
     };  // class LangRules
 
 }
 
-#define _sc_lrs sc::LangRules::Instance()
+// #define _sc_lrs sc::LangRules::Instance()
 
 #endif // _Language_Rules_H_

@@ -9,8 +9,8 @@
 #include "Option.h"
 #include "LangRules.h"
 
-#include "../counter/FileReport.h"
-#include "../counter/Rapporteur.h"
+#include "FileReport.h"
+#include "Rapporteur.h"
 
 namespace sc
 {

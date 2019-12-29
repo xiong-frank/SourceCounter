@@ -1,71 +1,7 @@
-﻿#include <future>
-#include <regex>
-#include <map>
-#include <list>
-#include <iostream>
-#include <fstream>
-#include <filesystem>
-
-#include "../third/xf_log_console.h"
-#include "../third/json.hpp"
-
-#include "../config/Option.h"
-#include "../config/LangRules.h"
-
-#include "analyzer/Analyzer.h"
-#include "FileReport.h"
 #include "Rapporteur.h"
 
 namespace sc
 {
-    constexpr unsigned int _indent_number(10);
-
-    unsigned int Rapporteur::Load(const std::string& input, const std::vector<std::string>& langs, const std::string& excludes)
-    {
-        unsigned int n = 0;
-        std::filesystem::path p(input);
-
-        if (std::filesystem::is_regular_file(p))
-        {
-            if (_AddFile(p, langs, excludes))
-                ++n;
-        }
-        else
-        {
-            for (const auto& iter : std::filesystem::recursive_directory_iterator(p))
-                if (iter.is_regular_file() && _AddFile(iter.path(), langs, excludes))
-                    ++n;
-        }
-
-        return n;
-    }
-
-    bool Rapporteur::Start(unsigned int nThread)
-    {
-        if (0 < nThread && !m_Files.empty())
-        {
-            if (1 < nThread)
-            {
-                std::vector<std::future<std::vector<FileReport>>> vtr;
-                for (unsigned int i = 0; i < nThread; ++i)
-                    vtr.emplace_back(std::async(std::launch::async, [this]() { return this->_Analyze(); }));
-
-                for (auto& f : vtr)
-                {
-                    auto reports = f.get();
-                    std::copy(reports.begin(), reports.end(), std::back_inserter(m_Reports));
-                }
-            }
-            else
-            {
-                m_Reports = _Analyze();
-            }
-
-            return true;
-        }
-
-        return false;
-    }
 
     class _report_t : public ReportItem {
 
@@ -134,17 +70,17 @@ namespace sc
                 j.emplace("Language", report.GetType());
                 file_report.emplace(report.GetFilePath(), j);
             }
-            
+
             nlohmann::json lang_report;
             for (const auto& [lang, report] : reportMap)
-               lang_report.emplace(lang, _to_json(report));
-            
+                lang_report.emplace(lang, _to_json(report));
+
             nlohmann::json total_report = { { "total.report",    _to_json(total) },
                                             { "language.report", lang_report },
                                             { "file.report",     file_report } };
 
             fout << std::setw(4) << total_report << std::endl;
-            
+
             fout.close();
 
             return true;
@@ -152,7 +88,7 @@ namespace sc
 
         return false;
     }
-    
+
     template<typename _LessType>
     void _InsertReport(std::list<report_pair_t>& reports, const report_pair_t& item, _LessType lt)
     {
@@ -226,86 +162,12 @@ namespace sc
                 << " | " << std::setw(_indent_number) << total.Lines()
                 << " | " << std::setw(_indent_number) << total.Codes()
                 << " | " << std::setw(_indent_number) << total.Comments()
-                << " | " << std::setw(_indent_number) << total.Blanks() 
+                << " | " << std::setw(_indent_number) << total.Blanks()
                 << " |" << std::endl;
             std::cout << "+------------+------------+------------+------------+------------+" << std::endl;
         }
 
         _OutputToFile(filename, m_Reports, reportMap, total);
-    }
-
-    std::vector<std::string> Rapporteur::Files() const
-    {
-        std::vector<std::string> vtr;
-        for (const auto& item : m_Files)
-            vtr.push_back(item.first);
-
-        return vtr;
-    }
-
-    std::vector<std::string> Rapporteur::Files(const std::string& language) const
-    {
-        std::vector<std::string> vtr;
-        for (const auto& [filename, lang] : m_Files)
-            if (lang == language)
-                vtr.push_back(filename);
-
-        return vtr;
-    }
-
-    bool Rapporteur::_PickFile(std::pair<std::string, std::string>& file)
-    {
-        /*
-         * 取文件操作是互斥操作
-         * 同一时刻只能有一个线程可以从文件队列取到文件
-         * 如果队列为空则取文件失败，否则将取到的文件从参数带出，并将该文件从队列移除。
-         */
-        std::lock_guard<std::mutex> automtx(m_Mutex);
-
-        if (m_Files.empty())
-            return false;
-
-        file = m_Files.back();
-        m_Files.pop_back();
-
-        return true;
-    }
-
-    template<typename _Type, typename _Equal>
-    bool _contains(const std::vector<_Type>& vtr, const _Type& value, _Equal equal)
-    {
-        for (const auto& v : vtr)
-            if (equal(v, value))
-                return true;
-
-        return false;
-    }
-
-    bool Rapporteur::_AddFile(const std::filesystem::path& file, const std::vector<std::string>& langs, const std::string& excludes)
-    {
-        if (_sc_opt.AllowEmpty() || 0 < std::filesystem::file_size(file))
-        {
-            if (excludes.empty() || !std::regex_search(file.generic_string(), std::regex(excludes)))
-            {
-                auto t = _sc_lrs.GetLanguage(file.extension().generic_string());
-                if (!t.empty() && (langs.empty() || _contains(langs, t, _StringEqual)))
-                {
-                    m_Files.emplace_back(std::filesystem::canonical(file).generic_string(), t);
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    std::vector<FileReport> Rapporteur::_Analyze()
-    {
-        std::vector<FileReport> vtr;
-        for (std::pair<std::string, std::string> item; _PickFile(item); )
-            vtr.emplace_back(item.first, item.second, Analyzer::Analyze(item.first, item.second));
-
-        return vtr;
     }
 
 }

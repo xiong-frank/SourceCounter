@@ -21,15 +21,6 @@ namespace sc
         order_direction  = 0x08
     };
 
-    enum mode_t {
-        cc_is_code      = 0x01,
-        cc_is_comment   = 0x02,
-        mc_is_blank     = 0x04,
-        mc_is_comment   = 0x08,
-        ms_is_blank     = 0x10,
-        ms_is_code      = 0x20
-    };
-
     class Option final
     {
         std::vector<std::string> languages;
@@ -52,7 +43,6 @@ namespace sc
 
         const std::vector<std::string>& Languages() const { return languages; }
         bool AllowEmpty() const { return empty; }
-        bool CheckMode(unsigned int m) const { return ((mode & m) == m); }
         const std::string& ConfigFile() const { return configFile; }
         const std::string& InputPath() const { return input; }
         const std::string& OutputPath() const { return output; }
