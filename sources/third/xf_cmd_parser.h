@@ -10,6 +10,8 @@ Copyright(c) 2019 Frank Xiong <https://github.com/xf-bnb>.
 
 #pragma once
 
+using namespace std;
+
 #include <functional>
 #include <regex>
 #include <variant>

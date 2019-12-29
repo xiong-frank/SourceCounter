@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace sc
 {
@@ -25,12 +25,14 @@ namespace sc
             has_comment = 0x02      // 有注释
         };
 
+    public:
         enum class _symbol_t : unsigned char {
             // 默认符号顺序：无、单行注释、多行注释、字符串、原生字符串
             _nothing, _st_1, _st_2, _st_3, _st_4
         };
-
         using pair_t = std::pair<std::string, std::string>;
+
+    protected:
         using list_t = LangRules::list_t;
         using pairs_t = LangRules::pairs_t;
         using item_t = LangRules::item_t;

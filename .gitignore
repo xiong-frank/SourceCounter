@@ -28,3 +28,8 @@ bld/
 [Ii]mterdiate/
 
 .vs/
+
+# XCode
+
+Build
+xcuserdata
