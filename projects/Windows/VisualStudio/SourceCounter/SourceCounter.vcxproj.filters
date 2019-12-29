@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="sources">
+      <UniqueIdentifier>{10cc12de-b40e-4c65-83b1-a2141c341e62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\counter">
+      <UniqueIdentifier>{c9da45a6-5a17-440a-b68a-e97032ad7541}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\third">
+      <UniqueIdentifier>{4e7223d1-e14a-43df-8b54-11bf3348b201}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\config">
+      <UniqueIdentifier>{486f8bbc-ad54-41e6-b548-2d8c871a1e87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\counter\analyzer">
+      <UniqueIdentifier>{0559b9d8-a77a-4c34-b0d6-3af6b622ccd9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\sources\config\_build_in.inl">
+      <Filter>sources\config</Filter>
+    </None>
+    <None Include="..\..\..\..\sources\config\_help_info.inl">
+      <Filter>sources\config</Filter>
+    </None>
+    <None Include="..\..\..\..\sources\counter\analyzer\ClojureAnalyzer.inl">
+      <Filter>sources\counter\analyzer</Filter>
+    </None>
+    <None Include="..\..\..\..\sources\counter\analyzer\CppAnalyzer.inl">
+      <Filter>sources\counter\analyzer</Filter>
+    </None>
+    <None Include="..\..\..\..\sources\counter\analyzer\PythonAnalyzer.inl">
+      <Filter>sources\counter\analyzer</Filter>
+    </None>
+    <None Include="..\..\..\..\sources\counter\analyzer\RubyAnalyzer.inl">
+      <Filter>sources\counter\analyzer</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\sources\config\LangRules.cpp">
+      <Filter>sources\config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\sources\config\Option.cpp">
+      <Filter>sources\config</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\sources\counter\analyzer\Analyzer.cpp">
+      <Filter>sources\counter\analyzer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\sources\counter\Rapporteur.cpp">
+      <Filter>sources\counter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\sources\Main.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\sources\config\LangRules.h">
+      <Filter>sources\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\sources\config\Option.h">
+      <Filter>sources\config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\sources\counter\analyzer\Analyzer.h">
+      <Filter>sources\counter\analyzer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\sources\counter\FileReport.h">
+      <Filter>sources\counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\sources\counter\Rapporteur.h">
+      <Filter>sources\counter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\sources\third\json.hpp">
+      <Filter>sources\third</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\sources\third\xf_cmd_parser.h">
+      <Filter>sources\third</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\sources\third\xf_log_console.h">
+      <Filter>sources\third</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

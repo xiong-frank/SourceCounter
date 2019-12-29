@@ -100,7 +100,7 @@ $> ./SourceCounter --input demo.c --mode=63
 ### 如何构建
 * 依赖的第三方库：
   * [NielsLohmann/json](https://github.com/nlohmann/json) 3.7.3
-  * [FrankXiong/CommandLineParser](https://github.com/xf-bnb/CommandLineParser) 1.0.1
+  * [FrankXiong/CommandLineParser](https://github.com/xf-bnb/CommandLineParser) 1.0.3
   * FrankXiong/ConsoleLog 1.0.0
 * 除依赖的外部库以外，项目其他部分完全采用`C++17`编写，理论上支持`C++17`的编译器均可编译，但受于开发环境限制，目前仅在部分机器和编译器上测试通过，以下是经过验证的编译环境：
 
@@ -109,7 +109,6 @@ $> ./SourceCounter --input demo.c --mode=63
   | Windows | VisualStudio2019 16.4 |
   | Mac | GCC 9.2 |
   | Linux | GCC 9.1 |
-* 在 [projects](./projects) 目录中提供了对应环境的工程配置文件(构建成功都将输出在 ./outputs 目录中)：
-  * **Windows:** 打开位于 [projects/VisualStudio/](./projects/VisualStudio/) 目录中的 `.sln`工程文件，在菜单中选择构建即可。
-  * **Mac:** 执行位于 [projects/GCC/Mac/](./projects/GCC/Mac/) 目录中的 `release.sh`/`debug.sh` 脚本即可。
-  * **Linux:** 执行位于 [projects/GCC/Linux/](./projects/GCC/Linux/) 目录中的 `release.sh`/`debug.sh` 脚本即可。
+* 在 [projects](./projects) 目录中按平台和编译器分别都提供了支持的构建工程配置文件，打开对应环境的配置目录，执行对应的构建脚本或运行构建即可，构建成功将在 `./outputs` 目录中输出生成的结果：
+  * **VisualStudio:** 打开 `.sln` 工程文件，在菜单中选择构建生成即可。
+  * **GCC:** 执行对应环境的 `release.sh` / `debug.sh` 脚本即可。
