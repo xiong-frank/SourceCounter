@@ -10,4 +10,9 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\sources\sc_test\test_main.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>

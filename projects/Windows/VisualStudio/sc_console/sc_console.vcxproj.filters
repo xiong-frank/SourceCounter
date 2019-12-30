@@ -15,17 +15,11 @@
     <ClCompile Include="..\..\..\..\sources\sc_console\Main.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\sources\sc_console\Option.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\sources\sc_console\Rapporteur.cpp">
       <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\sources\sc_console\Option.h">
-      <Filter>sources</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\sources\sc_console\Rapporteur.h">
       <Filter>sources</Filter>
     </ClInclude>

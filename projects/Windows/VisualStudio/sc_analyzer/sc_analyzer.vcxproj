@@ -27,7 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\analyzer\Analyzer.h" />
-    <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportItem.h" />
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\LangRules.h" />
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\Counter.h" />
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportType.h" />

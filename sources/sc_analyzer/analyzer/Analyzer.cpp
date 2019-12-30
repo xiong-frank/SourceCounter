@@ -7,15 +7,15 @@
 #include "../../third/xf_log_console.h"
 
 #include "../ReportType.h"
-#include "../ReportItem.h"
 
 #include "Analyzer.h"
 
 namespace sc
 {
-    ReportItem Analyzer::Analyze(const std::string& file, const item_t& item, unsigned int mode)
+    report_t Analyzer::Analyze(const std::string& file, const item_t& item, unsigned int mode)
     {
-        ReportItem report;
+        report_t report{ 0, 0, 0, 0 };
+        auto& [lines, codes, comments, blanks] = report;
 
         std::ifstream fin(file);
         if (fin.is_open())
@@ -34,10 +34,10 @@ namespace sc
                 switch (_status_funcs[static_cast<unsigned int>(_status)](view, arg, item))
                 {
                 case line_t::has_code:
-                    report.AddCodes();
+                    ++codes;
                     break;
                 case line_t::has_comment:
-                    report.AddComments();
+                    ++comments;
                     break;
                 case line_t::is_blank:
                 {
@@ -45,37 +45,36 @@ namespace sc
                     {
                     case status_t::quoting:
                     case status_t::primitive:
-                        if (_check_mode(mode, mode_t::ms_is_code)) report.AddCodes();
-                        if (_check_mode(mode, mode_t::ms_is_blank)) report.AddBlanks();
+                        if (_check_mode(mode, mode_t::ms_is_code)) ++codes;
+                        if (_check_mode(mode, mode_t::ms_is_blank)) ++blanks;
                         break;
                     case status_t::annotating:
-                        if (_check_mode(mode, mode_t::mc_is_blank)) report.AddBlanks();
-                        if (_check_mode(mode, mode_t::mc_is_comment)) report.AddComments();
+                        if (_check_mode(mode, mode_t::mc_is_blank)) ++blanks;
+                        if (_check_mode(mode, mode_t::mc_is_comment)) ++comments;
                         break;
                     default:
-                        report.AddBlanks();
+                        ++blanks;
                         break;
                     }
                     break;
                 }
                 default:
-                    if (_check_mode(mode, mode_t::cc_is_code)) report.AddCodes();
-                    if (_check_mode(mode, mode_t::cc_is_comment)) report.AddComments();
+                    if (_check_mode(mode, mode_t::cc_is_code)) ++codes;
+                    if (_check_mode(mode, mode_t::cc_is_comment)) ++comments;
                     break;
                 }
 
-                report.AddLines();
+                ++lines;
             }
 
             fin.close();
         }
         else
         {
-            _xflog("open file \"%s\" failed !", file.c_str());
+            _xflog(R"(open file "%s" failed !)", file.c_str());
         }
 
-        _xflog("file: %s, lines: %d, codes: %d, blanks: %d, comments: %d"
-               , file.c_str(), report.Lines(), report.Codes(), report.Comments(), report.Blanks());
+        _xflog("file: %s, lines: %d, codes: %d, blanks: %d, comments: %d", file.c_str(), lines, codes, comments, blanks);
 
         return report;
     }
@@ -242,11 +241,11 @@ namespace sc
 #include "ClojureAnalyzer.inl"
 
     template<typename _AnalyzerType>
-    ReportItem _Analyze(const std::string& file, const item_t& item, unsigned int mode) {
+    report_t _Analyze(const std::string& file, const item_t& item, unsigned int mode) {
         return (_AnalyzerType().Analyze(file, item, mode));
     }
 
-    const std::map<string_type, ReportItem (*)(const std::string&, const item_t&, unsigned int), _str_compare> _analyzerMap{
+    const std::map<string_type, report_t (*)(const std::string&, const item_t&, unsigned int), _str_compare> _analyzerMap{
         { "C++",            _Analyze<CppAnalyzer> },
         { "CPlusPlus",      _Analyze<CppAnalyzer> },
         { "Clojure",        _Analyze<ClojureAnalyzer> },
@@ -255,7 +254,7 @@ namespace sc
         { "Python",         _Analyze<PythonAnalyzer> }
     };
 
-    ReportItem Analyzer::Analyze(const std::string& file, const std::string& type, const item_t& item, unsigned int mode)
+    report_t Analyzer::Analyze(const std::string& file, const std::string& type, const item_t& item, unsigned int mode)
     {
         auto iter = _analyzerMap.find(type);
         if (iter != _analyzerMap.end())

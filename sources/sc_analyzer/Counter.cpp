@@ -2,15 +2,12 @@
 #include <regex>
 #include <map>
 #include <list>
-#include <iostream>
-#include <fstream>
 #include <filesystem>
 
 #include "../third/xf_log_console.h"
 #include "../third/json.hpp"
 
 #include "ReportType.h"
-#include "ReportItem.h"
 #include "LangRules.h"
 #include "analyzer/Analyzer.h"
 
@@ -18,22 +15,46 @@
 
 namespace sc
 {
-    constexpr unsigned int _indent_number(10);
-
-    unsigned int Counter::Load(const std::string& input, const std::string& config, const std::vector<std::string>& includes, const std::string& excludes, bool allowEmpty)
+    template<typename _Type, typename _Equal>
+    bool _contains(const std::vector<_Type>& vtr, const _Type& value, _Equal equal)
     {
-        m_Rules.Load(config);
-        auto languages = m_Rules.GetLanguages();
+        for (const auto& v : vtr)
+            if (equal(v, value))
+                return true;
 
-        if (!includes.empty())
+        return false;
+    }
+
+    bool _AddFile(pairs_t& files, const std::filesystem::path& file, const LangRules& rules, const list_t& includes, const std::string& excludes, bool allowEmpty)
+    {
+        if (allowEmpty || 0 < std::filesystem::file_size(file))
         {
-            languages = includes;
-            languages.erase(std::remove_if(languages.begin(), languages.end(), [this](const auto& v) { return !m_Rules.IsSupport(v); }), languages.end());
+            if (excludes.empty() || !std::regex_search(file.generic_string(), std::regex(excludes)))
+            {
+                auto t = rules.GetLanguage(file.extension().generic_string());
+                if (!t.empty() && (includes.empty() || _contains(includes, t, _StringEqual)))
+                {
+                    files.emplace_back(std::filesystem::canonical(file).generic_string(), t);
+                    return true;
+                }
+            }
         }
 
-        if (languages.empty())
+        return false;
+    }
+
+    unsigned int Counter::Load(const std::string& input, const std::string& config, const std::string& excludes, std::vector<std::string>& includes, bool allowEmpty)
+    {
+        m_Rules.Load(config);
+
+        if (includes.empty())
+            includes = m_Rules.GetLanguages();
+        else
+            includes.erase(std::remove_if(includes.begin(), includes.end(), [this](const auto& v) { return !m_Rules.IsSupport(v); }), includes.end());
+
+        if (includes.empty())
         {
-            std::cout << "No valid language name matched." << std::endl;
+            _xflog("No valid language name matched.");
             return 0;
         }
 
@@ -42,13 +63,13 @@ namespace sc
 
         if (std::filesystem::is_regular_file(p))
         {
-            if (_AddFile(p, languages, excludes, allowEmpty))
+            if (_AddFile(m_Files, p, m_Rules, includes, excludes, allowEmpty))
                 ++n;
         }
         else
         {
             for (const auto& iter : std::filesystem::recursive_directory_iterator(p))
-                if (iter.is_regular_file() && _AddFile(iter.path(), languages, excludes, allowEmpty))
+                if (iter.is_regular_file() && _AddFile(m_Files, iter.path(), m_Rules, includes, excludes, allowEmpty))
                     ++n;
         }
 
@@ -61,7 +82,7 @@ namespace sc
         {
             if (1 < nThread)
             {
-                std::vector<std::future<std::vector<FileReport>>> vtr;
+                std::vector<std::future<std::vector<file_report_t>>> vtr;
                 for (unsigned int i = 0; i < nThread; ++i)
                     vtr.emplace_back(std::async(std::launch::async, [this, mode]() { return this->_Analyze(mode); }));
 
@@ -119,37 +140,9 @@ namespace sc
         return true;
     }
 
-    template<typename _Type, typename _Equal>
-    bool _contains(const std::vector<_Type>& vtr, const _Type& value, _Equal equal)
+    std::vector<Counter::file_report_t> Counter::_Analyze(unsigned int mode)
     {
-        for (const auto& v : vtr)
-            if (equal(v, value))
-                return true;
-
-        return false;
-    }
-
-    bool Counter::_AddFile(const std::filesystem::path& file, const std::vector<std::string>& langs, const std::string& excludes, bool allowEmpty)
-    {
-        if (allowEmpty || 0 < std::filesystem::file_size(file))
-        {
-            if (excludes.empty() || !std::regex_search(file.generic_string(), std::regex(excludes)))
-            {
-                auto t = m_Rules.GetLanguage(file.extension().generic_string());
-                if (!t.empty() && (langs.empty() || _contains(langs, t, _StringEqual)))
-                {
-                    m_Files.emplace_back(std::filesystem::canonical(file).generic_string(), t);
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    std::vector<Counter::FileReport> Counter::_Analyze(unsigned int mode)
-    {
-        std::vector<FileReport> vtr;
+        std::vector<file_report_t> vtr;
         for (std::pair<std::string, std::string> item; _PickFile(item); )
             vtr.emplace_back(item.first, item.second, Analyzer::Analyze(item.first, item.second, *m_Rules.GetRule(item.second), mode));
 

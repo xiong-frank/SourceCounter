@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 namespace sc
 {
@@ -16,7 +16,7 @@ namespace sc
     using pairs_t = pair_list<string_type, string_type>;
     using item_t = std::tuple<list_t, pairs_t, pairs_t, pairs_t>;
 
-    // ×Ô¶¨Òå×Ö·û´®ºöÂÔ´óĞ¡Ğ´±È½Ïº¯Êı
+    // è‡ªå®šä¹‰å­—ç¬¦ä¸²å¿½ç•¥å¤§å°å†™æ¯”è¾ƒå‡½æ•°
     inline int _StringIgnoreCaseCompare(const char* a, const char* b) {
         for (; ; ++a, ++b) {
             unsigned char x = *a;
@@ -35,14 +35,14 @@ namespace sc
         return (a.size() == b.size()) && (_StringIgnoreCaseCompare(a.c_str(), b.c_str()) == 0);
     }
 
-    // ºöÂÔ´óĞ¡Ğ´µÄ×Ö·û´®±È½Ïº¯ÊıÀàĞÍ
+    // å¿½ç•¥å¤§å°å†™çš„å­—ç¬¦ä¸²æ¯”è¾ƒå‡½æ•°ç±»å‹
     struct _str_compare {
         bool operator()(const string_type& a, const string_type& b) const {
             return (_StringLessThan(a, b));
         }
     };
 
-    // ¶¨ÒåĞĞ½âÊÍÄ£Ê½
+    // å®šä¹‰è¡Œè§£é‡Šæ¨¡å¼
     enum mode_t
     {
         cc_is_code      = 0x01,
@@ -55,4 +55,11 @@ namespace sc
 
     inline bool _check_mode(unsigned int m, unsigned int k) { return ((m & k) == k); }
 
+    // å®šä¹‰ç»Ÿè®¡è¡Œæ•°ç±»å‹
+    enum count_t {
+        // ç‰©ç†è¡Œæ•°ã€æœ‰æ•ˆä»£ç è¡Œæ•°ã€æ³¨é‡Šè¡Œæ•°ã€ç©ºç™½è¡Œæ•°
+        _lines, _codes, _comments, _blanks
+    };
+
+    using report_t = std::tuple<unsigned int, unsigned int, unsigned int, unsigned int>;
 }

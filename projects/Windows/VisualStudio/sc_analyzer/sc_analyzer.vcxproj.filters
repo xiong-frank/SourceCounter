@@ -35,9 +35,6 @@
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\Counter.h">
       <Filter>sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportItem.h">
-      <Filter>sources</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportType.h">
       <Filter>sources</Filter>
     </ClInclude>

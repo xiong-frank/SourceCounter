@@ -158,11 +158,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\sources\sc_console\Main.cpp" />
-    <ClCompile Include="..\..\..\..\sources\sc_console\Option.cpp" />
     <ClCompile Include="..\..\..\..\sources\sc_console\Rapporteur.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\sources\sc_console\Option.h" />
     <ClInclude Include="..\..\..\..\sources\sc_console\Rapporteur.h" />
   </ItemGroup>
   <ItemGroup>

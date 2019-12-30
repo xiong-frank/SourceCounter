@@ -2,8 +2,6 @@
 
 namespace sc
 {
-    class ReportItem;
-
     class Analyzer
     {
     public:
@@ -47,9 +45,9 @@ namespace sc
         Analyzer() = default;
         virtual ~Analyzer() { }
 
-        virtual ReportItem Analyze(const std::string& file, const item_t& item, unsigned int mode);
+        virtual report_t Analyze(const std::string& file, const item_t& item, unsigned int mode);
 
-        static ReportItem Analyze(const std::string& file, const std::string& type, const item_t& item, unsigned int mode);
+        static report_t Analyze(const std::string& file, const std::string& type, const item_t& item, unsigned int mode);
 
     };  // class Analyzer
 

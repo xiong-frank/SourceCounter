@@ -1,22 +1,20 @@
-﻿#include <vector>
-#include <filesystem>
+﻿#include <chrono>
+#include <iostream>
 
-// #include "third/xf_log_console.h"
-
-#include "Option.h"
-
-#include "../sc_analyzer/Counter.h"
 #include "Rapporteur.h"
 
 int main(int argc, char *argv[])
 {
-    if (sc::Option::ParseCommandLine(argv, argc))
+    sc::params_t opt;
+    sc::Counter _counter;
+
+    if (sc::ParseCommandLine(_counter, opt, argv, argc))
     {
         auto t1 = std::chrono::system_clock::now();
-        _sc_rapporteur.Start(_sc_opt.ThreadNumber());
+        _counter.Start(opt.nThread, opt.mode);
         auto t2 = std::chrono::system_clock::now();
 
-        _sc_rapporteur.Report(_sc_opt.OutputPath(), _sc_opt.Detail());
+        sc::OutputReport(_counter.Reports(), opt.output, opt.detail);
 
         std::cout << "spend time: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " ms" << std::endl;
     }
