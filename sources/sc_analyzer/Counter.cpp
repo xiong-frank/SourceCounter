@@ -1,6 +1,5 @@
 ﻿#include <future>
 #include <regex>
-#include <map>
 #include <list>
 #include <filesystem>
 
@@ -43,21 +42,8 @@ namespace sc
         return false;
     }
 
-    unsigned int Counter::Load(const std::string& input, const std::string& config, const std::string& excludes, std::vector<std::string>& includes, bool allowEmpty)
+    unsigned int Counter::LoadFile(const std::string& input, const std::string& excludes, std::vector<std::string>& includes, bool allowEmpty)
     {
-        m_Rules.Load(config);
-
-        if (includes.empty())
-            includes = m_Rules.GetLanguages();
-        else
-            includes.erase(std::remove_if(includes.begin(), includes.end(), [this](const auto& v) { return !m_Rules.IsSupport(v); }), includes.end());
-
-        if (includes.empty())
-        {
-            _xflog("No valid language name matched.");
-            return 0;
-        }
-
         unsigned int n = 0;
         std::filesystem::path p(input);
 

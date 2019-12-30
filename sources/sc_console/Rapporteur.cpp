@@ -1,4 +1,4 @@
-#include <map>
+Ôªø#include <map>
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -11,7 +11,7 @@
 
 namespace sc
 {
-
+    
     unsigned int _parser_detail(const std::string& detail)
     {
         if (detail.empty())
@@ -85,6 +85,33 @@ namespace sc
     }
 
 #include "_help_info.inl"
+    
+    inline std::string _make_detail_text(unsigned int detail)
+    {
+        std::string _order_str[]{ "", "by_nothing", "by_lines", "by_codes", "by_comments", "by_blanks", "by_files" };
+
+        unsigned int order = (order_t::order_mask & detail);
+        if (order_t::no_show == order || order_t::by_nothing == order)
+            return _order_str[order];
+
+        std::string _dir_str[]{ "ascending", "descending" };
+
+        return _order_str[order] + " | " + _dir_str[(order_t::order_direction & detail) >> 3];
+    }
+
+    inline void Explain(const Counter& counter, const params_t& opt)
+    {
+        std::cout << std::setw(_help::_indent_number) << "input"        << ": " << opt.input << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "config file"  << ": " << opt.configFile << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "languages"    << ": " << xf::log::to_string(opt.languages) << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "exclusion"    << ": " << opt.exclusion << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "allow empty"  << ": " << (opt.allowEmpty ? "true" : "false") << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "files"        << ": " << counter.Files().size() << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "thread count" << ": " << opt.nThread << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "mode"         << ": " << opt.mode << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "output"       << ": " << opt.output << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "detail"       << ": " << _make_detail_text(opt.detail) << std::endl;
+    }
 
     bool _parse_option(Counter& counter, params_t& opt, const xf::cmd::result_t& result)
     {
@@ -127,22 +154,27 @@ namespace sc
         if (result.is_existing("--empty"))
             opt.allowEmpty = result.get<bool>("--empty");
 
-        if (result.is_existing("--languages"))
-            opt.languages = _split_string(result.get<std::string>("--languages"), ',');
+        counter.LoadConfig(opt.configFile);
 
-        if (result.is_existing("--detail"))
+        if (result.is_existing("--languages"))
         {
-            if (result.has_value("--detail"))
-                opt.detail = _parser_detail(result.get<std::string>("--detail"));
-            else
-                opt.detail = order_t::by_nothing;
+            opt.languages = _split_string(result.get<std::string>("--languages"), ',');
+            opt.languages.erase(std::remove_if(opt.languages.begin(), opt.languages.end(),
+                                               [&counter](const auto& v) { return !counter.Rules().IsSupport(v); }),
+                                opt.languages.end());
+        }
+        else
+        {
+            opt.languages = counter.Rules().GetLanguages();
         }
 
-        if (0 == counter.Load(opt.input, opt.configFile, opt.exclusion, opt.languages, opt.allowEmpty))
+        if (opt.languages.empty())
         {
-            std::cout << "counter load failed: No valid files are recognized by options." << std::endl;
+            std::cout << "No valid language name matched." << std::endl;
             return false;
         }
+
+        counter.LoadFile(opt.input, opt.exclusion, opt.languages, opt.allowEmpty);
 
         if (result.is_existing("--thread")) {
             opt.nThread = result.get<unsigned int>("--thread");
@@ -158,6 +190,14 @@ namespace sc
 
         if (counter.Files().size() < opt.nThread)
             opt.nThread = (unsigned int)(counter.Files().size());
+
+        if (result.is_existing("--detail"))
+        {
+            if (result.has_value("--detail"))
+                opt.detail = _parser_detail(result.get<std::string>("--detail"));
+            else
+                opt.detail = order_t::by_nothing;
+        }
 
         if (result.is_existing("--explain"))
         {
@@ -222,34 +262,9 @@ namespace sc
         return _parse_option(counter, opt, parser.Parse(argv, 1, argc));
     }
 
-    inline std::string _make_detail_text(unsigned int detail)
-    {
-        std::string _order_str[]{ "", "by_nothing", "by_lines", "by_codes", "by_comments", "by_blanks", "by_files" };
-
-        unsigned int order = (order_t::order_mask & detail);
-        if (order_t::no_show == order || order_t::by_nothing == order)
-            return _order_str[order];
-
-        std::string _dir_str[]{ "ascending", "descending" };
-
-        return _order_str[order] + " | " + _dir_str[(order_t::order_direction & detail) >> 3];
-    }
-
-    void Explain(const Counter& counter, const params_t& opt)
-    {
-        std::cout << std::setw(_help::_indent_number) << "input"        << ": " << opt.input << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "config file"  << ": " << opt.configFile << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "languages"    << ": " << xf::log::to_string(opt.languages) << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "exclusion"    << ": " << opt.exclusion << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "allow empty"  << ": " << (opt.allowEmpty ? "true" : "false") << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "files"        << ": " << counter.Files().size() << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "thread count" << ": " << opt.nThread << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "mode"         << ": " << opt.mode << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "output"       << ": " << opt.output << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "detail"       << ": " << _make_detail_text(opt.detail) << std::endl;
-    }
-
     using view_report_t = std::tuple<report_t, unsigned int>;
+    using report_map_t = std::map<std::string, view_report_t>;
+    using report_pair_t = report_map_t::value_type;
 
     inline view_report_t& operator += (view_report_t& x, const report_t& y)
     {
@@ -277,15 +292,12 @@ namespace sc
     inline bool _LessThanByComments(const view_report_t& a, const view_report_t& b) { return _LessThan<count_t::_comments>(a, b); }
     inline bool _LessThanByBlanks(const view_report_t& a, const view_report_t& b) { return _LessThan<count_t::_blanks>(a, b); }
 
-    using report_map_t = std::map<std::string, view_report_t>;
-    using report_pair_t = report_map_t::value_type;
-
     inline nlohmann::json _to_json(const report_t& report)
     {
         return { {"Lines", std::get<count_t::_lines>(report) },
-                 {"Codes", std::get<count_t::_lines>(report) },
-                 {"Blanks", std::get<count_t::_lines>(report) },
-                 {"Comments", std::get<count_t::_lines>(report) } };
+                 {"Codes", std::get<count_t::_codes>(report) },
+                 {"Blanks", std::get<count_t::_blanks>(report) },
+                 {"Comments", std::get<count_t::_comments>(report) } };
     }
 
     inline nlohmann::json _to_json(const view_report_t& report)
@@ -338,7 +350,7 @@ namespace sc
         reports.insert(iter, item);
     }
 
-    constexpr unsigned int _cell_width(10); // µ•‘™∏ÒøÌ∂»
+    constexpr unsigned int _cell_width(10); // ÂçïÂÖÉÊ†ºÂÆΩÂ∫¶
 
     inline void _ShowReport(const view_report_t& report)
     {

@@ -1,4 +1,4 @@
-
+﻿
 class ClojureAnalyzer : public Analyzer
 {
 

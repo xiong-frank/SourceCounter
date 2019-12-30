@@ -1,8 +1,7 @@
-﻿#include <fstream>
-#include <functional>
-#include <string>
+﻿#include <functional>
 #include <vector>
 #include <map>
+#include <fstream>
 
 #include "../../third/xf_log_console.h"
 
@@ -74,7 +73,7 @@ namespace sc
             _xflog(R"(open file "%s" failed !)", file.c_str());
         }
 
-        _xflog("file: %s, lines: %d, codes: %d, blanks: %d, comments: %d", file.c_str(), lines, codes, comments, blanks);
+        _xflog("file: %s, lines: %d, codes: %d, comments: %d, blanks: %d", file.c_str(), lines, codes, comments, blanks);
 
         return report;
     }

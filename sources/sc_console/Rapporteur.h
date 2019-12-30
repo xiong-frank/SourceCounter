@@ -1,12 +1,10 @@
-#pragma once
-
-#include <vector>
+ï»¿#pragma once
 
 #include "../sc_analyzer/Counter.h"
 
 namespace sc
 {
-
+    // å®šä¹‰æŠ¥å‘Šæ˜¾ç¤ºè§„åˆ™
     enum order_t
     {
         no_show         = 0x00,
@@ -37,13 +35,10 @@ namespace sc
 
     };  // struct params_t
 
-    // ´ÓÃüÁîĞĞ²ÎÊı½âÎöÅäÖÃ
+    // ä»å‘½ä»¤è¡Œå‚æ•°è§£æé…ç½®
     bool ParseCommandLine(Counter& counter, params_t& opt, const char* const* argv, unsigned int argc);
 
-    // ¶Ô±¨¸æ½á¹û½øĞĞÊä³ö
+    // å¯¹æŠ¥å‘Šç»“æœè¿›è¡Œè¾“å‡º
     void OutputReport(const std::vector<Counter::file_report_t>& reports, const std::string& filename, unsigned int detail);
-
-    // ¶ÔÅäÖÃ½øĞĞ½âÊÍ
-    void Explain(const Counter& counter, const params_t& opt);
 
 }

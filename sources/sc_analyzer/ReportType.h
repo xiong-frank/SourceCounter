@@ -62,4 +62,5 @@ namespace sc
     };
 
     using report_t = std::tuple<unsigned int, unsigned int, unsigned int, unsigned int>;
+
 }

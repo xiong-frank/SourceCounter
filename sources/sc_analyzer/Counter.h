@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <map>
+#include <vector>
 #include <mutex>
 
 #include "ReportType.h"
@@ -37,8 +38,11 @@ namespace sc
         const std::vector<file_report_t>& Reports() const { return m_Reports; }
         const LangRules& Rules() const { return m_Rules; }
 
+        // 加载配置
+        bool LoadConfig(const std::string& filename) { return m_Rules.Load(filename); }
+
         // 加载文件
-        unsigned int Load(const std::string& input, const std::string& config, const std::string& excludes, std::vector<std::string>& includes, bool allowEmpty);
+        unsigned int LoadFile(const std::string& input, const std::string& excludes, std::vector<std::string>& includes, bool allowEmpty);
 
         // 启动线程
         bool Start(unsigned int nThread, unsigned int mode);

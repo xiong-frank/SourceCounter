@@ -1,4 +1,4 @@
-
+﻿
 class CppAnalyzer : public Analyzer
 {
     static constexpr std::size_t _delimiter_length{ 0x10 };
