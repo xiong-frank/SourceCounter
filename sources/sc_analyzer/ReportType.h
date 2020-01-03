@@ -50,7 +50,9 @@ namespace sc
         mc_is_blank     = 0x04,
         mc_is_comment   = 0x08,
         ms_is_blank     = 0x10,
-        ms_is_code      = 0x20
+        ms_is_code      = 0x20,
+        default_mode = (cc_is_code | cc_is_comment | mc_is_blank | ms_is_code),
+        full_mode = (cc_is_code | cc_is_comment | mc_is_blank | mc_is_comment | ms_is_blank | ms_is_code)
     };
 
     inline bool _check_mode(unsigned int m, unsigned int k) { return ((m & k) == k); }

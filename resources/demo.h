@@ -1,27 +1,24 @@
-#include <stdio.h>
+#pragma once
 
-// mian "function"
-int main(/* args */)
+// define class
+class user
 {
-    /* 
+    int age;
+    std::string name;
     
-     * print "something"
-     */
-    printf("hi, /*
-
-    */ //");
-    /* */ int a = 0;
-    /*
+    void setAge(int n /* = 10 */) { age = n; }
+    void setName(const std::string& str)
+    {
+        // the size of "str" must be less 20
+        name = str;        
+    }
     
-    */ int b = 1; /*
+    void show() const
+    { /*
+       * print name
+       */ std::cout << "name:" << name << std::endl; /*
+       * print age 
+       */ std::cout << "age(/*1-80*/):" << age << std::endl;
+    }
     
-    */
-    
-    return 0; // return
-}
-
-/* 
-"
-
-" 
-*/
+};  // class user

@@ -11,15 +11,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\sources\sc_test\test_utils.cpp">
+    <ClCompile Include="..\..\..\..\sources\sc_test\test_analyzer.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\sources\sc_test\test_analyzer.cpp">
+    <ClCompile Include="..\..\..\..\sources\sc_test\test_counter.cpp">
       <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\sources\sc_test\test_utils.h">
+    <ClInclude Include="..\..\..\..\sources\sc_test\test_main.cpp">
       <Filter>sources</Filter>
     </ClInclude>
   </ItemGroup>
