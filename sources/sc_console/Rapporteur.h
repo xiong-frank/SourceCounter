@@ -30,7 +30,7 @@ namespace sc
         std::string exclusion;
         unsigned int nThread{ 0 };
         unsigned int detail{ 0 };
-        unsigned int mode{ mode_t::mc_is_blank | mode_t::ms_is_code | mode_t::cc_is_code };
+        unsigned int mode{ mode_t::default_mode };
         bool allowEmpty{ true };
 
     };  // struct params_t

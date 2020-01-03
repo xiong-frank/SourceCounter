@@ -19,7 +19,7 @@ Copyright(c) 2019 Frank Xiong <https://github.com/xf-bnb>.
 namespace xf::test
 {
 
-    const char* version() { return "1.0.0"; }
+    inline const char* version() { return "1.0.0"; }
 
     class TestInfo final
     {
@@ -83,7 +83,7 @@ namespace xf::test
 
     };  // class TestInfo
 
-    void Show(unsigned int n, unsigned int success, unsigned int failed, long long ms)
+    inline void Show(std::size_t n, std::size_t success, std::size_t failed, std::size_t ms)
     {
         std::cout << std::endl;
         std::cout << "==> Ran " << (success + failed) << " tests from " << n << " test case: "
@@ -91,7 +91,7 @@ namespace xf::test
         std::cout << "==> Test Result: " << (0 == failed ? "SUCCESS." : "FAIL.") << std::endl;
     }
 
-    bool Assert(bool result, const std::string& name, const std::string& file, unsigned int line)
+    inline bool Assert(bool result, const std::string& name, const std::string& file, unsigned int line)
     {
         TestInfo::Instance().Counting(result);
         if (!result)
@@ -103,7 +103,7 @@ namespace xf::test
         return result;
     }
 
-    void Test()
+    inline void Test()
     {
         auto t1 = std::chrono::system_clock::now();
         TestInfo::Instance().Run();
@@ -113,7 +113,7 @@ namespace xf::test
         Show(TestInfo::Instance().Size(), success, failed, std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
     }
 
-    void Test(const std::vector<std::string>& names)
+    inline void Test(const std::vector<std::string>& names)
     {
         auto t1 = std::chrono::system_clock::now();
         for (const auto& name : names)
