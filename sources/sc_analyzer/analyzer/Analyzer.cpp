@@ -11,7 +11,7 @@
 
 namespace sc
 {
-    report_t Analyzer::Analyze(const std::string& file, const item_t& item, unsigned int mode)
+    report_t Analyzer::Analyze(const std::string& file, const syntax_t& item, unsigned int mode)
     {
         report_t report{ 0, 0, 0, 0 };
         auto& [lines, codes, comments, blanks] = report;
@@ -19,11 +19,11 @@ namespace sc
         std::ifstream fin(file);
         if (fin.is_open())
         {
-            std::function<unsigned int(std::string_view&, pair_t&, const item_t&)> _status_funcs[4]{
-                [this](std::string_view& line, pair_t& arg, const item_t& item) { return this->_OnNormal(line, arg, item); },
-                [this](std::string_view& line, pair_t& arg, const item_t& item) { return this->_OnQuoting(line, arg, item); },
-                [this](std::string_view& line, pair_t& arg, const item_t& item) { return this->_OnPrimitive(line, arg, item); },
-                [this](std::string_view& line, pair_t& arg, const item_t& item) { return this->_OnAnnotating(line, arg, item); }
+            std::function<unsigned int(std::string_view&, pair_t&, const syntax_t&)> _status_funcs[4]{
+                [this](std::string_view& line, pair_t& arg, const syntax_t& item) { return this->_OnNormal(line, arg, item); },
+                [this](std::string_view& line, pair_t& arg, const syntax_t& item) { return this->_OnQuoting(line, arg, item); },
+                [this](std::string_view& line, pair_t& arg, const syntax_t& item) { return this->_OnPrimitive(line, arg, item); },
+                [this](std::string_view& line, pair_t& arg, const syntax_t& item) { return this->_OnAnnotating(line, arg, item); }
             };
 
             pair_t arg;
@@ -145,7 +145,7 @@ namespace sc
         }
     }
 
-    Analyzer::_symbol_t Analyzer::_search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item)
+    Analyzer::_symbol_t Analyzer::_search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const syntax_t& item)
     {
         _symbol_t st{ _symbol_t::_nothing };
 
@@ -157,7 +157,7 @@ namespace sc
         return st;
     }
 
-    unsigned int Analyzer::_OnNormal(std::string_view& line, pair_t& arg, const item_t& item)
+    unsigned int Analyzer::_OnNormal(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
         _remove_space(line);
 
@@ -192,17 +192,17 @@ namespace sc
         }
     }
 
-    unsigned int Analyzer::_OnQuoting(std::string_view& line, pair_t& arg, const item_t& item)
+    unsigned int Analyzer::_OnQuoting(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
         return _OnQuoting(line, arg, item, true);
     }
 
-    unsigned int Analyzer::_OnPrimitive(std::string_view& line, pair_t& arg, const item_t& item)
+    unsigned int Analyzer::_OnPrimitive(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
         return _OnQuoting(line, arg, item, false);
     }
 
-    unsigned int Analyzer::_OnAnnotating(std::string_view& line, pair_t& arg, const item_t& item)
+    unsigned int Analyzer::_OnAnnotating(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
         _remove_space(line);
 
@@ -218,7 +218,7 @@ namespace sc
         return line_t::has_comment | _OnNormal(line, arg, item);
     }
 
-    unsigned int Analyzer::_OnQuoting(std::string_view& line, pair_t& arg, const item_t& item, bool escape)
+    unsigned int Analyzer::_OnQuoting(std::string_view& line, pair_t& arg, const syntax_t& item, bool escape)
     {
         _remove_space(line);
 
@@ -240,11 +240,11 @@ namespace sc
 #include "ClojureAnalyzer.inl"
 
     template<typename _AnalyzerType>
-    report_t _Analyze(const std::string& file, const item_t& item, unsigned int mode) {
+    report_t _Analyze(const std::string& file, const syntax_t& item, unsigned int mode) {
         return (_AnalyzerType().Analyze(file, item, mode));
     }
 
-    const std::map<string_type, report_t (*)(const std::string&, const item_t&, unsigned int), _str_compare> _analyzerMap{
+    const std::map<string_type, report_t (*)(const std::string&, const syntax_t&, unsigned int), _str_compare> _analyzerMap{
         { "C++",            _Analyze<CppAnalyzer> },
         { "CPlusPlus",      _Analyze<CppAnalyzer> },
         { "Clojure",        _Analyze<ClojureAnalyzer> },
@@ -253,7 +253,7 @@ namespace sc
         { "Python",         _Analyze<PythonAnalyzer> }
     };
 
-    report_t Analyzer::Analyze(const std::string& file, const std::string& type, const item_t& item, unsigned int mode)
+    report_t Analyzer::Analyze(const std::string& file, const std::string& type, const syntax_t& item, unsigned int mode)
     {
         auto iter = _analyzerMap.find(type);
         if (iter != _analyzerMap.end())

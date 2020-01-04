@@ -11,7 +11,7 @@ inline auto _make_symbol_for_ruby(const std::string& a, const std::string& b)
     return symbols;
 }
 
-const std::map<std::string, std::tuple<std::vector<std::string>, item_t>> _build_in_map{
+const std::map<std::string, std::tuple<std::vector<std::string>, syntax_t>> _build_in_map{
     /*
     {"Java",        { { ".java" },
                       { { "//" },

@@ -32,22 +32,22 @@ namespace sc
 
         status_t _status{ status_t::normal };
 
-        virtual unsigned int _OnNormal(std::string_view& line, pair_t& arg, const item_t& item);
-        virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const item_t& item);
-        virtual unsigned int _OnPrimitive(std::string_view& line, pair_t& arg, const item_t& item);
-        virtual unsigned int _OnAnnotating(std::string_view& line, pair_t& arg, const item_t& item);
+        virtual unsigned int _OnNormal(std::string_view& line, pair_t& arg, const syntax_t& item);
+        virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const syntax_t& item);
+        virtual unsigned int _OnPrimitive(std::string_view& line, pair_t& arg, const syntax_t& item);
+        virtual unsigned int _OnAnnotating(std::string_view& line, pair_t& arg, const syntax_t& item);
 
-        virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const item_t& item, bool escape);
-        virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item);
+        virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const syntax_t& item, bool escape);
+        virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const syntax_t& item);
 
     public:
 
         Analyzer() = default;
         virtual ~Analyzer() { }
 
-        virtual report_t Analyze(const std::string& file, const item_t& item, unsigned int mode);
+        virtual report_t Analyze(const std::string& file, const syntax_t& item, unsigned int mode);
 
-        static report_t Analyze(const std::string& file, const std::string& type, const item_t& item, unsigned int mode);
+        static report_t Analyze(const std::string& file, const std::string& type, const syntax_t& item, unsigned int mode);
 
     };  // class Analyzer
 

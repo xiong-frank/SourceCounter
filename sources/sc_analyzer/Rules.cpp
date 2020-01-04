@@ -6,24 +6,24 @@
 #include "../third/json.hpp"
 
 #include "ReportType.h"
-#include "LangRules.h"
+#include "Rules.h"
 
 namespace sc
 {
 
 #include "_build_in.inl"
 
-    LangRules::LangRules()
+    Rules::Rules()
     {
         for (const auto& [name, item] : _build_in_map)
         {
-            m_ItemMap.emplace(name, std::get<1>(item));
+            m_SyntaxMap.emplace(name, std::get<1>(item));
             for (auto ext : std::get<0>(item))
                 m_ExtMap.emplace(ext, name);
         }
     }
 
-    bool LangRules::Load(const string_type& filename)
+    bool Rules::Load(const string_type& filename)
     {
         std::ifstream fin(filename);
         if (fin.is_open())
@@ -32,7 +32,7 @@ namespace sc
             fin >> rules;
 
             std::set<string_type> _build_in_languages;
-            for (const auto& item : m_ItemMap)
+            for (const auto& item : m_SyntaxMap)
                 _build_in_languages.emplace(item.first);
 
             for (const auto& [key, value] : rules.items())
@@ -45,7 +45,7 @@ namespace sc
                 else
                 {
                     const auto& options = value.at("options");
-                    m_ItemMap.emplace(key, item_t{ options[0], options[1], options[2], options[3] });
+                    m_SyntaxMap.emplace(key, syntax_t{ options[0], options[1], options[2], options[3] });
                 }
 
                 for (const auto& ext : value.at("extensions"))
@@ -58,30 +58,30 @@ namespace sc
         return false;
     }
 
-    bool LangRules::IsSupport(const string_type& name) const
+    bool Rules::IsSupport(const string_type& name) const
     {
-        return (m_ItemMap.find(name) != m_ItemMap.end());
+        return (m_SyntaxMap.find(name) != m_SyntaxMap.end());
     }
 
-    const item_t* LangRules::GetRule(const string_type& name) const
+    const syntax_t* Rules::GetSyntax(const string_type& name) const
     {
-        auto iter = m_ItemMap.find(name);
-        if (iter == m_ItemMap.end())
+        auto iter = m_SyntaxMap.find(name);
+        if (iter == m_SyntaxMap.end())
             return nullptr;
 
         return &iter->second;
     }
 
-    list_t LangRules::GetLanguages() const
+    list_t Rules::GetLanguages() const
     {
         list_t result;
-        for (const auto& item : m_ItemMap)
+        for (const auto& item : m_SyntaxMap)
             result.emplace_back(item.first);
 
         return result;
     }
 
-    string_type LangRules::GetLanguage(const string_type& ext) const
+    string_type Rules::GetLanguage(const string_type& ext) const
     {
         if (auto iter = m_ExtMap.find(ext); iter != m_ExtMap.end())
             return iter->second;
@@ -89,13 +89,13 @@ namespace sc
         return string_type();
     }
 
-    void LangRules::_AddItem(const string_type& name, const item_t& item, const list_type<string_type>& exts)
+    void Rules::_AddRule(const string_type& name, const syntax_t& item, const list_type<string_type>& exts)
     {
-        auto iter = m_ItemMap.find(name);
-        if (iter != m_ItemMap.end())
-            m_ItemMap.erase(iter);
+        auto iter = m_SyntaxMap.find(name);
+        if (iter != m_SyntaxMap.end())
+            m_SyntaxMap.erase(iter);
 
-        m_ItemMap.emplace(name, item);
+        m_SyntaxMap.emplace(name, item);
         for (auto ext : exts)
             m_ExtMap[ext] = name;
     }

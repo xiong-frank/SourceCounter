@@ -27,13 +27,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\analyzer\Analyzer.h" />
-    <ClInclude Include="..\..\..\..\sources\sc_analyzer\LangRules.h" />
+    <ClInclude Include="..\..\..\..\sources\sc_analyzer\Rules.h" />
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\Counter.h" />
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\sources\sc_analyzer\analyzer\Analyzer.cpp" />
-    <ClCompile Include="..\..\..\..\sources\sc_analyzer\LangRules.cpp" />
+    <ClCompile Include="..\..\..\..\sources\sc_analyzer\Rules.cpp" />
     <ClCompile Include="..\..\..\..\sources\sc_analyzer\Counter.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -14,7 +14,6 @@ namespace sc
     using list_t = list_type<string_type>;
     using pair_t = std::pair<string_type, string_type>;
     using pairs_t = pair_list<string_type, string_type>;
-    using item_t = std::tuple<list_t, pairs_t, pairs_t, pairs_t>;
 
     // 自定义字符串忽略大小写比较函数
     inline int _StringIgnoreCaseCompare(const char* a, const char* b) {
@@ -63,6 +62,7 @@ namespace sc
         _lines, _codes, _comments, _blanks
     };
 
+    using syntax_t = std::tuple<list_t, pairs_t, pairs_t, pairs_t>;
     using report_t = std::tuple<unsigned int, unsigned int, unsigned int, unsigned int>;
 
 }

@@ -9,7 +9,7 @@ public:
 
 protected:
 
-    virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item)
+    virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const syntax_t& item)
     {
         _symbol_t st{ _symbol_t::_nothing };
 

@@ -5,7 +5,7 @@
 #include <mutex>
 
 #include "ReportType.h"
-#include "LangRules.h"
+#include "Rules.h"
 
 namespace sc
 {
@@ -23,7 +23,7 @@ namespace sc
         std::mutex m_Mutex;
         std::vector<file_report_t> m_Reports;
         pairs_t m_Files;
-        LangRules m_Rules;
+        Rules m_Rules;
 
         // 取出一个文件
         bool _PickFile(std::pair<std::string, std::string>& file);
@@ -36,7 +36,7 @@ namespace sc
         std::vector<std::string> Files() const;
         std::vector<std::string> Files(const std::string& language) const;
         const std::vector<file_report_t>& Reports() const { return m_Reports; }
-        const LangRules& Rules() const { return m_Rules; }
+        const Rules& Rules() const { return m_Rules; }
 
         // 加载配置
         bool LoadConfig(const std::string& filename) { return m_Rules.Load(filename); }

@@ -7,7 +7,7 @@
 #include "../third/json.hpp"
 
 #include "ReportType.h"
-#include "LangRules.h"
+#include "Rules.h"
 #include "analyzer/Analyzer.h"
 
 #include "Counter.h"
@@ -24,7 +24,7 @@ namespace sc
         return false;
     }
 
-    bool _AddFile(pairs_t& files, const std::filesystem::path& file, const LangRules& rules, const list_t& includes, const std::string& excludes, bool allowEmpty)
+    bool _AddFile(pairs_t& files, const std::filesystem::path& file, const Rules& rules, const list_t& includes, const std::string& excludes, bool allowEmpty)
     {
         if (allowEmpty || 0 < std::filesystem::file_size(file))
         {
@@ -130,7 +130,7 @@ namespace sc
     {
         std::vector<file_report_t> vtr;
         for (std::pair<std::string, std::string> item; _PickFile(item); )
-            vtr.emplace_back(item.first, item.second, Analyzer::Analyze(item.first, item.second, *m_Rules.GetRule(item.second), mode));
+            vtr.emplace_back(item.first, item.second, Analyzer::Analyze(item.first, item.second, *m_Rules.GetSyntax(item.second), mode));
 
         return vtr;
     }

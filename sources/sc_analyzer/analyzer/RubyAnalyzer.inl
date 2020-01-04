@@ -7,7 +7,7 @@ public:
 
 protected:
 
-    virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const item_t& item)
+    virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const syntax_t& item)
     {
         _symbol_t st{ _symbol_t::_nothing };
 
@@ -24,7 +24,7 @@ protected:
         return st;
     }
 
-    virtual unsigned int _OnAnnotating(std::string_view& line, pair_t& arg, const item_t& item)
+    virtual unsigned int _OnAnnotating(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
         if (0 == line.compare(0, arg.second.size(), arg.second))
         {

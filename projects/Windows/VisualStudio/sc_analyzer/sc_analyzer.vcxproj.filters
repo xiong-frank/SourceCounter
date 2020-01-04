@@ -26,9 +26,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\sources\sc_analyzer\LangRules.h">
-      <Filter>sources</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\analyzer\Analyzer.h">
       <Filter>sources\analyzer</Filter>
     </ClInclude>
@@ -38,15 +35,18 @@
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportType.h">
       <Filter>sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\sources\sc_analyzer\Rules.h">
+      <Filter>sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\sources\sc_analyzer\LangRules.cpp">
-      <Filter>sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\sources\sc_analyzer\analyzer\Analyzer.cpp">
       <Filter>sources\analyzer</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\sources\sc_analyzer\Counter.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\sources\sc_analyzer\Rules.cpp">
       <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>
