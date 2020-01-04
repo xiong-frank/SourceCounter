@@ -42,7 +42,7 @@ namespace sc
         return false;
     }
 
-    unsigned int Counter::LoadFile(const std::string& input, const std::string& excludes, std::vector<std::string>& includes, bool allowEmpty)
+    unsigned int Counter::LoadFile(const std::string& input, const std::string& excludes, list_t& includes, bool allowEmpty)
     {
         unsigned int n = 0;
         std::filesystem::path p(input);
@@ -89,26 +89,26 @@ namespace sc
         return false;
     }
 
-    std::vector<std::string> Counter::Files() const
+    list_t Counter::Files() const
     {
-        std::vector<std::string> vtr;
+        list_t result;
         for (const auto& item : m_Files)
-            vtr.push_back(item.first);
+            result.push_back(item.first);
 
-        return vtr;
+        return result;
     }
 
-    std::vector<std::string> Counter::Files(const std::string& language) const
+    list_t Counter::Files(const std::string& language) const
     {
-        std::vector<std::string> vtr;
+        list_t result;
         for (const auto& [filename, lang] : m_Files)
             if (lang == language)
-                vtr.push_back(filename);
+                result.push_back(filename);
 
-        return vtr;
+        return result;
     }
 
-    bool Counter::_PickFile(std::pair<std::string, std::string>& file)
+    bool Counter::_PickFile(pair_t& file)
     {
         /*
          * 取文件操作是互斥操作
@@ -129,7 +129,7 @@ namespace sc
     std::vector<Counter::file_report_t> Counter::_Analyze(unsigned int mode)
     {
         std::vector<file_report_t> vtr;
-        for (std::pair<std::string, std::string> item; _PickFile(item); )
+        for (pair_t item; _PickFile(item); )
             vtr.emplace_back(item.first, item.second, Analyzer::Analyze(item.first, item.second, *m_Rules.GetSyntax(item.second), mode));
 
         return vtr;

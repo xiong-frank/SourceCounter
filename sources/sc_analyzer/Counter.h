@@ -26,15 +26,15 @@ namespace sc
         Rules m_Rules;
 
         // 取出一个文件
-        bool _PickFile(std::pair<std::string, std::string>& file);
+        bool _PickFile(pair_t& file);
 
         // 分析线程函数
         std::vector<file_report_t> _Analyze(unsigned int mode);
 
     public:
 
-        std::vector<std::string> Files() const;
-        std::vector<std::string> Files(const std::string& language) const;
+        list_t Files() const;
+        list_t Files(const std::string& language) const;
         const std::vector<file_report_t>& Reports() const { return m_Reports; }
         const Rules& Rules() const { return m_Rules; }
 
@@ -42,7 +42,7 @@ namespace sc
         bool LoadConfig(const std::string& filename) { return m_Rules.Load(filename); }
 
         // 加载文件
-        unsigned int LoadFile(const std::string& input, const std::string& excludes, std::vector<std::string>& includes, bool allowEmpty);
+        unsigned int LoadFile(const std::string& input, const std::string& excludes, list_t& includes, bool allowEmpty);
 
         // 启动线程
         bool Start(unsigned int nThread, unsigned int mode);
