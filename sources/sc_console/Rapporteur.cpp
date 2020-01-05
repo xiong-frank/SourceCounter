@@ -160,12 +160,12 @@ namespace sc
         {
             opt.languages = _split_string(result.get<std::string>("--languages"), ',');
             opt.languages.erase(std::remove_if(opt.languages.begin(), opt.languages.end(),
-                                               [&counter](const auto& v) { return !counter.Rules().IsSupport(v); }),
+                                               [&counter](const auto& v) { return !counter.RuleMgr().Contains(v); }),
                                 opt.languages.end());
         }
         else
         {
-            opt.languages = counter.Rules().GetLanguages();
+            opt.languages = counter.RuleMgr().GetLanguages();
         }
 
         if (opt.languages.empty())

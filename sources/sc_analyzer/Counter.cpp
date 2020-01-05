@@ -7,7 +7,7 @@
 #include "../third/json.hpp"
 
 #include "ReportType.h"
-#include "Rules.h"
+#include "RuleManager.h"
 #include "analyzer/Analyzer.h"
 
 #include "Counter.h"
@@ -24,16 +24,18 @@ namespace sc
         return false;
     }
 
-    bool _AddFile(pairs_t& files, const std::filesystem::path& file, const Rules& rules, const list_t& includes, const std::string& excludes, bool allowEmpty)
+    bool _AddFile(std::vector<Counter::item_t>& items, const RuleManager& mgr, const std::filesystem::path& file, const list_t& includes, const std::string& excludes, bool allowEmpty)
     {
         if (allowEmpty || 0 < std::filesystem::file_size(file))
         {
             if (excludes.empty() || !std::regex_search(file.generic_string(), std::regex(excludes)))
             {
-                auto t = rules.GetLanguage(file.extension().generic_string());
-                if (!t.empty() && (includes.empty() || _contains(includes, t, _StringEqual)))
+                const auto& name = mgr.GetLanguage(file.extension().generic_string());
+                if (!name.empty() && (includes.empty() || _contains(includes, name, _StringEqual)))
                 {
-                    files.emplace_back(std::filesystem::canonical(file).generic_string(), t);
+                    const auto& [type, syntax] = mgr.GetRule(name);
+                    items.emplace_back(std::filesystem::canonical(file).generic_string(), name, type, syntax);
+
                     return true;
                 }
             }
@@ -49,13 +51,13 @@ namespace sc
 
         if (std::filesystem::is_regular_file(p))
         {
-            if (_AddFile(m_Files, p, m_Rules, includes, excludes, allowEmpty))
+            if (_AddFile(m_Items, m_RuleMgr, p, includes, excludes, allowEmpty))
                 ++n;
         }
         else
         {
             for (const auto& iter : std::filesystem::recursive_directory_iterator(p))
-                if (iter.is_regular_file() && _AddFile(m_Files, iter.path(), m_Rules, includes, excludes, allowEmpty))
+                if (iter.is_regular_file() && _AddFile(m_Items, m_RuleMgr, iter.path(), includes, excludes, allowEmpty))
                     ++n;
         }
 
@@ -64,7 +66,7 @@ namespace sc
 
     bool Counter::Start(unsigned int nThread, unsigned int mode)
     {
-        if (0 < nThread && !m_Files.empty())
+        if (0 < nThread && !m_Items.empty())
         {
             if (1 < nThread)
             {
@@ -89,11 +91,23 @@ namespace sc
         return false;
     }
 
+    std::vector<Counter::file_report_t> Counter::_Analyze(unsigned int mode)
+    {
+        std::vector<file_report_t> vtr;
+        for (unsigned int i = m_ItemIndex++; i < m_Items.size(); i = m_ItemIndex++)
+        {
+            const auto& [file, name, type, syntax] = m_Items[i];
+            vtr.emplace_back(file, name, Analyzer::Analyze(file, type, syntax, mode));
+        }
+
+        return vtr;
+    }
+
     list_t Counter::Files() const
     {
         list_t result;
-        for (const auto& item : m_Files)
-            result.push_back(item.first);
+        for (const auto& item : m_Items)
+            result.push_back(std::get<0>(item));
 
         return result;
     }
@@ -101,38 +115,11 @@ namespace sc
     list_t Counter::Files(const std::string& language) const
     {
         list_t result;
-        for (const auto& [filename, lang] : m_Files)
-            if (lang == language)
-                result.push_back(filename);
+        for (const auto& [file, name, _ignore1, _ignore2] : m_Items)
+            if (name == language)
+                result.push_back(file);
 
         return result;
-    }
-
-    bool Counter::_PickFile(pair_t& file)
-    {
-        /*
-         * 取文件操作是互斥操作
-         * 同一时刻只能有一个线程可以从文件队列取到文件
-         * 如果队列为空则取文件失败，否则将取到的文件从参数带出，并将该文件从队列移除。
-         */
-        std::lock_guard<std::mutex> automtx(m_Mutex);
-
-        if (m_Files.empty())
-            return false;
-
-        file = m_Files.back();
-        m_Files.pop_back();
-
-        return true;
-    }
-
-    std::vector<Counter::file_report_t> Counter::_Analyze(unsigned int mode)
-    {
-        std::vector<file_report_t> vtr;
-        for (pair_t item; _PickFile(item); )
-            vtr.emplace_back(item.first, item.second, Analyzer::Analyze(item.first, item.second, *m_Rules.GetSyntax(item.second), mode));
-
-        return vtr;
     }
 
 }

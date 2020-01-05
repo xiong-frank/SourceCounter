@@ -9,9 +9,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\sources\sc_analyzer\_build_in.inl">
-      <Filter>sources</Filter>
-    </None>
     <None Include="..\..\..\..\sources\sc_analyzer\analyzer\ClojureAnalyzer.inl">
       <Filter>sources\analyzer</Filter>
     </None>
@@ -35,7 +32,7 @@
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportType.h">
       <Filter>sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\sources\sc_analyzer\Rules.h">
+    <ClInclude Include="..\..\..\..\sources\sc_analyzer\RuleManager.h">
       <Filter>sources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -46,7 +43,7 @@
     <ClCompile Include="..\..\..\..\sources\sc_analyzer\Counter.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\sources\sc_analyzer\Rules.cpp">
+    <ClCompile Include="..\..\..\..\sources\sc_analyzer\RuleManager.cpp">
       <Filter>sources</Filter>
     </ClCompile>
   </ItemGroup>

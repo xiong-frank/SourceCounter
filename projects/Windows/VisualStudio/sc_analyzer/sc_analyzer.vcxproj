@@ -23,17 +23,16 @@
     <None Include="..\..\..\..\sources\sc_analyzer\analyzer\CppAnalyzer.inl" />
     <None Include="..\..\..\..\sources\sc_analyzer\analyzer\PythonAnalyzer.inl" />
     <None Include="..\..\..\..\sources\sc_analyzer\analyzer\RubyAnalyzer.inl" />
-    <None Include="..\..\..\..\sources\sc_analyzer\_build_in.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\analyzer\Analyzer.h" />
-    <ClInclude Include="..\..\..\..\sources\sc_analyzer\Rules.h" />
+    <ClInclude Include="..\..\..\..\sources\sc_analyzer\RuleManager.h" />
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\Counter.h" />
     <ClInclude Include="..\..\..\..\sources\sc_analyzer\ReportType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\sources\sc_analyzer\analyzer\Analyzer.cpp" />
-    <ClCompile Include="..\..\..\..\sources\sc_analyzer\Rules.cpp" />
+    <ClCompile Include="..\..\..\..\sources\sc_analyzer\RuleManager.cpp" />
     <ClCompile Include="..\..\..\..\sources\sc_analyzer\Counter.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -2,10 +2,10 @@
 
 #include <map>
 #include <vector>
-#include <mutex>
+#include <atomic>
 
 #include "ReportType.h"
-#include "Rules.h"
+#include "RuleManager.h"
 
 namespace sc
 {
@@ -15,18 +15,17 @@ namespace sc
     public:
 
         using file_report_t = std::tuple<std::string, std::string, report_t>;
+        using item_t = std::tuple<std::string, const std::string&, const std::string&, const syntax_t&>;
 
         Counter() = default;
 
     private:
 
-        std::mutex m_Mutex;
         std::vector<file_report_t> m_Reports;
-        pairs_t m_Files;
-        Rules m_Rules;
+        std::vector<item_t> m_Items;
+        RuleManager m_RuleMgr;
 
-        // 取出一个文件
-        bool _PickFile(pair_t& file);
+        std::atomic_uint m_ItemIndex{ 0 };
 
         // 分析线程函数
         std::vector<file_report_t> _Analyze(unsigned int mode);
@@ -36,10 +35,10 @@ namespace sc
         list_t Files() const;
         list_t Files(const std::string& language) const;
         const std::vector<file_report_t>& Reports() const { return m_Reports; }
-        const Rules& Rules() const { return m_Rules; }
+        const RuleManager& RuleMgr() const { return m_RuleMgr; }
 
         // 加载配置
-        bool LoadConfig(const std::string& filename) { return m_Rules.Load(filename); }
+        bool LoadConfig(const std::string& filename) { return m_RuleMgr.Load(filename); }
 
         // 加载文件
         unsigned int LoadFile(const std::string& input, const std::string& excludes, list_t& includes, bool allowEmpty);
