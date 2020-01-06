@@ -38,7 +38,7 @@ namespace sc
         const RuleManager& RuleMgr() const { return m_RuleMgr; }
 
         // 加载配置
-        bool LoadConfig(const std::string& filename) { return m_RuleMgr.Load(filename); }
+        bool LoadConfig(const std::string& filename, std::string& error) { return m_RuleMgr.Load(filename, error); }
 
         // 加载文件
         unsigned int LoadFile(const std::string& input, const std::string& excludes, list_t& includes, bool allowEmpty);

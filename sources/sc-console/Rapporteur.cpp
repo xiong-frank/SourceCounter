@@ -155,7 +155,12 @@ namespace sc
         if (result.is_existing("--empty"))
             opt.allowEmpty = result.get<bool>("--empty");
 
-        counter.LoadConfig(opt.configFile);
+        std::string error;
+        if (!counter.LoadConfig(opt.configFile, error))
+        {
+            std::cout << "load rule config failed: " << error << std::endl;
+            return false;
+        }
 
         if (result.is_existing("--languages"))
         {

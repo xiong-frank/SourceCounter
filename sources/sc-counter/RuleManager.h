@@ -26,7 +26,7 @@ namespace sc
         RuleManager();
 
         // 从文件加载配置
-        bool Load(const string_type& filename);
+        bool Load(const string_type& filename, string_type& error);
 
         // 获取支持的语言列表
         list_t GetLanguages() const;

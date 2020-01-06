@@ -22,11 +22,16 @@ namespace sc
         }
     }
 
-    bool RuleManager::Load(const string_type& filename)
+    bool RuleManager::Load(const string_type& filename, string_type& error)
     {
         std::ifstream fin(filename);
-        if (fin.is_open())
+        if (!fin.is_open())
         {
+            error = R"(open config file: ")" + filename + R"(" failed.)";
+            return false;
+        }
+
+        try {
             nlohmann::json rules;
             fin >> rules;
 
@@ -48,13 +53,14 @@ namespace sc
                     m_ExtMap[ext.get<std::string>()] = key;
                 */
             }
-
-            fin.close();
-
-            return true;
+        } catch (const std::exception & ex) {
+            error = "read rule config occur exception:\n";
+            error.append(ex.what());
+            return false;
         }
 
-        return false;
+        fin.close();
+        return true;
     }
 
     list_t RuleManager::GetLanguages() const

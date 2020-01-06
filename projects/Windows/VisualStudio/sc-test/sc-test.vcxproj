@@ -153,6 +153,7 @@
     <ClCompile Include="..\..\..\..\sources\sc-test\test_analyzer.cpp" />
     <ClCompile Include="..\..\..\..\sources\sc-test\test_counter.cpp" />
     <ClCompile Include="..\..\..\..\sources\sc-test\test_main.cpp" />
+    <ClCompile Include="..\..\..\..\sources\sc-test\test_rule_mgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\sc-counter\sc-counter.vcxproj">
