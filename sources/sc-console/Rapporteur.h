@@ -1,6 +1,6 @@
-﻿#pragma once
+#pragma once
 
-#include "../sc_analyzer/Counter.h"
+#include "../sc-counter/Counter.h"
 
 namespace sc
 {
