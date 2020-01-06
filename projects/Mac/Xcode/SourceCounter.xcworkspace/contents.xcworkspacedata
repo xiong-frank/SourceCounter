@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:sc-test/sc-test.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:sc-console/sc-console.xcodeproj">
    </FileRef>
 </Workspace>
