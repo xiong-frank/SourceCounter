@@ -7,21 +7,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\sources\sc_console\_help_info.inl">
-      <Filter>sources</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\..\sources\sc_console\Main.cpp">
+    <ClCompile Include="..\..\..\..\sources\sc-test\test_analyzer.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\sources\sc_console\Rapporteur.cpp">
+    <ClCompile Include="..\..\..\..\sources\sc-test\test_counter.cpp">
       <Filter>sources</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\..\sources\sc_console\Rapporteur.h">
+    <ClCompile Include="..\..\..\..\sources\sc-test\test_main.cpp">
       <Filter>sources</Filter>
-    </ClInclude>
+    </ClCompile>
   </ItemGroup>
 </Project>

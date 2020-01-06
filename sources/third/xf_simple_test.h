@@ -83,7 +83,7 @@ namespace xf::test
 
     };  // class TestInfo
 
-    inline void Show(std::size_t n, std::size_t success, std::size_t failed, std::size_t ms)
+    inline void Show(std::size_t n, std::size_t success, std::size_t failed, std::uint64_t ms)
     {
         std::cout << std::endl;
         std::cout << "==> Ran " << (success + failed) << " tests from " << n << " test case: "

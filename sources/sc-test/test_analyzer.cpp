@@ -1,8 +1,8 @@
 ﻿#include "../third/xf_simple_test.h"
 
-#include "../sc_analyzer/ReportType.h"
-#include "../sc_analyzer/RuleManager.h"
-#include "../sc_analyzer/analyzer/Analyzer.h"
+#include "../sc-counter/ReportType.h"
+#include "../sc-counter/RuleManager.h"
+#include "../sc-counter/analyzer/Analyzer.h"
 
 namespace sc::test
 {
