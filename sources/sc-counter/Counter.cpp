@@ -1,4 +1,4 @@
-﻿#include <future>
+#include <future>
 #include <regex>
 #include <list>
 #include <filesystem>
@@ -97,7 +97,7 @@ namespace sc
         for (unsigned int i = m_ItemIndex++; i < m_Items.size(); i = m_ItemIndex++)
         {
             const auto& [file, name, type, syntax] = m_Items[i];
-            vtr.emplace_back(file, name, Analyzer::Analyze(file, type, syntax, mode));
+            vtr.emplace_back(file, name, sc::Analyzer::Analyze(file, type, syntax, mode));
         }
 
         return vtr;

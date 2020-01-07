@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:sc-counter/sc-counter.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:sc-test/sc-test.xcodeproj">
    </FileRef>
    <FileRef

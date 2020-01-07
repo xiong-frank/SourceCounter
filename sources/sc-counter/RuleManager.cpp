@@ -1,4 +1,4 @@
-﻿#include <map>
+#include <map>
 #include <set>
 #include <vector>
 #include <fstream>
@@ -96,7 +96,7 @@ namespace sc
     inline auto _make_symbol_for_ruby(const std::string& a, const std::string& b)
     {
         pairs_t symbols{ { R"(%q")", R"(")"} };
-        for (auto i = 0; i < a.size(); ++i)
+        for (std::size_t i = 0; i < a.size(); ++i)
         {
             symbols.emplace_back(string_type("%q").append(1, a[i]), string_type(1, b[i]));
             symbols.emplace_back(string_type("%Q").append(1, a[i]), string_type(1, b[i]));
