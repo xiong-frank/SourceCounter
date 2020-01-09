@@ -246,9 +246,7 @@ namespace sc
 
     const std::map<string_type, report_t (*)(const std::string&, const syntax_t&, unsigned int), _str_compare> _analyzerMap{
         { "C++",            _Analyze<CppAnalyzer> },
-        { "CPlusPlus",      _Analyze<CppAnalyzer> },
         { "Clojure",        _Analyze<ClojureAnalyzer> },
-        { "ClojureScript",  _Analyze<ClojureAnalyzer> },
         { "Ruby",           _Analyze<RubyAnalyzer> },
         { "Python",         _Analyze<PythonAnalyzer> }
     };
