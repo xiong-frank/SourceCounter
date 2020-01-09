@@ -11,23 +11,20 @@ namespace sc::test
 {
 
     template<typename _Type>
-    bool IsEqual(const std::vector<_Type>& a, const std::vector<_Type>& b)
+    bool IsEqual(const _Type& a, const _Type& b)
     {
-        if (a.size() != b.size())
-            return false;
-
-        std::set<_Type> x(a.begin(), a.end()), y(b.begin(), b.end());
-        return (x.size() == y.size() &&
-                std::equal(x.begin(), x.end(), y.begin()));
+        return (a.size() == b.size() && std::equal(a.begin(), a.end(), b.begin()));
     }
 
-    bool IsEqual(const sc::RuleManager& mgr, const std::string& name, const std::string& type, const sc::list_t& exts, const sc::syntax_t& syntax)
+    inline bool IsEqual(const sc::RuleManager& mgr, const std::string& name, const std::string& type, const std::set<std::string>& exts, const sc::syntax_t& syntax)
     {
         if (mgr.Contains(name))
         {
             const auto& [a, s] = mgr.GetRule(name);
+            auto extensions = mgr.GetExtensions(name);
 
             return (type == a
+                    && IsEqual(exts, std::set<std::string>(extensions.begin(), extensions.end()))
                     && IsEqual(std::get<0>(s), std::get<0>(syntax))
                     && IsEqual(std::get<1>(s), std::get<1>(syntax))
                     && IsEqual(std::get<2>(s), std::get<2>(syntax))
@@ -37,13 +34,67 @@ namespace sc::test
         return false;
     }
 
-    _xfTest(test_rule)
+    _xfTest(test_rule_build_in)
     {
         sc::RuleManager mgr;
-        std::string error("ok");
-        auto b = mgr.Load("../../resources/config.json", error);
-        std::cout << "result: " << (b ? "true" : "false") << ", " << error << std::endl;
 
-        _xfExpect(IsEqual(mgr, "Java", "C", {}, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
+        _xfExpect(mgr.Contains("C"));
+        _xfExpect(mgr.Contains("C++"));
+        _xfExpect(mgr.Contains("Ruby"));
+        _xfExpect(!mgr.Contains("Java"));
+
+        _xfExpect("C" == mgr.GetLanguage(".c"));
+        _xfExpect("C++" == mgr.GetLanguage(".cpp"));
+        _xfExpect("C++" == mgr.GetLanguage(".hpp"));
+        _xfExpect("Ruby" == mgr.GetLanguage(".rb"));
+        _xfExpect(mgr.GetLanguage(".java").empty());
+
+        _xfExpect(IsEqual(mgr, "C", "C", { ".h", ".c" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
+        _xfExpect(IsEqual(mgr, "C++", "C++", { ".hpp", ".cpp", ".inl" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, { { R"(R")", R"(")" }, { "(", ")" } } }));
+        _xfExpect(51 == std::get<3>(mgr.GetSyntax("Ruby")).size());
     }
+
+    _xfTest(test_rule_load_file)
+    {
+        sc::RuleManager mgr;
+        std::string strInfo("ok");
+
+        _xfExpect(mgr.Load("../../resources/config.json", strInfo));
+        _xfExpect("ok" == strInfo);
+
+        _xfExpect(IsEqual(mgr, "C", "C++", { ".c" }, { { "#" }, { {"<!--", "-->"} }, { {"\"", "\""} }, {{"a", "b"}} }));
+        _xfExpect(IsEqual(mgr, "C++", "C++", { ".cxx", ".cpp" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, { { R"(R")", R"(")" }, { "(", ")" } } }));
+        _xfExpect(IsEqual(mgr, "C/C++ Header", "C", { ".h" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
+        _xfExpect(IsEqual(mgr, "C#", "C", { ".cs" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
+        _xfExpect(IsEqual(mgr, "Java", "C", { ".java" }, { { "//" }, { {"/**", "**/"} }, { {"\"", "\""} }, {} }));
+        _xfExpect(IsEqual(mgr, "Ruby", "Ruby", { ".rb" }, { { "#" }, { {"=begin", "=end"} }, { {"%q{", "}"} }, {{"%Q[", "]"}} }));
+    }
+
+    _xfTest(test_rule_error1)
+    {
+        sc::RuleManager mgr;
+        std::string strInfo("ok");
+
+        _xfExpect(!mgr.Load("../../resources/config-error1.json", strInfo));
+        _xfExpect(std::string::npos != strInfo.find("exception"));
+    }
+
+    _xfTest(test_rule_error2)
+    {
+        sc::RuleManager mgr;
+        std::string strInfo("ok");
+
+        _xfExpect(!mgr.Load("../../resources/config-error2.json", strInfo));
+        _xfExpect(R"(Analyzer "C--" of language "Ruby" is not support.)" == strInfo);
+    }
+
+    _xfTest(test_rule_error3)
+    {
+        sc::RuleManager mgr;
+        std::string strInfo("ok");
+
+        _xfExpect(!mgr.Load("../../resources/config-error3.json", strInfo));
+        _xfExpect(R"(No file extension specified for language "Java")" == strInfo);
+    }
+
 }

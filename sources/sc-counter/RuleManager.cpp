@@ -13,7 +13,7 @@ namespace sc
 
     RuleManager::RuleManager()
     {
-        for (const auto& [name, rule] : _BuildInRule)
+        for (const auto& [name, rule] : _BuildInRules)
         {
             const auto& [exts, syntax] = rule;
             m_SyntaxMap.emplace(name, std::tuple<string_type, syntax_t>{ name, syntax });
@@ -37,49 +37,43 @@ namespace sc
 
             for (const auto& [key, value] : rules.items())
             {
-                auto analyzer = _BuildInRule.end();
-                auto extension = _BuildInRule.end();
-                auto type_iter = value.find("analyzer");
-                if (type_iter != value.end())
+                auto analyzer = _BuildInRules.end();
+                auto extension = _BuildInRules.end();
+
+                if (auto type_iter = value.find("analyzer"); type_iter != value.end())
                 {
                     auto type = type_iter->get<string_type>();
-                    analyzer = _BuildInRule.find(type);
-                    if (_BuildInRule.end() == analyzer)
+                    analyzer = _BuildInRules.find(type);
+                    if (_BuildInRules.end() == analyzer)
                     {
                         error = R"(Analyzer ")" + type + R"(" of language ")" + key + R"(" is not support.)";
                         return false;
                     }
 
-                    extension = _BuildInRule.find(key);
+                    extension = _BuildInRules.find(key);
                 }
                 else
                 {
-                    analyzer = _BuildInRule.find(key);
-                    if (_BuildInRule.end() == analyzer)
-                        analyzer = _BuildInRule.find(_DefaultName);
+                    analyzer = _BuildInRules.find(key);
+                    if (_BuildInRules.end() == analyzer)
+                        analyzer = _BuildInRules.find(_DefaultAnalyzer);
                     else
                         extension = analyzer;
                 }
 
-                auto exts_iter = value.find("extensions");
-                if (exts_iter == value.end())
+                if (auto exts_iter = value.find("extensions"); exts_iter == value.end())
                 {
-                    if (_BuildInRule.end() == extension)
+                    if (_BuildInRules.end() == extension)
                     {
                         error = R"(No file extension specified for language ")" + key + R"(")";
                         return false;
                     }
-
-                    for (auto ext : std::get<0>(extension->second))
-                        m_ExtMap[ext] = key;
                 }
                 else
                 {
-                    if (_BuildInRule.end() != extension)
-                    {
-                        for (auto ext : std::get<0>(extension->second))
+                    if (_BuildInRules.end() != extension)
+                        for (const auto& ext : std::get<0>(extension->second))
                             m_ExtMap.erase(ext);
-                    }
 
                     for (const auto& ext : exts_iter->get<list_t>())
                         m_ExtMap[ext] = key;
@@ -92,8 +86,7 @@ namespace sc
                     
             }
         } catch (const std::exception & ex) {
-            error = "Read rule config occur exception:\n";
-            error.append(ex.what());
+            error.assign("Read rule config occur exception:\n").append(ex.what());
             return false;
         }
 
@@ -118,17 +111,14 @@ namespace sc
         return string_type();
     }
 
-    void RuleManager::_AddRule(const string_type& name, const syntax_t& item, const list_type<string_type>& exts)
+    list_t RuleManager::GetExtensions(const string_type& name) const
     {
-        /*
-        auto iter = m_SyntaxMap.find(name);
-        if (iter != m_SyntaxMap.end())
-            m_SyntaxMap.erase(iter);
+        list_t exts;
+        for (const auto& [ext, value] : m_ExtMap)
+            if (_StringEqual(value, name))
+                exts.emplace_back(ext);
 
-        m_SyntaxMap.emplace(name, item);
-        for (auto ext : exts)
-            m_ExtMap[ext] = name;
-            */
+        return exts;
     }
 
     inline auto _make_symbol_for_ruby(const std::string& a, const std::string& b)
@@ -143,7 +133,7 @@ namespace sc
         return symbols;
     }
 
-    const std::map<std::string, std::tuple<list_t, syntax_t>> RuleManager::_BuildInRule{
+    const std::map<std::string, std::tuple<list_t, syntax_t>> RuleManager::_BuildInRules{
         /*
         {"Java",        { { ".java" },
                           { { "//" },
@@ -183,7 +173,7 @@ namespace sc
                             { {"/*", "*/"} },
                             { { R"(")", R"(")" } },
                             { } } } },
-        {"C++",         { { ".h", ".cpp", ".hpp", ".inl" },
+        {"C++",         { { ".cpp", ".hpp", ".inl" },
                           { { "//" },
                             { {"/*", "*/"} },
                             { { R"(")", R"(")" } },
@@ -195,6 +185,6 @@ namespace sc
                             _make_symbol_for_ruby(R"({[<(`~!@#$%^&*:;-_+=,.\/ )", R"(}]>)`~!@#$%^&*:;-_+=,.\/ )") } } }
     };
 
-    const string_type RuleManager::_DefaultName("C");
+    const string_type RuleManager::_DefaultAnalyzer("C");
 
 }
