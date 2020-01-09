@@ -1,6 +1,26 @@
 {
-    "C": {
-        "extensions": [".cpp"],
-        "syntax": {}
+    "Java": {
+        "extensions": [".java"],
+		"analyzer": "C",
+        "syntax": [ ["//"],
+                    [["/*", "*/"]],
+                    [["\"", "\""]],
+                    [] 
+                  ]
+    },
+	"C/C++ Header": {
+        "extensions": [".h"],
+		"analyzer": "C"
+    },
+	"C": {
+		"analyzer": "C++",
+		"syntax": [ ["#"],
+                    [["<!--", "-->"]],
+                    [["\"", "\""]],
+                    [["a", "b"]] 
+                  ]
+    },
+	"C++": {
+        "extensions": [".cxx"]
     }
 }

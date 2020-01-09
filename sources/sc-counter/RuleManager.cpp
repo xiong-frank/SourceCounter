@@ -37,24 +37,62 @@ namespace sc
 
             for (const auto& [key, value] : rules.items())
             {
-                /*
-                if (auto iter = _BuildInRule.find(key); iter != _BuildInRule.end())
+                auto analyzer = _BuildInRule.end();
+                auto extension = _BuildInRule.end();
+                auto type_iter = value.find("analyzer");
+                if (type_iter != value.end())
                 {
-                    for (auto ext : std::get<0>(iter->second))
-                        m_ExtMap.erase(ext);
+                    auto type = type_iter->get<string_type>();
+                    analyzer = _BuildInRule.find(type);
+                    if (_BuildInRule.end() == analyzer)
+                    {
+                        error = R"(Analyzer ")" + type + R"(" of language ")" + key + R"(" is not support.)";
+                        return false;
+                    }
+
+                    extension = _BuildInRule.find(key);
                 }
                 else
                 {
-                    const auto& options = value.at("options");
-                    m_SyntaxMap.emplace(key, syntax_t{ options[0], options[1], options[2], options[3] });
+                    analyzer = _BuildInRule.find(key);
+                    if (_BuildInRule.end() == analyzer)
+                        analyzer = _BuildInRule.find(_DefaultName);
+                    else
+                        extension = analyzer;
                 }
 
-                for (const auto& ext : value.at("extensions"))
-                    m_ExtMap[ext.get<std::string>()] = key;
-                */
+                auto exts_iter = value.find("extensions");
+                if (exts_iter == value.end())
+                {
+                    if (_BuildInRule.end() == extension)
+                    {
+                        error = R"(No file extension specified for language ")" + key + R"(")";
+                        return false;
+                    }
+
+                    for (auto ext : std::get<0>(extension->second))
+                        m_ExtMap[ext] = key;
+                }
+                else
+                {
+                    if (_BuildInRule.end() != extension)
+                    {
+                        for (auto ext : std::get<0>(extension->second))
+                            m_ExtMap.erase(ext);
+                    }
+
+                    for (const auto& ext : exts_iter->get<list_t>())
+                        m_ExtMap[ext] = key;
+                }
+               
+                if (auto iter = value.find("syntax"); iter != value.end())
+                    m_SyntaxMap[key] = { analyzer->first, { (*iter)[0], (*iter)[1], (*iter)[2], (*iter)[3] } };
+                else
+                    m_SyntaxMap[key] = { analyzer->first, std::get<1>(analyzer->second) };
+                    
             }
         } catch (const std::exception & ex) {
-            error = "read rule config occur exception:\n";
+            error = "Read rule config occur exception:\n";
             error.append(ex.what());
             return false;
         }
