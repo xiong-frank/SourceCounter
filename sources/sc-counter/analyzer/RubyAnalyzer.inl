@@ -11,11 +11,15 @@ protected:
     {
         _symbol_t st{ _symbol_t::_nothing };
 
-        if (const auto& symbol = std::get<1>(item).front(); 0 == line.compare(0, symbol.first.size(), symbol.first))
+        for (const auto& v : std::get<1>(item))
         {
-            index = 0;
-            arg = symbol;
-            st = _symbol_t::_st_2;
+            if (0 == line.compare(0, v.first.size(), v.first))
+            {
+                index = 0;
+                arg = v;
+                st = _symbol_t::_st_2;
+                break;
+            }
         }
         _MatchElement<_symbol_t::_st_4>(st, line, index, std::get<3>(item), arg);
         _MatchElement<_symbol_t::_st_3>(st, line, index, std::get<2>(item), arg);

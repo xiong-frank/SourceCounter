@@ -58,9 +58,11 @@ namespace sc
                     break;
                 }
                 default:
+                {
                     if (_check_mode(mode, mode_t::cc_is_code)) ++codes;
                     if (_check_mode(mode, mode_t::cc_is_comment)) ++comments;
                     break;
+                }
                 }
 
                 ++lines;
@@ -92,24 +94,7 @@ namespace sc
         view.remove_prefix(i);
     }
 
-    // 查找引号结束符位置，同时检查转义字符。
-    inline std::size_t _find_quote(const std::string_view& view, const std::string& quote)
-    {
-        for (std::size_t start = 0;;)
-        {
-            auto index = view.find(quote, start);
-            if (std::string::npos == index)
-                return std::string::npos;
-
-            unsigned int n = 0;
-            for (auto i = index; (0 < i) && ('\\' == view[--i]); ++n);
-
-            if (0 == n % 2)
-                return index;
-
-            start = index + 1;
-        }
-    }
+    inline std::size_t _find_quote(const std::string_view& view, const std::string& quote) { return view.find(quote); }
 
     // 从line的index位置前面查找str
     inline std::size_t _find_front_position(const std::string_view& line, std::size_t index, const std::string& str)
@@ -194,49 +179,38 @@ namespace sc
 
     unsigned int Analyzer::_OnQuoting(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
-        return _OnQuoting(line, arg, item, true);
+        return _on_status(line_t::has_code, line, arg, item, sc::Analyzer::_find_quote);
     }
 
     unsigned int Analyzer::_OnPrimitive(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
-        return _OnQuoting(line, arg, item, false);
+        return _on_status(line_t::has_code, line, arg, item, sc::_find_quote);
     }
 
     unsigned int Analyzer::_OnAnnotating(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
-        _remove_space(line);
-
-        if (line.empty())
-            return line_t::is_blank;
-
-        auto index = line.find(arg.second);
-        if (std::string::npos == index)
-            return line_t::has_comment;
-
-        _status = status_t::normal;
-        line.remove_prefix(arg.second.size() + index);
-        return line_t::has_comment | _OnNormal(line, arg, item);
+        return _on_status(line_t::has_comment, line, arg, item, sc::_find_quote);
     }
 
-    unsigned int Analyzer::_OnQuoting(std::string_view& line, pair_t& arg, const syntax_t& item, bool escape)
+    unsigned int Analyzer::_on_status(line_t lt, std::string_view& line, pair_t& arg, const syntax_t& item, std::size_t (*func)(const std::string_view&, const std::string&))
     {
         _remove_space(line);
 
         if (line.empty())
             return line_t::is_blank;
 
-        auto index = (escape ? _find_quote(line, arg.second) : line.find(arg.second));
+        auto index = func(line, arg.second);
         if (std::string::npos == index)
-            return line_t::has_code;
+            return (lt);
 
         _status = status_t::normal;
         line.remove_prefix(arg.second.size() + index);
-        return line_t::has_code | _OnNormal(line, arg, item);
+        return (lt | _OnNormal(line, arg, item));
     }
 
 #include "CppAnalyzer.inl"
 #include "RubyAnalyzer.inl"
-#include "PythonAnalyzer.inl"
+#include "CsharpAnalyzer.inl"
 #include "ClojureAnalyzer.inl"
 
     template<typename _AnalyzerType>
@@ -245,10 +219,13 @@ namespace sc
     }
 
     const std::map<string_type, report_t (*)(const std::string&, const syntax_t&, unsigned int), _str_compare> _analyzerMap{
-        { "C++",            _Analyze<CppAnalyzer> },
-        { "Clojure",        _Analyze<ClojureAnalyzer> },
-        { "Ruby",           _Analyze<RubyAnalyzer> },
-        { "Python",         _Analyze<PythonAnalyzer> }
+        { "Java",       _Analyze<Analyzer> },
+        { "JavaScript", _Analyze<Analyzer> },
+        { "C++",        _Analyze<CppAnalyzer> },
+        { "C#",         _Analyze<CsharpAnalyzer> },
+        { "Clojure",    _Analyze<ClojureAnalyzer> },
+        { "Ruby",       _Analyze<RubyAnalyzer> },
+        { "Python",     _Analyze<RubyAnalyzer> }
     };
 
     report_t Analyzer::Analyze(const std::string& file, const std::string& type, const syntax_t& item, unsigned int mode)

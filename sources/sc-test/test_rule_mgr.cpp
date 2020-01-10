@@ -41,17 +41,19 @@ namespace sc::test
         _xfExpect(mgr.Contains("C"));
         _xfExpect(mgr.Contains("C++"));
         _xfExpect(mgr.Contains("Ruby"));
-        _xfExpect(!mgr.Contains("Java"));
+        _xfExpect(mgr.Contains("Java"));
+        _xfExpect(!mgr.Contains("Frank"));
 
         _xfExpect("C" == mgr.GetLanguage(".c"));
         _xfExpect("C++" == mgr.GetLanguage(".cpp"));
         _xfExpect("C++" == mgr.GetLanguage(".hpp"));
         _xfExpect("Ruby" == mgr.GetLanguage(".rb"));
-        _xfExpect(mgr.GetLanguage(".java").empty());
+        _xfExpect(mgr.GetLanguage(".bnb").empty());
 
         _xfExpect(IsEqual(mgr, "C", "C", { ".h", ".c" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
         _xfExpect(IsEqual(mgr, "C++", "C++", { ".hpp", ".cpp", ".inl" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, { { R"(R")", R"(")" }, { "(", ")" } } }));
         _xfExpect(51 == std::get<3>(mgr.GetSyntax("Ruby")).size());
+        _xfExpect(12 == std::get<2>(mgr.GetSyntax("Python")).size());
     }
 
     _xfTest(test_rule_load_file)
@@ -65,7 +67,7 @@ namespace sc::test
         _xfExpect(IsEqual(mgr, "C", "C++", { ".c" }, { { "#" }, { {"<!--", "-->"} }, { {"\"", "\""} }, {{"a", "b"}} }));
         _xfExpect(IsEqual(mgr, "C++", "C++", { ".cxx", ".cpp" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, { { R"(R")", R"(")" }, { "(", ")" } } }));
         _xfExpect(IsEqual(mgr, "C/C++ Header", "C", { ".h" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
-        _xfExpect(IsEqual(mgr, "C#", "C", { ".cs" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
+        _xfExpect(IsEqual(mgr, "Frank", "C", { ".cs" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
         _xfExpect(IsEqual(mgr, "Java", "C", { ".java" }, { { "//" }, { {"/**", "**/"} }, { {"\"", "\""} }, {} }));
         _xfExpect(IsEqual(mgr, "Ruby", "Ruby", { ".rb" }, { { "#" }, { {"=begin", "=end"} }, { {"%q{", "}"} }, {{"%Q[", "]"}} }));
     }
@@ -94,7 +96,7 @@ namespace sc::test
         std::string strInfo("ok");
 
         _xfExpect(!mgr.Load("../../resources/config-error3.json", strInfo));
-        _xfExpect(R"(No file extension specified for language "Java")" == strInfo);
+        _xfExpect(R"(No file extension specified for language "Frank")" == strInfo);
     }
 
 }

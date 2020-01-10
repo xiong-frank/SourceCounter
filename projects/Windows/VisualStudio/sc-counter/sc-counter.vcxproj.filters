@@ -41,10 +41,10 @@
     <None Include="..\..\..\..\sources\sc-counter\analyzer\CppAnalyzer.inl">
       <Filter>sources\analyzer</Filter>
     </None>
-    <None Include="..\..\..\..\sources\sc-counter\analyzer\PythonAnalyzer.inl">
+    <None Include="..\..\..\..\sources\sc-counter\analyzer\RubyAnalyzer.inl">
       <Filter>sources\analyzer</Filter>
     </None>
-    <None Include="..\..\..\..\sources\sc-counter\analyzer\RubyAnalyzer.inl">
+    <None Include="..\..\..\..\sources\sc-counter\analyzer\CsharpAnalyzer.inl">
       <Filter>sources\analyzer</Filter>
     </None>
   </ItemGroup>

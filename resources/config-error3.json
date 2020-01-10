@@ -2,7 +2,7 @@
 	"C++": {
         "extensions": [".cpp", ".cxx"]
     },
-	"Java": {
+	"Frank": {
 		"analyzer": "C"
     }
 }

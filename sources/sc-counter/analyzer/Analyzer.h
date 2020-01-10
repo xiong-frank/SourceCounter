@@ -37,8 +37,28 @@ namespace sc
         virtual unsigned int _OnPrimitive(std::string_view& line, pair_t& arg, const syntax_t& item);
         virtual unsigned int _OnAnnotating(std::string_view& line, pair_t& arg, const syntax_t& item);
 
-        virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const syntax_t& item, bool escape);
         virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const syntax_t& item);
+
+        virtual unsigned int _on_status(line_t lt, std::string_view& line, pair_t& arg, const syntax_t& item, std::size_t(*pf)(const std::string_view&, const std::string&));
+
+        // 查找引号结束符位置，同时检查转义字符。
+        static std::size_t _find_quote(const std::string_view& view, const std::string& quote)
+        {
+            for (std::size_t start = 0;;)
+            {
+                auto index = view.find(quote, start);
+                if (std::string::npos == index)
+                    return std::string::npos;
+
+                unsigned int n = 0;
+                for (auto i = index; (0 < i) && ('\\' == view[--i]); ++n);
+
+                if (0 == n % 2)
+                    return index;
+
+                start = index + 1;
+            }
+        }
 
     public:
 
@@ -51,4 +71,4 @@ namespace sc
 
     };  // class Analyzer
 
-}
+}   // namespace sc

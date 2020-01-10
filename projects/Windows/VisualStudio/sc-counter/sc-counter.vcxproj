@@ -163,7 +163,7 @@
   <ItemGroup>
     <None Include="..\..\..\..\sources\sc-counter\analyzer\ClojureAnalyzer.inl" />
     <None Include="..\..\..\..\sources\sc-counter\analyzer\CppAnalyzer.inl" />
-    <None Include="..\..\..\..\sources\sc-counter\analyzer\PythonAnalyzer.inl" />
+    <None Include="..\..\..\..\sources\sc-counter\analyzer\CsharpAnalyzer.inl" />
     <None Include="..\..\..\..\sources\sc-counter\analyzer\RubyAnalyzer.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

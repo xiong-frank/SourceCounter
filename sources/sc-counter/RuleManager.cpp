@@ -133,41 +133,22 @@ namespace sc
         return symbols;
     }
 
+
+    inline auto _make_symbol_for_python(const list_t& prefixes, const list_t& quotes)
+    {
+        pairs_t symbols;
+        for (const auto& prefix : prefixes)
+            for (const auto& quote : quotes)
+                symbols.emplace_back(prefix + quote, quote);
+
+        for (const auto& quote : quotes)
+            symbols.emplace_back(quote, quote);
+
+        return symbols;
+    }
+
+
     const std::map<std::string, std::tuple<list_t, syntax_t>> RuleManager::_BuildInRules{
-        /*
-        {"Java",        { { ".java" },
-                          { { "//" },
-                            { {"/*", "* /"} },
-                            { { R"(")", R"(")" } },
-                            { } } } },
-        {"C#",          { { ".cs" },
-                          { { "//" },
-                            { {"/*", "* /"} },
-                            { { R"(")", R"(")" } },
-                            { { R"(@")", R"(")" } } } } },
-        {"Python",      { { ".py" },
-                          { { "#" },
-                            { { R"(""")", R"(""")" }, { R"(''')", R"(''')" } },
-                            { { R"(")", R"(")" }, { R"(')", R"(')" }, { R"(""")", R"(""")" }, { R"(''')", R"(''')" } },
-                            { { R"(R")", R"(")" }, { R"(r")", R"(")" }, { R"(R')", R"(')" }, { R"(r')", R"(')" } } } } },
-        {"JavaScript",  { { ".js" },
-                          { { "//" },
-                            { {"/*", "* /"} },
-                            { { R"(")", R"(")" },{ "'", "'" }, { "`", "`" } },
-                            { } } } },
-        {"Clojure",     { { ".clj", ".cljc" },
-                          { { ";", "#_" },
-                            { { "(comment", ")" } },
-                            { { R"(")", R"(")" } },
-                            { } } } },
-        {"ClojureScript", { { ".cljs" },
-                          { { ";", "#_" },
-                            { { "(comment", ")" } },
-                            { { R"(")", R"(")" } },
-                            { } } } },
-        {"Rust",        {   },
-        {"Shell",       {   },
-        */
         {"C",           { { ".h", ".c" },
                           { { "//" },
                             { {"/*", "*/"} },
@@ -178,6 +159,26 @@ namespace sc
                             { {"/*", "*/"} },
                             { { R"(")", R"(")" } },
                             { { R"(R")", R"(")" }, { "(", ")" } } } } },
+        {"Java",       { { ".java" },
+                          { { "//" },
+                            { {"/*", "*/"} },
+                            { { R"(")", R"(")" } },
+                            { } } } },
+        {"JavaScript",  { { ".js" },
+                          { { "//" },
+                            { {"/*", "*/"} },
+                            { { R"(")", R"(")" },{ "'", "'" }, { "`", "`" } },
+                            { } } } },
+        {"C#",          { { ".cs" },
+                          { { "//" },
+                            { {"/*", "*/"} },
+                            { { R"(")", R"(")" } },
+                            { { R"(@")", R"(")" } } } } },
+        {"Python",      { { ".py" },
+                          { { "#" },
+                            { { R"(""")", R"(""")" }, { R"(''')", R"(''')" } },
+                            _make_symbol_for_python({"R", "r"},{R"(""")", R"(''')", R"(")", R"(')"}),
+                            { } } } },
         {"Ruby",        { { ".rb" },
                           { { "#" },
                             { { "=begin", "=end" } },
