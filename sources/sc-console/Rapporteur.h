@@ -29,7 +29,7 @@ namespace sc
         std::string configFile;
         std::string exclusion;
         unsigned int nThread{ 0 };
-        unsigned int detail{ 0 };
+        unsigned int view{ 0 };
         unsigned int mode{ mode_t::default_mode };
         bool allowEmpty{ true };
 
@@ -39,6 +39,6 @@ namespace sc
     bool ParseCommandLine(Counter& counter, params_t& opt, const char* const* argv, unsigned int argc);
 
     // 对报告结果进行输出
-    void OutputReport(const std::vector<Counter::file_report_t>& reports, const std::string& filename, unsigned int detail);
+    void OutputReport(const std::vector<Counter::file_report_t>& reports, const std::string& filename, unsigned int view);
 
 }

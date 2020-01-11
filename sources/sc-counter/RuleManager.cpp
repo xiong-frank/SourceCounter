@@ -13,7 +13,7 @@ namespace sc
 
     RuleManager::RuleManager()
     {
-        for (const auto& [name, rule] : _BuildInRules)
+        for (const auto& [name, rule] : BuildInRules())
         {
             const auto& [exts, syntax] = rule;
             m_SyntaxMap.emplace(name, std::tuple<string_type, syntax_t>{ name, syntax });
@@ -37,33 +37,33 @@ namespace sc
 
             for (const auto& [key, value] : rules.items())
             {
-                auto analyzer = _BuildInRules.end();
-                auto extension = _BuildInRules.end();
+                auto analyzer = BuildInRules().end();
+                auto extension = BuildInRules().end();
 
                 if (auto type_iter = value.find("analyzer"); type_iter != value.end())
                 {
                     auto type = type_iter->get<string_type>();
-                    analyzer = _BuildInRules.find(type);
-                    if (_BuildInRules.end() == analyzer)
+                    analyzer = BuildInRules().find(type);
+                    if (BuildInRules().end() == analyzer)
                     {
                         error = R"(Analyzer ")" + type + R"(" of language ")" + key + R"(" is not support.)";
                         return false;
                     }
 
-                    extension = _BuildInRules.find(key);
+                    extension = BuildInRules().find(key);
                 }
                 else
                 {
-                    analyzer = _BuildInRules.find(key);
-                    if (_BuildInRules.end() == analyzer)
-                        analyzer = _BuildInRules.find(_DefaultAnalyzer);
+                    analyzer = BuildInRules().find(key);
+                    if (BuildInRules().end() == analyzer)
+                        analyzer = BuildInRules().find(_DefaultAnalyzer);
                     else
                         extension = analyzer;
                 }
 
                 if (auto exts_iter = value.find("extensions"); exts_iter == value.end())
                 {
-                    if (_BuildInRules.end() == extension)
+                    if (BuildInRules().end() == extension)
                     {
                         error = R"(No file extension specified for language ")" + key + R"(")";
                         return false;
@@ -71,7 +71,7 @@ namespace sc
                 }
                 else
                 {
-                    if (_BuildInRules.end() != extension)
+                    if (BuildInRules().end() != extension)
                         for (const auto& ext : std::get<0>(extension->second))
                             m_ExtMap.erase(ext);
 
@@ -133,7 +133,6 @@ namespace sc
         return symbols;
     }
 
-
     inline auto _make_symbol_for_python(const list_t& prefixes, const list_t& quotes)
     {
         pairs_t symbols;
@@ -147,8 +146,7 @@ namespace sc
         return symbols;
     }
 
-
-    const std::map<std::string, std::tuple<list_t, syntax_t>> RuleManager::_BuildInRules{
+    const std::map<std::string, std::tuple<list_t, syntax_t>, _str_compare> _build_in_rules{
         {"C",           { { ".h", ".c" },
                           { { "//" },
                             { {"/*", "*/"} },
@@ -187,5 +185,15 @@ namespace sc
     };
 
     const string_type RuleManager::_DefaultAnalyzer("C");
+
+    const std::map<string_type, std::tuple<list_t, syntax_t> , _str_compare>& RuleManager::BuildInRules()
+    {
+        return (_build_in_rules);
+    }
+
+    bool RuleManager::IsSupport(const string_type& name)
+    {
+        return (_build_in_rules.find(name) != _build_in_rules.end());
+    }
 
 }

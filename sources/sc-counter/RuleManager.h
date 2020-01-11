@@ -16,9 +16,6 @@ namespace sc
         // 默认的分析器名称
         static const string_type _DefaultAnalyzer;
 
-        // 内置支持的分析器配置
-        static const std::map<string_type, std::tuple<list_t, syntax_t>> _BuildInRules;
-
     public:
 
         RuleManager();
@@ -44,8 +41,11 @@ namespace sc
         // 判定是否支持的语言
         bool Contains(const string_type& name) const { return (m_SyntaxMap.find(name) != m_SyntaxMap.end()); }
 
+        // 内置支持的分析器配置
+        static const std::map<string_type, std::tuple<list_t, syntax_t>, _str_compare>& BuildInRules();
+
         // 判定是否支持的分析器
-        static bool IsSupport(const string_type& name) { return (_BuildInRules.find(name) != _BuildInRules.end()); }
+        static bool IsSupport(const string_type& name);
 
     };  // class RuleManager
 

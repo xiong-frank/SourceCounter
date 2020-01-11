@@ -13,9 +13,10 @@ namespace _help
         _sc_cmd_mode,
         _sc_cmd_languages,
         _sc_cmd_exclude,
-        _sc_cmd_detail,
         _sc_cmd_thread,
         _sc_cmd_explain,
+        _sc_cmd_analyzer,
+        _sc_cmd_view,
         _sc_cmd_empty
     };
 
@@ -39,55 +40,53 @@ namespace _help
         return _map;
     }
 
-    inline std::string _to_string(const std::vector<std::string>& strs) {
-        if (strs.empty()) return std::string();
-
-        std::string str = strs[0];
-        for (std::size_t i = 1; i < strs.size(); str.append(", ").append(strs[i++]));
-
-        return str;
-    }
-
     const std::map<unsigned int, _help_item> _help_map{
         { _sc_cmd::_sc_cmd_help, _help_item({{"--help", "-h"}, 
         "For help information.",
         "",
-        "--help [command]",
-        R"(--help
-                 --help --input
-                 --help --config)" })},
+        "sc --help [command]",
+        R"(sc --help
+                 sc --help --input
+                 sc --help -c)" })},
 
         { _sc_cmd::_sc_cmd_version, _help_item({{"--version", "-v"},
         "Show version information.",
         "",
-        "--version",
-        "--version" })},
+        "sc --version",
+        "sc --version" })},
 
         { _sc_cmd::_sc_cmd_input, _help_item({{"--input", "-i"},
         "[required] Specify the path of the source to be counted, can be a file or directory.",
         "",
-        "--input [path]",
-        R"(--input ./main.cpp
-                 --input ./sources/)" })},
+        "sc --input [path]",
+        R"(sc --input ./main.cpp
+                 sc --input ./sources/)" })},
 
         { _sc_cmd::_sc_cmd_output, _help_item({{"--output", "-o"},
         "[optional] Specify the file path for the output statistics, the output is in JSON format.",
         R"(Contains the statistics of each source file and the summarized statistics.
                  If not specified, it will not be output.)",
-        "--output [path]",
-        "--output ./output/sc.json" })},
+        "sc --output [path]",
+        "sc --output ./output/sc.json" })},
 
         { _sc_cmd::_sc_cmd_config, _help_item({{"--config", "-c"},
         "[optional] Specifies the config path for language syntax rules.",
         R"(If not specified, only built-in rules are used.
                  The config is in JSON format.
                  Example:
-                    [
-                        {"name": "Python",
-                         }
-                    ])",
-        "--config [path]",
-        "--config ./languages.json" })},
+                    {
+                        "Java": {
+                                "extensions": [".java"],
+                                "analyzer": "C",
+                                "syntax": [ ["//"],
+                                            [["/*", "*/"]],
+                                            [["\"", "\""]],
+                                            [] 
+                                          ]
+                            }
+                    })",
+        "sc --config [path]",
+        "sc --config ./languages.json" })},
 
         { _sc_cmd::_sc_cmd_mode, _help_item({{"--mode", "-m"},
         "[optional] Specify statistical rules to explain the ambiguous lines.",
@@ -112,47 +111,55 @@ namespace _help
                  Different rules can be used in combination.
                  Use the result of bit-or (or addition) as the value of "mode".
                  If not specified, the default value is 37.)",
-        "--mode [number]",
-        "--mode 53" })},
+        "sc --mode [number]",
+        "sc --mode 53" })},
 
         { _sc_cmd::_sc_cmd_languages, _help_item({{"--languages", "-l"},
         "[optional] Specify the language for Statistics.",
         "Multiple languages are separated by commas,and language names are not case sensitive.",
-        "--languages [name list]",
-        "--languages C++,Java,Python" })},
+        "sc --languages [name list]",
+        "sc --languages C++,Java,Python" })},
 
         { _sc_cmd::_sc_cmd_exclude, _help_item({{"--exclude", "-e"},
         "[optional] A regular expression, specify paths to exclude.",
         "File paths that match the regular expression are not counted.",
-        "--exclude [regular expression]",
-        "--exclude *.h" })},
+        "sc --exclude [regular expression]",
+        "sc --exclude *.h" })},
 
-        { _sc_cmd::_sc_cmd_detail, _help_item({{"--detail", "-d"},
+        { _sc_cmd::_sc_cmd_view, _help_item({{"--view"},
         "[optional] Show statistics by language, and you can also specify sorting rules.",
         R"(Sort columns: files, lines, codes, comments, blanks.
                  Sort order: asc[ending], des[cending])",
-        "--detail [command]",
-        R"(--detail
-                 --detail codes:asc)" })},
+        "sc --view [command]",
+        R"(sc --view
+                 sc --view codes:asc)" })},
+
+        { _sc_cmd::_sc_cmd_analyzer, _help_item({{"--analyzer", "-a"},
+        "[optional] Show built-in analyzer information.",
+        R"(You can specify a name to view the corresponding analyzer information.
+                  If not specified, show all analyzer information.)",
+        "sc --analyzer [command]",
+        R"(sc --analyzer
+                 sc --analyzer C++)" })},
 
         { _sc_cmd::_sc_cmd_empty, _help_item({{"--empty"},
         "[optional] Specifies whether to count empty files. default: true.",
         "",
-        "--empty [bool]",
-        "--empty true" })},
+        "sc --empty [bool]",
+        "sc --empty true" })},
 
         { _sc_cmd::_sc_cmd_thread, _help_item({{"--thread", "-t"},
         "[optional] suggested number of threads used.",
         R"(The program automatically adjusts the number of threads based on the number of files it recognizes.
                  If the number of threads specified is too large, will be ignored.)",
-        "--thread [number]",
-        "--thread 4" })},
+        "sc --thread [number]",
+        "sc --thread 4" })},
 
         { _sc_cmd::_sc_cmd_explain, _help_item({{"--explain", "-x"},
         "[optional] explain parameters to be used during program execution.",
         "If this option is specified, statistical process will not be excuted.",
-        "--explain",
-        "--explain" })}
+        "sc --explain",
+        "sc --explain" })}
     };
 
     const std::map<std::string, unsigned int> _cmd_map = _make_cmd_map(_help_map);
@@ -161,6 +168,16 @@ namespace _help
     {
         const auto& keys = _help::_help_map.at(k)._names;
         return { keys.begin(), keys.end() };
+    }
+
+    inline std::string _to_string(const std::vector<std::string>& strs)
+    {
+        if (strs.empty()) return std::string();
+
+        std::string str = strs[0];
+        for (std::size_t i = 1; i < strs.size(); str.append(", ").append(strs[i++]));
+
+        return str;
     }
 
     inline void _show_help(const std::string& k) {
@@ -186,6 +203,44 @@ namespace _help
         std::cout << std::endl;
     }
 
+    inline void _show_analyzer(const std::pair<std::string, std::tuple<sc::list_t, sc::syntax_t>>& analyzer)
+    {
+        const auto& [name, rule] = analyzer;
+        const auto& [exts, syntax] = rule;
+        std::cout << _make_filler<4, ' '>() << R"(")" << name << R"(": {)" << std::endl;
+        std::cout << _make_filler<8, ' '>() << R"("extensions": )" << nlohmann::json(exts).dump() << "," << std::endl;
+        std::cout << _make_filler<8, ' '>() << R"("syntax": [)" << std::endl;
+        std::cout << _make_filler<12, ' '>() << nlohmann::json(std::get<0>(syntax)).dump() << "," << std::endl;
+        std::cout << _make_filler<12, ' '>() << nlohmann::json(std::get<1>(syntax)).dump() << "," << std::endl;
+        std::cout << _make_filler<12, ' '>() << nlohmann::json(std::get<2>(syntax)).dump() << "," << std::endl;
+        std::cout << _make_filler<12, ' '>() << nlohmann::json(std::get<3>(syntax)).dump() << std::endl;
+        std::cout << _make_filler<8, ' '>() << "]" << std::endl;
+        std::cout << _make_filler<4, ' '>() << "}";
+    }
+
+    inline void _show_analyzers(const std::vector<std::pair<std::string, std::tuple<sc::list_t, sc::syntax_t>>>& analyzers)
+    {
+        std::cout << '{' << std::endl;
+        _show_analyzer(analyzers[0]);
+        for (std::size_t i = 1; i < analyzers.size(); _show_analyzer(analyzers[i++]))
+            std::cout << "," << std::endl;
+        std::cout << std::endl <<  '}' << std::endl;
+    }
+
+    inline void _show_analyzer(const std::string& name)
+    {
+        if (auto iter = sc::RuleManager::BuildInRules().find(name); iter != sc::RuleManager::BuildInRules().end())
+            _show_analyzers({ *iter });
+        else
+            std::cout << R"(error: No analyzer with name ")" + name + R"(")" << std::endl;
+    }
+
+    inline void _show_analyzer()
+    {
+        _show_analyzers({ sc::RuleManager::BuildInRules().begin(), sc::RuleManager::BuildInRules().end() });
+    }
+
 }
 
 #define _opt_keys(k) _help::_get_options(_help::_sc_cmd::k)
+#define _opt_key(k) _help::_help_map.at(_help::_sc_cmd::k)._names.front()

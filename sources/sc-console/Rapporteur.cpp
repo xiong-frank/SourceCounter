@@ -13,9 +13,9 @@
 namespace sc
 {
     
-    unsigned int _parser_detail(const std::string& detail)
+    unsigned int _parser_view(const std::string& view)
     {
-        if (detail.empty())
+        if (view.empty())
             return 0;
 
         std::map<std::string, unsigned int> order_map{
@@ -30,10 +30,10 @@ namespace sc
             { "descending", order_t::descending }
         };
 
-        auto pos = detail.find(':', 3);
+        auto pos = view.find(':', 3);
         if (std::string::npos == pos)
         {
-            auto iter = order_map.find(detail);
+            auto iter = order_map.find(view);
             if (iter != order_map.end())
             {
                 if (0 < (order_t::order_mask & iter->second))
@@ -42,8 +42,8 @@ namespace sc
         }
         else
         {
-            auto a = detail.substr(0, pos);
-            auto b = detail.substr(pos + 1);
+            auto a = view.substr(0, pos);
+            auto b = view.substr(pos + 1);
             if (a != b)
             {
                 auto iter1 = order_map.find(a);
@@ -85,19 +85,22 @@ namespace sc
         return strs;
     }
 
+    template<std::size_t _N, char _C>
+    inline constexpr std::string _make_filler() { return std::string(_N, _C); }
+
 #include "_help_info.inl"
     
-    inline std::string _make_detail_text(unsigned int detail)
+    inline std::string _make_view_text(unsigned int view)
     {
         std::string _order_str[]{ "", "by_nothing", "by_lines", "by_codes", "by_comments", "by_blanks", "by_files" };
 
-        unsigned int order = (order_t::order_mask & detail);
+        unsigned int order = (order_t::order_mask & view);
         if (order_t::no_show == order || order_t::by_nothing == order)
             return _order_str[order];
 
         std::string _dir_str[]{ "ascending", "descending" };
 
-        return _order_str[order] + " | " + _dir_str[(order_t::order_direction & detail) >> 3];
+        return _order_str[order] + " | " + _dir_str[(order_t::order_direction & view) >> 3];
     }
 
     inline void Explain(const Counter& counter, const params_t& opt)
@@ -111,10 +114,10 @@ namespace sc
         std::cout << std::setw(_help::_indent_number) << "thread count" << ": " << opt.nThread << std::endl;
         std::cout << std::setw(_help::_indent_number) << "mode"         << ": " << opt.mode << std::endl;
         std::cout << std::setw(_help::_indent_number) << "output"       << ": " << opt.output << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "detail"       << ": " << _make_detail_text(opt.detail) << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "view"         << ": " << _make_view_text(opt.view) << std::endl;
     }
 
-    bool _parse_option(Counter& counter, params_t& opt, const xf::cmd::result_t& result)
+    inline bool _parse_option(Counter& counter, params_t& opt, const xf::cmd::result_t& result)
     {
         if (!result.is_valid())
         {
@@ -122,49 +125,61 @@ namespace sc
             return false;
         }
 
-        if (result.is_existing("--version"))
+        if (result.is_existing(_opt_key(_sc_cmd_version)))
         {
             std::cout << app_name() << " " << version() << "  2019-10 by FrankXiong" << std::endl;
             return false;
         }
 
-        if (result.is_existing("--help"))
+        if (result.is_existing(_opt_key(_sc_cmd_help)))
         {
-            if (result.has_value("--help"))
-                _help::_show_help(result.get<std::string>("--help"));
+            if (result.has_value(_opt_key(_sc_cmd_help)))
+                _help::_show_help(result.get<std::string>(_opt_key(_sc_cmd_help)));
             else
                 _help::_show_help();
 
             return false;
         }
 
-        opt.input = result.get<std::string>("--input");
-
-        if (result.is_existing("--output"))
-            opt.output = result.get<std::string>("--output");
-
-        if (result.is_existing("--config"))
-            opt.configFile = result.get<std::string>("--config");
-
-        if (result.is_existing("--exclude"))
-            opt.exclusion = result.get<std::string>("--exclude");
-
-        if (result.is_existing("--mode"))
-            opt.mode = result.get<unsigned int>("--mode");
-
-        if (result.is_existing("--empty"))
-            opt.allowEmpty = result.get<bool>("--empty");
-
-        std::string error;
-        if (!counter.LoadConfig(opt.configFile, error))
+        if (result.is_existing(_opt_key(_sc_cmd_analyzer)))
         {
-            std::cout << "load rule config failed: " << error << std::endl;
+            if (result.has_value(_opt_key(_sc_cmd_analyzer)))
+                _help::_show_analyzer(result.get<std::string>(_opt_key(_sc_cmd_analyzer)));
+            else
+                _help::_show_analyzer();
+
             return false;
         }
 
-        if (result.is_existing("--languages"))
+        opt.input = result.get<std::string>(_opt_key(_sc_cmd_input));
+
+        if (result.is_existing(_opt_key(_sc_cmd_output)))
+            opt.output = result.get<std::string>(_opt_key(_sc_cmd_output));
+
+        if (result.is_existing(_opt_key(_sc_cmd_exclude)))
+            opt.exclusion = result.get<std::string>(_opt_key(_sc_cmd_exclude));
+
+        if (result.is_existing(_opt_key(_sc_cmd_mode)))
+            opt.mode = result.get<unsigned int>(_opt_key(_sc_cmd_mode));
+
+        if (result.is_existing(_opt_key(_sc_cmd_empty)))
+            opt.allowEmpty = result.get<bool>(_opt_key(_sc_cmd_empty));
+
+        if (result.is_existing(_opt_key(_sc_cmd_config)))
         {
-            opt.languages = _split_string(result.get<std::string>("--languages"), ',');
+            opt.configFile = result.get<std::string>(_opt_key(_sc_cmd_config));
+
+            std::string error;
+            if (!counter.LoadConfig(opt.configFile, error))
+            {
+                std::cout << "load rule config failed: " << error << std::endl;
+                return false;
+            }
+        }
+
+        if (result.is_existing(_opt_key(_sc_cmd_languages)))
+        {
+            opt.languages = _split_string(result.get<std::string>(_opt_key(_sc_cmd_languages)), ',');
             opt.languages.erase(std::remove_if(opt.languages.begin(), opt.languages.end(),
                                                [&counter](const auto& v) { return !counter.RuleMgr().Contains(v); }),
                                 opt.languages.end());
@@ -182,8 +197,8 @@ namespace sc
 
         counter.LoadFile(opt.input, opt.exclusion, opt.languages, opt.allowEmpty);
 
-        if (result.is_existing("--thread")) {
-            opt.nThread = result.get<unsigned int>("--thread");
+        if (result.is_existing(_opt_key(_sc_cmd_thread))) {
+            opt.nThread = result.get<unsigned int>(_opt_key(_sc_cmd_thread));
             if (0x20 < opt.nThread) opt.nThread = 0x20;
         }
         else {
@@ -197,15 +212,15 @@ namespace sc
         if (counter.Files().size() < opt.nThread)
             opt.nThread = (unsigned int)(counter.Files().size());
 
-        if (result.is_existing("--detail"))
+        if (result.is_existing(_opt_key(_sc_cmd_view)))
         {
-            if (result.has_value("--detail"))
-                opt.detail = _parser_detail(result.get<std::string>("--detail"));
+            if (result.has_value(_opt_key(_sc_cmd_view)))
+                opt.view = _parser_view(result.get<std::string>(_opt_key(_sc_cmd_view)));
             else
-                opt.detail = order_t::by_nothing;
+                opt.view = order_t::by_nothing;
         }
 
-        if (result.is_existing("--explain"))
+        if (result.is_existing(_opt_key(_sc_cmd_explain)))
         {
             Explain(counter, opt);
             return false;
@@ -225,7 +240,8 @@ namespace sc
          --languages=c++,java,ruby
          --exclude=*.h
          --mode=123
-         --detail=lines|asc
+         --view=lines|asc
+         --analyzer=C++
          --thread=10
          --empty=true
          --explain
@@ -238,6 +254,7 @@ namespace sc
 
         xf::cmd::Parser parser;
         parser.AddOption({ _opt_keys(_sc_cmd_help), { xf::cmd::value_t::vt_string, true, false, false, [&parser](const std::string& k) { return parser.IsValid(k); } } })
+            .AddOption({ _opt_keys(_sc_cmd_analyzer), { xf::cmd::value_t::vt_string, true, false, false } })
             .AddOption({ _opt_keys(_sc_cmd_version), { true, false } })
             .AddOption({ _opt_keys(_sc_cmd_input), { xf::cmd::value_t::vt_string, false, true, true } })
             .AddOption({ _opt_keys(_sc_cmd_output), { xf::cmd::value_t::vt_string, false, false, true } })
@@ -245,7 +262,7 @@ namespace sc
             .AddOption({ _opt_keys(_sc_cmd_mode), { xf::cmd::value_t::vt_unsigned, false, false, true} })
             .AddOption({ _opt_keys(_sc_cmd_languages), { xf::cmd::value_t::vt_string, false, false, true } })
             .AddOption({ _opt_keys(_sc_cmd_exclude), { xf::cmd::value_t::vt_string, false, false, true } })
-            .AddOption({ _opt_keys(_sc_cmd_detail), { xf::cmd::value_t::vt_string, false, false, false, [](const std::string& v) { return (0 < _parser_detail(v)); } } })
+            .AddOption({ _opt_keys(_sc_cmd_view), { xf::cmd::value_t::vt_string, false, false, false, [](const std::string& v) { return (0 < _parser_view(v)); } } })
             .AddOption({ _opt_keys(_sc_cmd_empty), { xf::cmd::value_t::vt_boolean, false, false, true } })
             .AddOption({ _opt_keys(_sc_cmd_thread), { xf::cmd::value_t::vt_unsigned, false, false, true, "[1-9][0-9]?" } })
             .AddOption({ _opt_keys(_sc_cmd_explain), { false, false } });
@@ -358,15 +375,20 @@ namespace sc
 
     constexpr unsigned int _cell_width(10); // 单元格宽度
 
+    template<typename _Type>
+    inline void _show_line(char separator, char placeholder, const std::vector<_Type>& filler)
+    {
+        std::cout << ' ' << separator;
+        for (const auto& v : filler)
+            std::cout << placeholder << std::setw(_cell_width) << v << placeholder << separator;
+        std::cout << std::endl;
+    }
+
     inline void _ShowReport(const view_report_t& report)
     {
         const auto& [r, n] = report;
-        std::cout << " | " << std::setw(_cell_width) << n
-                  << " | " << std::setw(_cell_width) << std::get<count_t::_lines>(r)
-                  << " | " << std::setw(_cell_width) << std::get<count_t::_codes>(r)
-                  << " | " << std::setw(_cell_width) << std::get<count_t::_comments>(r)
-                  << " | " << std::setw(_cell_width) << std::get<count_t::_blanks>(r)
-                  << " |" << std::endl;
+        const auto& [lines, codes, comments, blanks] = r;
+        _show_line('|', ' ', std::vector<unsigned int>{ n, lines, codes, comments, blanks });
     }
 
     inline void _ShowReport(const std::string& name, const view_report_t& report)
@@ -375,7 +397,7 @@ namespace sc
         _ShowReport(report);
     }
 
-    void OutputReport(const std::vector<Counter::file_report_t>& reports, const std::string& filename, unsigned int detail)
+    void OutputReport(const std::vector<Counter::file_report_t>& reports, const std::string& filename, unsigned int view)
     {
         view_report_t total{ { 0, 0, 0, 0 }, 0 };
         report_map_t reportMap;
@@ -390,10 +412,10 @@ namespace sc
                 iter->second += report;
         }
 
-        if (unsigned int rank = (order_t::order_mask & detail); 0 < rank)
+        if (unsigned int rank = (order_t::order_mask & view); 0 < rank)
         {
             std::list<report_pair_t> views;
-            bool asc = (order_t::ascending == (order_t::order_direction & detail));
+            bool asc = (order_t::ascending == (order_t::order_direction & view));
 
             for (const auto& item : reportMap)
                 _InsertReport(views, item,
@@ -416,25 +438,24 @@ namespace sc
                                   }
                               });
 
-            std::cout << " +------------+------------+------------+------------+------------+------------+" << std::endl;
-            std::cout << " |   Language |      Files |      Lines |      Codes |   Comments |     Blanks |" << std::endl;
-            std::cout << " +------------+------------+------------+------------+------------+------------+" << std::endl;
+            _show_line('+', '-', std::vector<std::string>(6, _make_filler<_cell_width, '-'>()));
+            _show_line('|', ' ', std::vector<std::string>{"Language","Files", "Lines", "Codes", "Comments", "Blanks"});
+            _show_line('+', '-', std::vector<std::string>(6, _make_filler<_cell_width, '-'>()));
 
             for (const auto& report : views)
                 _ShowReport(report.first, report.second);
 
-            std::cout << " +------------+------------+------------+------------+------------+------------+" << std::endl;
+            _show_line('+', '-', std::vector<std::string>(6, _make_filler<_cell_width, '-'>()));
             _ShowReport("Total", total);
-            std::cout << " +------------+------------+------------+------------+------------+------------+" << std::endl;
+            _show_line('+', '-', std::vector<std::string>(6, _make_filler<_cell_width, '-'>()));
         }
         else
         {
-
-            std::cout << " +------------+------------+------------+------------+------------+" << std::endl;
-            std::cout << " |      Files |      Lines |      Codes |   Comments |     Blanks |" << std::endl;
-            std::cout << " +------------+------------+------------+------------+------------+" << std::endl;
+            _show_line('+', '-', std::vector<std::string>(5, _make_filler<_cell_width, '-'>()));
+            _show_line('|', ' ', std::vector<std::string>{"Files", "Lines", "Codes", "Comments", "Blanks"});
+            _show_line('+', '-', std::vector<std::string>(5, _make_filler<_cell_width, '-'>()));
             _ShowReport(total);
-            std::cout << " +------------+------------+------------+------------+------------+" << std::endl;
+            _show_line('+', '-', std::vector<std::string>(5, _make_filler<_cell_width, '-'>()));
         }
 
         _OutputToFile(filename, reports, reportMap, total);
