@@ -21,6 +21,9 @@ namespace sc
 
     private:
 
+        Counter(const Counter&) = delete;
+        Counter& operator=(const Counter&) = delete;
+
         std::vector<file_report_t> m_Reports;
         std::vector<item_t> m_Items;
         RuleManager m_RuleMgr;

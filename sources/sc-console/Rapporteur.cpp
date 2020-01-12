@@ -13,7 +13,7 @@
 namespace sc
 {
     
-    unsigned int _parser_view(const std::string& view)
+    inline unsigned int _parser_view(const std::string& view)
     {
         if (view.empty())
             return 0;
