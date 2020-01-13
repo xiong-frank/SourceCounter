@@ -1,8 +1,8 @@
-#include <map>
+﻿#include <map>
 #include <list>
+#include <iomanip>
 #include <iostream>
 #include <fstream>
-#include <filesystem>
 
 #include "../third/xf_log_console.h"
 #include "../third/xf_cmd_parser.h"
@@ -228,6 +228,10 @@ namespace sc
         return true;
     }
 
+    inline bool _is_path(const xf::cmd::Parser& parser, const char* str) {
+        return (!parser.IsValid(str) && nullptr == std::strpbrk(str, R"(:?*"'<>!=)"));
+    }
+
     bool ParseCommandLine(Counter& counter, params_t& opt, const char* const* argv, unsigned int argc)
     {
         /*
@@ -267,14 +271,14 @@ namespace sc
             .AddOption({ _opt_keys(_sc_cmd_explain), { false, false } });
 
         if (argc < 3)
-            if (std::filesystem::exists(argv[1]))
+            if (_is_path(parser, argv[1]))
                 return _parse_option(counter, opt, parser.Parse({ "--input", argv[1] }));
 
         if (argc < 4)
         {
-            if (std::filesystem::exists(argv[1]))
+            if (_is_path(parser, argv[1]))
             {
-                if (std::filesystem::exists(argv[2]))
+                if (_is_path(parser, argv[2]))
                     return _parse_option(counter, opt, parser.Parse({ "--input", argv[1], "--output", argv[2] }));
                 else
                     return _parse_option(counter, opt, parser.Parse({ "--input", argv[1], argv[2] }));

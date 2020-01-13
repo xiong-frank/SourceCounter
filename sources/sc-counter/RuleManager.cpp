@@ -90,7 +90,6 @@ namespace sc
             return false;
         }
 
-        fin.close();
         return true;
     }
 

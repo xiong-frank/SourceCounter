@@ -44,21 +44,23 @@ namespace sc
         return false;
     }
 
-    unsigned int Counter::LoadFile(const std::string& input, const std::string& excludes, list_t& includes, bool allowEmpty)
+    unsigned int Counter::LoadFile(const std::string& input, const std::string& excludes, const list_t& includes, bool allowEmpty)
     {
         unsigned int n = 0;
-        std::filesystem::path p(input);
-
-        if (std::filesystem::is_regular_file(p))
+        
+        if (std::filesystem::path p(input); std::filesystem::exists(p))
         {
-            if (_AddFile(m_Items, m_RuleMgr, p, includes, excludes, allowEmpty))
-                ++n;
-        }
-        else
-        {
-            for (const auto& iter : std::filesystem::recursive_directory_iterator(p))
-                if (iter.is_regular_file() && _AddFile(m_Items, m_RuleMgr, iter.path(), includes, excludes, allowEmpty))
+            if (std::filesystem::is_regular_file(p))
+            {
+                if (_AddFile(m_Items, m_RuleMgr, p, includes, excludes, allowEmpty))
                     ++n;
+            }
+            else
+            {
+                for (const auto& iter : std::filesystem::recursive_directory_iterator(p))
+                    if (iter.is_regular_file() && _AddFile(m_Items, m_RuleMgr, iter.path(), includes, excludes, allowEmpty))
+                        ++n;
+            }
         }
 
         return n;

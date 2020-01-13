@@ -44,7 +44,7 @@ namespace sc
         bool LoadConfig(const std::string& filename, std::string& error) { return m_RuleMgr.Load(filename, error); }
 
         // 加载文件
-        unsigned int LoadFile(const std::string& input, const std::string& excludes, list_t& includes, bool allowEmpty);
+        unsigned int LoadFile(const std::string& input, const std::string& excludes, const list_t& includes, bool allowEmpty);
 
         // 启动线程
         bool Start(unsigned int nThread, unsigned int mode);

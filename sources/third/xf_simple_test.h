@@ -47,10 +47,12 @@ namespace xf::test
 
         const auto& Result() const { return _result; }
 
-        void Run() const
+        unsigned int Run() const
         {
             for (const auto& [name, func] : _FuncMap)
                 _run(name, func);
+
+            return (unsigned int)(_FuncMap.size());
         }
 
         bool Run(const std::string& key) const
@@ -62,6 +64,22 @@ namespace xf::test
             }
 
             return false;
+        }
+
+        unsigned int Run(const std::vector<std::string>& keys)
+        {
+            unsigned int n(0);
+
+            for (const auto& key : keys)
+            {
+                if (auto iter = _FuncMap.find(key); iter != _FuncMap.end())
+                {
+                    _run(iter->first, iter->second);
+                    ++n;
+                }
+            }
+
+            return n;
         }
 
         bool Add(const std::string& key, _func_type func)
@@ -88,7 +106,7 @@ namespace xf::test
         std::cout << std::endl;
         std::cout << "==> Ran " << (success + failed) << " tests from " << n << " test case: "
             << success << " successes, " << failed << " failures, spend " << ms << " ms." << std::endl;
-        std::cout << "==> Test Result: " << (0 == failed ? "SUCCESS." : "FAIL.") << std::endl;
+        std::cout << "==> Test Result: " << (0 == failed ? "SUCCESS." : "FAIL.") << std::endl << std::endl;
     }
 
     inline bool Assert(bool result, const std::string& name, const std::string& file, unsigned int line)
@@ -103,25 +121,27 @@ namespace xf::test
         return result;
     }
 
-    inline void Test()
+    template<typename _FuncType>
+    unsigned int _test(_FuncType func)
     {
         auto t1 = std::chrono::system_clock::now();
-        TestInfo::Instance().Run();
+        unsigned int n = func();
         auto t2 = std::chrono::system_clock::now();
 
         const auto& [success, failed] = TestInfo::Instance().Result();
-        Show(TestInfo::Instance().Size(), success, failed, std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
+        Show(n, success, failed, std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
+
+        return failed;
     }
 
-    inline void Test(const std::vector<std::string>& names)
+    inline unsigned int Test()
     {
-        auto t1 = std::chrono::system_clock::now();
-        for (const auto& name : names)
-            TestInfo::Instance().Run(name);
-        auto t2 = std::chrono::system_clock::now();
+        return _test([]() { return TestInfo::Instance().Run(); });
+    }
 
-        const auto& [success, failed] = TestInfo::Instance().Result();
-        Show(names.size(), success, failed, std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count());
+    inline unsigned int Test(const std::vector<std::string>& names)
+    {
+        return _test([&names]() { return TestInfo::Instance().Run(names); });
     }
 
 }   // namespace xf::test

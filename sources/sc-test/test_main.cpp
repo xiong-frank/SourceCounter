@@ -3,7 +3,6 @@
 
 int main()
 {
-    xf::test::Test();
-
-    return 0;
+    // run test
+    return xf::test::Test();
 }

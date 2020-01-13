@@ -7,6 +7,7 @@ namespace _help
     enum _sc_cmd {
         _sc_cmd_help,
         _sc_cmd_version,
+        _sc_cmd_analyzer,
         _sc_cmd_input,
         _sc_cmd_output,
         _sc_cmd_config,
@@ -15,7 +16,6 @@ namespace _help
         _sc_cmd_exclude,
         _sc_cmd_thread,
         _sc_cmd_explain,
-        _sc_cmd_analyzer,
         _sc_cmd_view,
         _sc_cmd_empty
     };
@@ -54,6 +54,14 @@ namespace _help
         "",
         "sc --version",
         "sc --version" })},
+
+        { _sc_cmd::_sc_cmd_analyzer, _help_item({{"--analyzer", "-a"},
+        "Show built-in analyzer information.",
+        R"(You can specify a name to view the corresponding analyzer information.
+                  If not specified, show all analyzer information.)",
+        "sc --analyzer [command]",
+        R"(sc --analyzer
+                 sc --analyzer C++)" })},
 
         { _sc_cmd::_sc_cmd_input, _help_item({{"--input", "-i"},
         "[required] Specify the path of the source to be counted, can be a file or directory.",
@@ -133,14 +141,6 @@ namespace _help
         "sc --view [command]",
         R"(sc --view
                  sc --view codes:asc)" })},
-
-        { _sc_cmd::_sc_cmd_analyzer, _help_item({{"--analyzer", "-a"},
-        "[optional] Show built-in analyzer information.",
-        R"(You can specify a name to view the corresponding analyzer information.
-                  If not specified, show all analyzer information.)",
-        "sc --analyzer [command]",
-        R"(sc --analyzer
-                 sc --analyzer C++)" })},
 
         { _sc_cmd::_sc_cmd_empty, _help_item({{"--empty"},
         "[optional] Specifies whether to count empty files. default: true.",
