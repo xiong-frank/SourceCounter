@@ -1,4 +1,4 @@
-﻿#include <map>
+#include <map>
 #include <list>
 #include <iostream>
 #include <fstream>
@@ -85,8 +85,7 @@ namespace sc
         return strs;
     }
 
-    template<std::size_t _N, char _C>
-    inline constexpr std::string _make_filler() { return std::string(_N, _C); }
+    inline std::string _make_filler(std::size_t _N, char _C) { return std::string(_N, _C); }
 
 #include "_help_info.inl"
     
@@ -438,24 +437,24 @@ namespace sc
                                   }
                               });
 
-            _show_line('+', '-', std::vector<std::string>(6, _make_filler<_cell_width, '-'>()));
+            _show_line('+', '-', std::vector<std::string>(6, _make_filler(_cell_width, '-')));
             _show_line('|', ' ', std::vector<std::string>{"Language","Files", "Lines", "Codes", "Comments", "Blanks"});
-            _show_line('+', '-', std::vector<std::string>(6, _make_filler<_cell_width, '-'>()));
+            _show_line('+', '-', std::vector<std::string>(6, _make_filler(_cell_width, '-')));
 
             for (const auto& report : views)
                 _ShowReport(report.first, report.second);
 
-            _show_line('+', '-', std::vector<std::string>(6, _make_filler<_cell_width, '-'>()));
+            _show_line('+', '-', std::vector<std::string>(6, _make_filler(_cell_width, '-')));
             _ShowReport("Total", total);
-            _show_line('+', '-', std::vector<std::string>(6, _make_filler<_cell_width, '-'>()));
+            _show_line('+', '-', std::vector<std::string>(6, _make_filler(_cell_width, '-')));
         }
         else
         {
-            _show_line('+', '-', std::vector<std::string>(5, _make_filler<_cell_width, '-'>()));
+            _show_line('+', '-', std::vector<std::string>(5, _make_filler(_cell_width, '-')));
             _show_line('|', ' ', std::vector<std::string>{"Files", "Lines", "Codes", "Comments", "Blanks"});
-            _show_line('+', '-', std::vector<std::string>(5, _make_filler<_cell_width, '-'>()));
+            _show_line('+', '-', std::vector<std::string>(5, _make_filler(_cell_width, '-')));
             _ShowReport(total);
-            _show_line('+', '-', std::vector<std::string>(5, _make_filler<_cell_width, '-'>()));
+            _show_line('+', '-', std::vector<std::string>(5, _make_filler(_cell_width, '-')));
         }
 
         _OutputToFile(filename, reports, reportMap, total);

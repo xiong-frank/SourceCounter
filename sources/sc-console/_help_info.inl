@@ -1,4 +1,4 @@
-﻿
+
 inline const char* version() { return "1.0.0-snapshot"; }
 inline const char* app_name() { return "SourceCounter"; }
 
@@ -124,7 +124,7 @@ namespace _help
         "[optional] A regular expression, specify paths to exclude.",
         "File paths that match the regular expression are not counted.",
         "sc --exclude [regular expression]",
-        "sc --exclude *.h" })},
+        R"(sc --exclude "\.h$")" })},
 
         { _sc_cmd::_sc_cmd_view, _help_item({{"--view"},
         "[optional] Show statistics by language, and you can also specify sorting rules.",
@@ -207,15 +207,15 @@ namespace _help
     {
         const auto& [name, rule] = analyzer;
         const auto& [exts, syntax] = rule;
-        std::cout << _make_filler<4, ' '>() << R"(")" << name << R"(": {)" << std::endl;
-        std::cout << _make_filler<8, ' '>() << R"("extensions": )" << nlohmann::json(exts).dump() << "," << std::endl;
-        std::cout << _make_filler<8, ' '>() << R"("syntax": [)" << std::endl;
-        std::cout << _make_filler<12, ' '>() << nlohmann::json(std::get<0>(syntax)).dump() << "," << std::endl;
-        std::cout << _make_filler<12, ' '>() << nlohmann::json(std::get<1>(syntax)).dump() << "," << std::endl;
-        std::cout << _make_filler<12, ' '>() << nlohmann::json(std::get<2>(syntax)).dump() << "," << std::endl;
-        std::cout << _make_filler<12, ' '>() << nlohmann::json(std::get<3>(syntax)).dump() << std::endl;
-        std::cout << _make_filler<8, ' '>() << "]" << std::endl;
-        std::cout << _make_filler<4, ' '>() << "}";
+        std::cout << _make_filler(4, ' ') << R"(")" << name << R"(": {)" << std::endl;
+        std::cout << _make_filler(8, ' ') << R"("extensions": )" << nlohmann::json(exts).dump() << "," << std::endl;
+        std::cout << _make_filler(8, ' ') << R"("syntax": [)" << std::endl;
+        std::cout << _make_filler(12, ' ') << nlohmann::json(std::get<0>(syntax)).dump() << "," << std::endl;
+        std::cout << _make_filler(12, ' ') << nlohmann::json(std::get<1>(syntax)).dump() << "," << std::endl;
+        std::cout << _make_filler(12, ' ') << nlohmann::json(std::get<2>(syntax)).dump() << "," << std::endl;
+        std::cout << _make_filler(12, ' ') << nlohmann::json(std::get<3>(syntax)).dump() << std::endl;
+        std::cout << _make_filler(8, ' ') << "]" << std::endl;
+        std::cout << _make_filler(4, ' ') << "}";
     }
 
     inline void _show_analyzers(const std::vector<std::pair<std::string, std::tuple<sc::list_t, sc::syntax_t>>>& analyzers)

@@ -28,7 +28,6 @@
 		013CA01523C344E800BAFDC8 /* sc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sc; sourceTree = BUILT_PRODUCTS_DIR; };
 		013CA02023C3451700BAFDC8 /* Rapporteur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Rapporteur.cpp; path = "../../../../sources/sc-console/Rapporteur.cpp"; sourceTree = "<group>"; };
 		013CA02123C3451700BAFDC8 /* Rapporteur.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = Rapporteur.h; path = "../../../../sources/sc-console/Rapporteur.h"; sourceTree = "<group>"; };
-		013CA02223C3451700BAFDC8 /* _help_info.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = _help_info.inl; path = "../../../../sources/sc-console/_help_info.inl"; sourceTree = "<group>"; };
 		013CA02323C3451700BAFDC8 /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = "../../../../sources/sc-console/Main.cpp"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -63,7 +62,6 @@
 		013CA01F23C344F400BAFDC8 /* sources */ = {
 			isa = PBXGroup;
 			children = (
-				013CA02223C3451700BAFDC8 /* _help_info.inl */,
 				013CA02323C3451700BAFDC8 /* Main.cpp */,
 				013CA02023C3451700BAFDC8 /* Rapporteur.cpp */,
 				013CA02123C3451700BAFDC8 /* Rapporteur.h */,
