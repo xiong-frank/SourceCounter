@@ -1,4 +1,4 @@
 
 cd $(dirname "$0")
 
-./compile-script.sh -O3
+../../scripts/compile-script.sh "g++-9 --std=c++17" ar -O3

@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 
-#include "../third/xf_log_console.h"
 #include "../third/xf_cmd_parser.h"
 #include "../third/json.hpp"
 
@@ -85,13 +84,13 @@ namespace sc
         return strs;
     }
 
-    inline std::string _make_filler(std::size_t _N, char _C) { return std::string(_N, _C); }
+    inline std::string _make_filler(std::size_t n, char c) { return std::string(n, c); }
 
 #include "_help_info.inl"
     
     inline std::string _make_view_text(unsigned int view)
     {
-        std::string _order_str[]{ "", "by_nothing", "by_lines", "by_codes", "by_comments", "by_blanks", "by_files" };
+        const std::string _order_str[]{ "", "nothing", "lines", "codes", "comments", "blanks", "files" };
 
         unsigned int order = (order_t::order_mask & view);
         if (order_t::no_show == order || order_t::by_nothing == order)
@@ -99,20 +98,33 @@ namespace sc
 
         std::string _dir_str[]{ "ascending", "descending" };
 
-        return _order_str[order] + " | " + _dir_str[(order_t::order_direction & view) >> 3];
+        return _order_str[order] + ":" + _dir_str[(order_t::order_direction & view) >> 3];
+    }
+
+    inline std::string _make_mode_text(unsigned int mode)
+    {
+        constexpr unsigned int _mode_value[]{ mode_t::cc_is_code,  mode_t::cc_is_comment,
+                                              mode_t::mc_is_blank, mode_t::mc_is_comment,
+                                              mode_t::ms_is_blank, mode_t::ms_is_code };
+        std::vector<std::string> text;
+        for (unsigned int k : _mode_value)
+            if (_check_mode(mode, k))
+                text.emplace_back(std::to_string(k));
+        
+        return (_help::_to_string(text, std::to_string(mode).append("("), ")", "+"));
     }
 
     inline void Explain(const Counter& counter, const params_t& opt)
     {
         std::cout << std::setw(_help::_indent_number) << "input"        << ": " << opt.input << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "output"       << ": " << opt.output << std::endl;
         std::cout << std::setw(_help::_indent_number) << "config file"  << ": " << opt.configFile << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "languages"    << ": " << xf::log::to_string(opt.languages) << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "languages"    << ": " << _help::_to_string(opt.languages) << std::endl;
         std::cout << std::setw(_help::_indent_number) << "exclusion"    << ": " << opt.exclusion << std::endl;
         std::cout << std::setw(_help::_indent_number) << "allow empty"  << ": " << (opt.allowEmpty ? "true" : "false") << std::endl;
         std::cout << std::setw(_help::_indent_number) << "files"        << ": " << counter.Files().size() << std::endl;
         std::cout << std::setw(_help::_indent_number) << "thread count" << ": " << opt.nThread << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "mode"         << ": " << opt.mode << std::endl;
-        std::cout << std::setw(_help::_indent_number) << "output"       << ": " << opt.output << std::endl;
+        std::cout << std::setw(_help::_indent_number) << "mode"         << ": " << _make_mode_text(opt.mode) << std::endl;
         std::cout << std::setw(_help::_indent_number) << "view"         << ": " << _make_view_text(opt.view) << std::endl;
     }
 

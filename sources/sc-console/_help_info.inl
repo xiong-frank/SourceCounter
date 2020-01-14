@@ -44,38 +44,38 @@ namespace _help
         { _sc_cmd::_sc_cmd_help, _help_item({{"--help", "-h"}, 
         "For help information.",
         "",
-        "sc --help [command]",
-        R"(sc --help
-                 sc --help --input
-                 sc --help -c)" })},
+        "--help [command]",
+        R"(--help
+                 --help --input
+                 --help -c)" })},
 
         { _sc_cmd::_sc_cmd_version, _help_item({{"--version", "-v"},
         "Show version information.",
         "",
-        "sc --version",
-        "sc --version" })},
+        "--version",
+        "--version" })},
 
         { _sc_cmd::_sc_cmd_analyzer, _help_item({{"--analyzer", "-a"},
         "Show built-in analyzer information.",
         R"(You can specify a name to view the corresponding analyzer information.
                   If not specified, show all analyzer information.)",
-        "sc --analyzer [command]",
-        R"(sc --analyzer
-                 sc --analyzer C++)" })},
+        "--analyzer [name]",
+        R"(--analyzer
+                 --analyzer C++)" })},
 
         { _sc_cmd::_sc_cmd_input, _help_item({{"--input", "-i"},
         "[required] Specify the path of the source to be counted, can be a file or directory.",
         "",
-        "sc --input [path]",
-        R"(sc --input ./main.cpp
-                 sc --input ./sources/)" })},
+        "--input [path]",
+        R"(--input ./main.cpp
+                 --input ./sources/)" })},
 
         { _sc_cmd::_sc_cmd_output, _help_item({{"--output", "-o"},
         "[optional] Specify the file path for the output statistics, the output is in JSON format.",
         R"(Contains the statistics of each source file and the summarized statistics.
                  If not specified, it will not be output.)",
-        "sc --output [path]",
-        "sc --output ./output/sc.json" })},
+        "--output [path]",
+        "--output ./output/sc.json" })},
 
         { _sc_cmd::_sc_cmd_config, _help_item({{"--config", "-c"},
         "[optional] Specifies the config path for language syntax rules.",
@@ -93,8 +93,8 @@ namespace _help
                                           ]
                             }
                     })",
-        "sc --config [path]",
-        "sc --config ./languages.json" })},
+        "--config [path]",
+        "--config ./languages.json" })},
 
         { _sc_cmd::_sc_cmd_mode, _help_item({{"--mode", "-m"},
         "[optional] Specify statistical rules to explain the ambiguous lines.",
@@ -119,47 +119,49 @@ namespace _help
                  Different rules can be used in combination.
                  Use the result of bit-or (or addition) as the value of "mode".
                  If not specified, the default value is 37.)",
-        "sc --mode [number]",
-        "sc --mode 53" })},
+        "--mode [number]",
+        "--mode 53" })},
 
         { _sc_cmd::_sc_cmd_languages, _help_item({{"--languages", "-l"},
         "[optional] Specify the language for Statistics.",
         "Multiple languages are separated by commas,and language names are not case sensitive.",
-        "sc --languages [name list]",
-        "sc --languages C++,Java,Python" })},
+        "--languages [name-list]",
+        "--languages C++,Java,Python" })},
 
         { _sc_cmd::_sc_cmd_exclude, _help_item({{"--exclude", "-e"},
         "[optional] A regular expression, specify paths to exclude.",
         "File paths that match the regular expression are not counted.",
-        "sc --exclude [regular expression]",
-        R"(sc --exclude "\.h$")" })},
+        "--exclude [regular-expression]",
+        R"(--exclude "\.h$")" })},
 
         { _sc_cmd::_sc_cmd_view, _help_item({{"--view"},
         "[optional] Show statistics by language, and you can also specify sorting rules.",
         R"(Sort columns: files, lines, codes, comments, blanks.
                  Sort order: asc[ending], des[cending])",
-        "sc --view [command]",
-        R"(sc --view
-                 sc --view codes:asc)" })},
+        "--view [options]",
+        R"(--view
+                 --view codes
+                 --view codes:asc
+                 --view codes:ascending)" })},
 
         { _sc_cmd::_sc_cmd_empty, _help_item({{"--empty"},
         "[optional] Specifies whether to count empty files. default: true.",
         "",
-        "sc --empty [bool]",
-        "sc --empty true" })},
+        "--empty [bool]",
+        "--empty true" })},
 
         { _sc_cmd::_sc_cmd_thread, _help_item({{"--thread", "-t"},
         "[optional] suggested number of threads used.",
         R"(The program automatically adjusts the number of threads based on the number of files it recognizes.
                  If the number of threads specified is too large, will be ignored.)",
-        "sc --thread [number]",
-        "sc --thread 4" })},
+        "--thread [number]",
+        "--thread 4" })},
 
         { _sc_cmd::_sc_cmd_explain, _help_item({{"--explain", "-x"},
         "[optional] explain parameters to be used during program execution.",
         "If this option is specified, statistical process will not be excuted.",
-        "sc --explain",
-        "sc --explain" })}
+        "--explain",
+        "--explain" })}
     };
 
     const std::map<std::string, unsigned int> _cmd_map = _make_cmd_map(_help_map);
@@ -170,14 +172,57 @@ namespace _help
         return { keys.begin(), keys.end() };
     }
 
-    inline std::string _to_string(const std::vector<std::string>& strs)
+    inline const std::string& _to_string(const std::string& value)
     {
-        if (strs.empty()) return std::string();
+        return value;
+    }
 
-        std::string str = strs[0];
-        for (std::size_t i = 1; i < strs.size(); str.append(", ").append(strs[i++]));
+    inline std::string _to_string(const std::pair<std::string, std::tuple<sc::list_t, sc::syntax_t>>& analyzer)
+    {
+        const auto& [name, rule] = analyzer;
+        const auto& [exts, syntax] = rule;
 
+        std::string str;
+        str.append(_make_filler(4, ' ')).append(R"(")").append(name).append("\": {\n");
+        str.append(_make_filler(8, ' ')).append(R"("extensions": )").append(nlohmann::json(exts).dump()).append(",\n");
+        str.append(_make_filler(8, ' ')).append("\"syntax\": [\n");
+        str.append(_make_filler(12, ' ')).append(nlohmann::json(std::get<0>(syntax)).dump()).append(",\n");
+        str.append(_make_filler(12, ' ')).append(nlohmann::json(std::get<1>(syntax)).dump()).append(",\n");
+        str.append(_make_filler(12, ' ')).append(nlohmann::json(std::get<2>(syntax)).dump()).append(",\n");
+        str.append(_make_filler(12, ' ')).append(nlohmann::json(std::get<3>(syntax)).dump()).append("\n");
+        str.append(_make_filler(8, ' ')).append("]\n");
+        str.append(_make_filler(4, ' ')).append("}");
+        
         return str;
+    }
+
+    template<typename _IterType>
+    std::string _to_string(_IterType first, _IterType last, const std::string& prefix, const std::string& suffix, const std::string& separator)
+    {
+        std::string str(prefix);
+
+        if (first != last)
+            for (str.append(_to_string(*first++)); first != last; ++first)
+                str.append(separator).append(_to_string(*first));
+        
+        return str.append(suffix);
+    }
+
+    template<typename _Type>
+    std::string _to_string(const _Type& value, const std::string& prefix, const std::string& suffix, const std::string& separator)
+    {
+        return _to_string(std::cbegin(value), std::cend(value), prefix, suffix, separator);
+    }
+
+    template<typename _Type, std::size_t n>
+    std::string _to_string(const _Type(&value)[n], const std::string& prefix, const std::string& suffix, const std::string& separator)
+    {
+        return _to_string(value, value + n, prefix, suffix, separator);
+    }
+
+    inline std::string _to_string(const std::vector<std::string>& vtr)
+    {
+        return _to_string(vtr, "", "", ",");
     }
 
     inline void _show_help(const std::string& k) {
@@ -203,41 +248,17 @@ namespace _help
         std::cout << std::endl;
     }
 
-    inline void _show_analyzer(const std::pair<std::string, std::tuple<sc::list_t, sc::syntax_t>>& analyzer)
-    {
-        const auto& [name, rule] = analyzer;
-        const auto& [exts, syntax] = rule;
-        std::cout << _make_filler(4, ' ') << R"(")" << name << R"(": {)" << std::endl;
-        std::cout << _make_filler(8, ' ') << R"("extensions": )" << nlohmann::json(exts).dump() << "," << std::endl;
-        std::cout << _make_filler(8, ' ') << R"("syntax": [)" << std::endl;
-        std::cout << _make_filler(12, ' ') << nlohmann::json(std::get<0>(syntax)).dump() << "," << std::endl;
-        std::cout << _make_filler(12, ' ') << nlohmann::json(std::get<1>(syntax)).dump() << "," << std::endl;
-        std::cout << _make_filler(12, ' ') << nlohmann::json(std::get<2>(syntax)).dump() << "," << std::endl;
-        std::cout << _make_filler(12, ' ') << nlohmann::json(std::get<3>(syntax)).dump() << std::endl;
-        std::cout << _make_filler(8, ' ') << "]" << std::endl;
-        std::cout << _make_filler(4, ' ') << "}";
-    }
-
-    inline void _show_analyzers(const std::vector<std::pair<std::string, std::tuple<sc::list_t, sc::syntax_t>>>& analyzers)
-    {
-        std::cout << '{' << std::endl;
-        _show_analyzer(analyzers[0]);
-        for (std::size_t i = 1; i < analyzers.size(); _show_analyzer(analyzers[i++]))
-            std::cout << "," << std::endl;
-        std::cout << std::endl <<  '}' << std::endl;
-    }
-
     inline void _show_analyzer(const std::string& name)
     {
         if (auto iter = sc::RuleManager::BuildInRules().find(name); iter != sc::RuleManager::BuildInRules().end())
-            _show_analyzers({ *iter });
+            std::cout << "{\n" << _to_string(*iter) << "\n}" << std::endl;
         else
             std::cout << R"(error: No analyzer with name ")" + name + R"(")" << std::endl;
     }
 
     inline void _show_analyzer()
     {
-        _show_analyzers({ sc::RuleManager::BuildInRules().begin(), sc::RuleManager::BuildInRules().end() });
+        std::cout << _to_string(sc::RuleManager::BuildInRules(), "{\n", "\n}", ",\n") << std::endl;
     }
 
 }
