@@ -137,9 +137,9 @@ $> ./sc --input demo.c --output report.json --mode=63
 * 依赖的第三方库：
   * [NielsLohmann/json](https://github.com/nlohmann/json) 3.7.3
   * [FrankXiong/CommandLineParser](https://github.com/xf-bnb/CommandLineParser) 1.0.3
-  * [FrankXiong/SimpleTest](https://github.com/xf-bnb/SimpleTest) 1.0.0
-  * FrankXiong/ConsoleLog 1.0.0
-* 除依赖的外部库以外，项目其他部分完全采用`C++17`编写，理论上支持`C++17`的编译器均可编译，但受于开发环境限制，目前仅在部分机器和编译器上测试通过，以下是经过验证的编译环境：
+  * [FrankXiong/SimpleTest](https://github.com/xf-bnb/SimpleTest) 1.0.1
+  * [FrankXiong/ConsoleLog](https://github.com/xf-bnb/ConsoleLog) 1.0.0
+* 除依赖的外部库以外，项目代码完全采用`C++17`编写，理论上支持`C++17`的编译器均可编译，但受于开发环境限制，目前仅在部分机器和编译器上测试通过，以下是经过验证的编译环境：
 
   | platform | compiler |
   | --- | --- |
@@ -147,5 +147,17 @@ $> ./sc --input demo.c --output report.json --mode=63
   | Mac | GCC 9.2 |
   | Linux | GCC 9.1 |
 * 在 [projects](./projects) 目录中按平台和编译器分别都提供了支持的构建工程配置文件，打开对应环境的配置目录，执行对应的构建脚本或运行构建即可，构建成功将在 `./outputs` 目录中输出生成的结果：
-  * **VisualStudio:** 打开 `.sln` 工程文件，在菜单中选择构建生成即可。
-  * **GCC:** 执行对应环境的 `release.sh` / `debug.sh` 脚本即可。
+  * **Windows:**
+    * 打开 [./projects/Windows/VisualStudio](./projects/Windows/VisualStudio) 目录下的 `.sln` 工程文件，在菜单中选择构建生成即可。
+    * 要求：`VS 2017 15.7` 及以上版本。
+  * **Linux:**
+    * 提供了对 `GCC` 和 `Clang` 编译器的构建脚本，分别进入 [./projects/Linux](./projects/Linux) 中对应的目录，执行对应环境的 `release.sh` / `debug.sh` 脚本即可。
+    * 要求：`GCC 8` 及以上版本，或 `Clang 9` 及以上版本。
+  * **Mac:**
+    * 由于目前仅在 Mac 上验证了 GCC 的正确性，因此执行 [./projects/Mac/GCC](./projects/Mac/GCC) 目录中对应环境的 `release.sh` / `debug.sh` 脚本即可。`Xcode` 和 `Clang` 待测试。
+    * 要求：`Clang 9` 及以上版本。
+  * 参考：
+    * [C++ 编译器支持情况](https://en.cppreference.com/w/cpp/compiler_support)
+    * [Microsoft C++ 语言一致性](https://docs.microsoft.com/zh-cn/cpp/overview/visual-cpp-language-conformance?view=vs-2019)
+    * [GCC 8 发行说明](https://gcc.gnu.org/gcc-8/changes.html)
+    * [Clang 9.0.0 发行说明](https://releases.llvm.org/9.0.0/tools/clang/docs/ReleaseNotes.html)

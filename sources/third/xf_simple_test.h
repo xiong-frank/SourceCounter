@@ -1,6 +1,6 @@
 ﻿/*
 A simple C++ testing framework
-version 1.0.0
+version 1.0.1
 https://github.com/xf-bnb/SimpleTest
 
 Licensed under the MIT License <http://opensource.org/licenses/MIT>.
@@ -19,7 +19,7 @@ Copyright(c) 2019 Frank Xiong <https://github.com/xf-bnb>.
 namespace xf::test
 {
 
-    inline const char* version() { return "1.0.0"; }
+    inline const char* version() { return "1.0.1"; }
 
     class TestInfo final
     {
@@ -151,10 +151,10 @@ namespace xf::test
 
 #define _xfAddTest(key, func) xf::test::TestInfo::Instance().Add(key, func)
 
-#define _xfTest(key) _xfDeclareTestFunc(key); \
-auto _xfConcatenateName(_test_variable_name_, key) = \
-_xfAddTest(#key, _xfConcatenateName(_test_function_name_, key)); \
-_xfDeclareTestFunc(key)
+#define _xfTest(key) _xfDeclareTestFunc(key);                            \
+        auto _xfConcatenateName(_test_variable_name_, key) =             \
+        _xfAddTest(#key, _xfConcatenateName(_test_function_name_, key)); \
+        _xfDeclareTestFunc(key)
 
 #define _xfExpect(expr) xf::test::Assert(expr, name, __FILE__, __LINE__)
 #define _xfAssert(expr) if (!xf::test::Assert(expr, name, __FILE__, __LINE__)) return
