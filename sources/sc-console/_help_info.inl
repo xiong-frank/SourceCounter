@@ -166,19 +166,14 @@ namespace _help
 
     const std::map<std::string, unsigned int> _cmd_map = _make_cmd_map(_help_map);
 
-    std::set<std::string> _get_options(unsigned int k)
-    {
+    std::set<std::string> _get_options(unsigned int k) {
         const auto& keys = _help::_help_map.at(k)._names;
         return { keys.begin(), keys.end() };
     }
 
-    inline const std::string& _to_string(const std::string& value)
-    {
-        return value;
-    }
+    inline const std::string& _to_string(const std::string& value) { return value; }
 
-    inline std::string _to_string(const std::pair<std::string, std::tuple<sc::list_t, sc::syntax_t>>& analyzer)
-    {
+    inline std::string _to_string(const std::pair<std::string, std::tuple<sc::list_t, sc::syntax_t>>& analyzer) {
         const auto& [name, rule] = analyzer;
         const auto& [exts, syntax] = rule;
 
@@ -197,8 +192,7 @@ namespace _help
     }
 
     template<typename _IterType>
-    std::string _to_string(_IterType first, _IterType last, const std::string& prefix, const std::string& suffix, const std::string& separator)
-    {
+    std::string _to_string(_IterType first, _IterType last, const std::string& prefix, const std::string& suffix, const std::string& separator) {
         std::string str(prefix);
 
         if (first != last)
@@ -209,21 +203,16 @@ namespace _help
     }
 
     template<typename _Type>
-    std::string _to_string(const _Type& value, const std::string& prefix, const std::string& suffix, const std::string& separator)
-    {
+    std::string _to_string(const _Type& value, const std::string& prefix, const std::string& suffix, const std::string& separator) {
         return _to_string(std::cbegin(value), std::cend(value), prefix, suffix, separator);
     }
 
     template<typename _Type, std::size_t n>
-    std::string _to_string(const _Type(&value)[n], const std::string& prefix, const std::string& suffix, const std::string& separator)
-    {
+    std::string _to_string(const _Type(&value)[n], const std::string& prefix, const std::string& suffix, const std::string& separator) {
         return _to_string(value, value + n, prefix, suffix, separator);
     }
 
-    inline std::string _to_string(const std::vector<std::string>& vtr)
-    {
-        return _to_string(vtr, "", "", ",");
-    }
+    inline std::string _to_string(const std::vector<std::string>& vtr) { return _to_string(vtr, "", "", ","); }
 
     inline void _show_help(const std::string& k) {
         const auto& [_names, _summary, _description, _usage, _example] = _help_map.at(_cmd_map.at(k));
@@ -248,16 +237,14 @@ namespace _help
         std::cout << std::endl;
     }
 
-    inline void _show_analyzer(const std::string& name)
-    {
+    inline void _show_analyzer(const std::string& name) {
         if (auto iter = sc::RuleManager::BuildInRules().find(name); iter != sc::RuleManager::BuildInRules().end())
             std::cout << "{\n" << _to_string(*iter) << "\n}" << std::endl;
         else
             std::cout << R"(error: No analyzer with name ")" + name + R"(")" << std::endl;
     }
 
-    inline void _show_analyzer()
-    {
+    inline void _show_analyzer() {
         std::cout << _to_string(sc::RuleManager::BuildInRules(), "{\n", "\n}", ",\n") << std::endl;
     }
 

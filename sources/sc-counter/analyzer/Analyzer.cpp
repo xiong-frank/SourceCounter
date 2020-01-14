@@ -1,12 +1,12 @@
 ﻿#include <functional>
 #include <vector>
 #include <map>
+#include <string>
 #include <fstream>
 
 #include "../../third/xf_log_console.h"
 
 #include "../ReportType.h"
-
 #include "Analyzer.h"
 
 namespace sc

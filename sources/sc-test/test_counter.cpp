@@ -103,7 +103,7 @@ namespace sc::test
 
         // 生成测试目录
         constexpr unsigned int n(100);
-        _test_soource_dir dir(sources_dir, test_dir, n);
+        _test_soource_dir _dir_inst(sources_dir, test_dir, n);
 
         // 定义统计器2，加载测试目录文件
         sc::Counter counter2;

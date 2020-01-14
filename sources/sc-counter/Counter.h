@@ -15,7 +15,7 @@ namespace sc
     public:
 
         using file_report_t = std::tuple<std::string, std::string, report_t>;
-        using item_t = std::tuple<std::string, const std::string, const std::string, const syntax_t&>;
+        using item_t = std::tuple<std::string, std::string, const std::string&, const syntax_t&>;
 
         Counter() = default;
 

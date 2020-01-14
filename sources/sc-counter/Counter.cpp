@@ -24,7 +24,7 @@ namespace sc
         return false;
     }
 
-    bool _AddFile(std::vector<Counter::item_t>& items, const RuleManager& mgr, const std::filesystem::path& file, const list_t& includes, const std::string& excludes, bool allowEmpty)
+    bool _AddItem(std::vector<Counter::item_t>& items, const RuleManager& mgr, const std::filesystem::path& file, const list_t& includes, const std::string& excludes, bool allowEmpty)
     {
         if (allowEmpty || 0 < std::filesystem::file_size(file))
         {
@@ -52,13 +52,13 @@ namespace sc
         {
             if (std::filesystem::is_regular_file(p))
             {
-                if (_AddFile(m_Items, m_RuleMgr, p, includes, excludes, allowEmpty))
+                if (_AddItem(m_Items, m_RuleMgr, p, includes, excludes, allowEmpty))
                     ++n;
             }
             else
             {
                 for (const auto& iter : std::filesystem::recursive_directory_iterator(p))
-                    if (iter.is_regular_file() && _AddFile(m_Items, m_RuleMgr, iter.path(), includes, excludes, allowEmpty))
+                    if (iter.is_regular_file() && _AddItem(m_Items, m_RuleMgr, iter.path(), includes, excludes, allowEmpty))
                         ++n;
             }
         }

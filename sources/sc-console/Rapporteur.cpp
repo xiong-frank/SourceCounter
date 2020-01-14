@@ -106,12 +106,12 @@ namespace sc
         constexpr unsigned int _mode_value[]{ mode_t::cc_is_code,  mode_t::cc_is_comment,
                                               mode_t::mc_is_blank, mode_t::mc_is_comment,
                                               mode_t::ms_is_blank, mode_t::ms_is_code };
-        std::vector<std::string> text;
+        std::vector<std::string> keys;
         for (unsigned int k : _mode_value)
             if (_check_mode(mode, k))
-                text.emplace_back(std::to_string(k));
+                keys.emplace_back(std::to_string(k));
         
-        return (_help::_to_string(text, std::to_string(mode).append("("), ")", "+"));
+        return (_help::_to_string(keys, std::to_string(mode).append("("), ")", "+"));
     }
 
     inline void Explain(const Counter& counter, const params_t& opt)
@@ -138,7 +138,7 @@ namespace sc
 
         if (result.is_existing(_opt_key(_sc_cmd_version)))
         {
-            std::cout << app_name() << " " << version() << "  2019-10 by FrankXiong" << std::endl;
+            std::cout << app_name() << " " << version() << "  2020-01 by FrankXiong" << std::endl;
             return false;
         }
 
