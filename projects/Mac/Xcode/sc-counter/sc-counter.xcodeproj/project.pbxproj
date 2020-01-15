@@ -23,7 +23,7 @@
 		0119EFE423C4875C00240B3F /* ClojureAnalyzer.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ClojureAnalyzer.inl; path = "../../../../sources/sc-counter/analyzer/ClojureAnalyzer.inl"; sourceTree = "<group>"; };
 		0119EFE523C4875C00240B3F /* CppAnalyzer.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CppAnalyzer.inl; path = "../../../../sources/sc-counter/analyzer/CppAnalyzer.inl"; sourceTree = "<group>"; };
 		0119EFE623C4875C00240B3F /* RubyAnalyzer.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = RubyAnalyzer.inl; path = "../../../../sources/sc-counter/analyzer/RubyAnalyzer.inl"; sourceTree = "<group>"; };
-		013C9FE523C32DE500BAFDC8 /* sc-counter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "sc-counter.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		013C9FE523C32DE500BAFDC8 /* libsc-counter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libsc-counter.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		013C9FEE23C32E7500BAFDC8 /* RuleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RuleManager.h; path = "../../../../sources/sc-counter/RuleManager.h"; sourceTree = "<group>"; };
 		013C9FEF23C32E7500BAFDC8 /* ReportType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReportType.h; path = "../../../../sources/sc-counter/ReportType.h"; sourceTree = "<group>"; };
 		013C9FF023C32E7500BAFDC8 /* Counter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Counter.h; path = "../../../../sources/sc-counter/Counter.h"; sourceTree = "<group>"; };
@@ -66,7 +66,7 @@
 		013C9FE623C32DE500BAFDC8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				013C9FE523C32DE500BAFDC8 /* sc-counter.a */,
+				013C9FE523C32DE500BAFDC8 /* libsc-counter.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,7 +115,7 @@
 			);
 			name = "sc-counter";
 			productName = "sc-counter";
-			productReference = 013C9FE523C32DE500BAFDC8 /* sc-counter.a */;
+			productReference = 013C9FE523C32DE500BAFDC8 /* libsc-counter.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -277,7 +277,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "../../../../outputs/sc-counter/";
@@ -288,7 +288,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SYMROOT = "../../../../outputs/sc-counter/";

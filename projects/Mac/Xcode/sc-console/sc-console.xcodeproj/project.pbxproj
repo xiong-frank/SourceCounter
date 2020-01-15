@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		013CA02523C3451700BAFDC8 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 013CA02323C3451700BAFDC8 /* Main.cpp */; };
 		013CA02623C34E9B00BAFDC8 /* Rapporteur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 013CA02023C3451700BAFDC8 /* Rapporteur.cpp */; };
+		0164E01B23CF057B00B4B535 /* libsc-counter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0164E01A23CF057B00B4B535 /* libsc-counter.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,11 +25,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0119EFEB23C487E600240B3F /* libsc-counter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; name = "libsc-counter.a"; path = "../../sc-counter/Debug/libsc-counter.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		013CA01523C344E800BAFDC8 /* sc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sc; sourceTree = BUILT_PRODUCTS_DIR; };
 		013CA02023C3451700BAFDC8 /* Rapporteur.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Rapporteur.cpp; path = "../../../../sources/sc-console/Rapporteur.cpp"; sourceTree = "<group>"; };
 		013CA02123C3451700BAFDC8 /* Rapporteur.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = Rapporteur.h; path = "../../../../sources/sc-console/Rapporteur.h"; sourceTree = "<group>"; };
 		013CA02323C3451700BAFDC8 /* Main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Main.cpp; path = "../../../../sources/sc-console/Main.cpp"; sourceTree = "<group>"; };
+		0164E01A23CF057B00B4B535 /* libsc-counter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; name = "libsc-counter.a"; path = "../../../../outputs/sc-counter/libsc-counter.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0164E01B23CF057B00B4B535 /* libsc-counter.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,7 +74,7 @@
 		013CA02723C351D800BAFDC8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0119EFEB23C487E600240B3F /* libsc-counter.a */,
+				0164E01A23CF057B00B4B535 /* libsc-counter.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
