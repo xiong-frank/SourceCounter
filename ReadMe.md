@@ -143,21 +143,19 @@ $> ./sc --input demo.c --output report.json --mode=63
 
   | platform | compiler |
   | --- | --- |
-  | Windows | VisualStudio2019 16.4 |
-  | Mac | GCC 9.2 |
-  | Linux | GCC 9.1 |
-* 在 [projects](./projects) 目录中按平台和编译器分别都提供了支持的构建工程配置文件，打开对应环境的配置目录，执行对应的构建脚本或运行构建即可，构建成功将在 `./outputs` 目录中输出生成的结果：
-  * **Windows:**
-    * 打开 [./projects/Windows/VisualStudio](./projects/Windows/VisualStudio) 目录下的 `.sln` 工程文件，在菜单中选择构建生成即可。
-    * 要求：`VS 2017 15.7` 及以上版本。
-  * **Linux:**
-    * 提供了对 `GCC` 和 `Clang` 编译器的构建脚本，分别进入 [./projects/Linux](./projects/Linux) 中对应的目录，执行对应环境的 `release.sh` / `debug.sh` 脚本即可。
-    * 要求：`GCC 8` 及以上版本，或 `Clang 9` 及以上版本。
-  * **Mac:**
-    * 由于目前仅在 Mac 上验证了 GCC 的正确性，因此执行 [./projects/Mac/GCC](./projects/Mac/GCC) 目录中对应环境的 `release.sh` / `debug.sh` 脚本即可。`Xcode` 和 `Clang` 待测试。
-    * 要求：`Clang 9` 及以上版本。
+  | Windows 1903 | VisualStudio2019 16.4 |
+  | Ubuntu 18.04 | GCC 9.1, Clang 9.0 |
+  | MacOS 10.15.2 | GCC 9.2, Clang 9.0, Xcode 11.3 |
+* 在 [projects](./projects) 目录中按平台和编译器分别提供了支持的构建工程配置或脚本，打开对应环境的配置目录，执行对应的构建脚本或运行构建即可，构建成功将在 `./outputs` 目录中输出生成的结果：
+  * **Windows:** 要求 `VS 2017 15.7` 及以上版本。
+    * 使用 VisualStudio 打开 [./projects/Windows/VisualStudio/SourceCounter.sln](./projects/Windows/VisualStudio) 工程文件，在菜单中选择构建生成即可。
+  * **Linux:** 要求 `GCC 9` 或 `Clang 9` 及以上版本。
+    * **GCC/Clang:** 分别进入 [./projects/Linux](./projects/Linux) 中对应的目录，执行对应环境的 `release.sh` / `debug.sh` 脚本即可。
+  * **Mac:** 要求 `GCC 9` 或 `Clang 9` 或 `Xcode 11` 及以上版本。注意：对于 `Clang` 或 `Xcode` 编译，同时要求 `MacOS 10.15` 以上版本。
+    * **Xcode:** 使用 `Xcode` 加载 [./projects/Mac/Xcode/SourceCounter.xcworkspace](./projects/Mac/Xcode) 工程，分别对每个模块进行构建即可。
+    * **GCC/Clang:** 分别进入 [./projects/Mac](./projects/Mac) 中对应的目录，执行对应环境的 `release.sh` / `debug.sh` 脚本即可。
   * 参考：
     * [C++ 编译器支持情况](https://en.cppreference.com/w/cpp/compiler_support)
     * [Microsoft C++ 语言一致性](https://docs.microsoft.com/zh-cn/cpp/overview/visual-cpp-language-conformance?view=vs-2019)
-    * [GCC 8 发行说明](https://gcc.gnu.org/gcc-8/changes.html)
+    * [GCC 9 发行说明](https://gcc.gnu.org/gcc-9/changes.html)
     * [Clang 9.0.0 发行说明](https://releases.llvm.org/9.0.0/tools/clang/docs/ReleaseNotes.html)
