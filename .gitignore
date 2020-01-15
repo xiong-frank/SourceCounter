@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# vs
+.vs/
+.vscode/
+
 # User-specific files
 *.suo
 # *.user
@@ -27,9 +31,6 @@ bld/
 [Oo]utputs/
 [Ii]mterdiate/
 
-.vs/
-
 # XCode
-
-Build
-xcuserdata
+Build/
+xcuserdata/
