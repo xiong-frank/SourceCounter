@@ -145,6 +145,7 @@ namespace sc
         return symbols;
     }
 
+    // 内置支持的默认语言规则
     const std::map<std::string, std::tuple<list_t, syntax_t>, _str_compare> _build_in_rules{
         {"C",           { { ".h", ".c" },
                           { { "//" },
@@ -183,6 +184,7 @@ namespace sc
                             _make_symbol_for_ruby(R"({[<(`~!@#$%^&*:;-_+=,.\/ )", R"(}]>)`~!@#$%^&*:;-_+=,.\/ )") } } }
     };
 
+    // 默认的分析器名称
     const string_type RuleManager::_DefaultAnalyzer("C");
 
     const std::map<string_type, std::tuple<list_t, syntax_t> , _str_compare>& RuleManager::BuildInRules()

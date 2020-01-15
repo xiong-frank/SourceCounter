@@ -1,8 +1,14 @@
-﻿#pragma once
+﻿/*
+ * 定义规则管理器类
+ * 规则包括：源文件扩展名，对应的分析器，以及相应的语法规则。
+ * 提供对配置规则的加载和判定方法。
+ */
+
+#pragma once
 
 namespace sc
 {
-    // 配置规则管理器
+
     class RuleManager
     {
     private:

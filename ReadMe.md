@@ -30,7 +30,7 @@ $> ./sc --input demo.c --output report.json --mode=63
 注意：通过指定多个命令行参数来运行统计工具是推荐的做法，可以更加明确的决定统计行为。使用简写方式运行仅在只有一个或两个参数时有效，且两个参数都表示路径，例如：
 * `sc demo.c` 等价于 `sc --input demo.c`。
 * `sc demo.c report.json` 等价于 `sc --input demo.c --output report.json`。
-* 其他情况必须明确以 `sc [command] [param] ...` 方式执行。
+* 其他情形则必须明确以 `sc [command] [param] ...` 方式执行。
 
 ### 支持的命令行参数
 ```text
@@ -86,21 +86,21 @@ $> ./sc --input demo.c --output report.json --mode=63
         }
     }
     ```
-    那么统计工具将会识别扩展名为 `.javaxx` 的文件，并以 `Java` 语言规则配置和统计算法，输出 `MyJava` 语言的统计结果。如果两种语言的语法一致，但规则配置不一致，例如 `Java` 使用 `/*` `*/` 来表示多行注释，而你的 `MyJava` 语言使用 `ab` `cd`，那么也可以自定义配置规则：
+    那么统计工具将会识别扩展名为 `.javaxx` 的文件，并以 `Java` 语言规则配置和统计算法，输出 `MyJava` 语言的统计结果。如果两种语言的语法一致，但规则配置不一致，例如 `Java` 使用 `/*` `*/` 来表示多行注释，而你的 `MyJava` 语言使用 `xxx` `yyy`，那么也可以自定义配置规则：
     ```json
     {
         "MyJava": {
             "analyzer": "Java",
             "extensions": [".javaxx"],
             "syntax": [ ["//"],
-                      [["ab", "cd"]],
+                      [["xxx", "yyy"]],
                       [["\"", "\""]],
                       [] 
                     ]
         }
     }
     ```
-    `syntax` 对于非内置语言是可选的，不指定时默认使用对应的 `analyzer` 的配置，但 `extensions` 字段必填，否则统计程序不能确定该将哪种文件识别为 `MyJava` 语言，但同时你依然可以指定 `extensions` 字段为 `[".java"]` ，这会优先将 `.java` 文件识别为 `MyJava`，而不是 `Java`。
+    `syntax` 对于非内置语言是可选的，不指定时默认使用对应的 `analyzer` 的配置，但 `extensions` 字段必填，否则统计程序不能确定该将哪种文件识别为 `MyJava` 语言，但同时你依然可以指定 `extensions` 字段为 `[".java"]` ，这会优先将 `.java` 文件识别为 `MyJava`，而不是 `Java`。注意：配置中的语言名称和分析器名称不区分大小写。
 * **--mode, -m**：即使指定了不同语言的语法规则，也不一定就能准确的对行数进行判定，这是因为，即便是相同代码，不同的人会有不同的理解，例如下面的 C++ 代码示例：
   ```c++
   int main(/* void */)
@@ -130,8 +130,22 @@ $> ./sc --input demo.c --output report.json --mode=63
    * 需要注意的是，不同的值可以通过 **位或** (或加法)运算组合使用，例如：`--mode=7` 而 7 = 1 + 2 + 4， 这意味着：当指定7，那么 **一行中同时包含有效代码和注释，该行既统计为代码行，又统计为注释行。并且多行注释中的空行将统计为空行。** 以上述C++代码为例。指定 `--mode=7`，那么统计结果为： *Lines:7, Codes:4, Comments:3, Blanks:1*。
    * `--mode` 参数是可选的，若不指定，默认值为：39(1 + 2 + 4 + 32)。
 * **--languages, -l, --exclude, -e**：统计工具内置分析器对应的语言以及配置文件中配置的语言都将得到支持，这通常会导致大量的语言都得到支持，我正是我们想要的，但使用者在统计的时候可能并不想分析所有的源代码，而仅想获得自己关注的某些语言的分析统计结果，此时就可以使用 `--languages` 选项指定，例如：`--languages=C,Java,Python` 意味着统计工具仅分析 C, Java, Python 这3种语言源代码文件的统计结果，前提是统计工具也支持这3种语言。而 `--exclude` 选项则用来排除文件，利用正则表达式对每个文件的绝对路径进行匹配，所有匹配到的文件将不会被统计。
-* **--thread, -t** 此选项建议统计工具运行时使用的线程数量，为什么是建议？因为如果指定一个较大的数字，统计程序当然不会同时分配如此多的线程。一般指定一个小于32的数字，且不大于目标文件的数量，建议生效。
-* **--explain, -x** 一旦指定该选项，统计工具将不会真正执行统计工作，仅对当前使用的参数信息进行解释输出，前提是所有的选项和参数都指定正确。例如想在真正运行前查看输入的选项或参数是否和预期的一致，可以添加该选项查看。
+* **--thread, -t**： 此选项建议统计工具运行时使用的线程数量，为什么是建议？因为如果指定一个较大的数字，统计程序当然不会同时分配如此多的线程。一般指定一个小于32的数字，且不大于目标文件的数量，建议生效。
+* **--explain, -x**： 一旦指定该选项，统计工具将不会真正执行统计工作，仅对当前使用的参数信息进行解释输出，前提是所有的选项和参数都指定正确。例如想在真正运行前查看输入的选项或参数是否和预期的一致，可以添加该选项查看。例如：
+  ```shell
+  $> ./sc --explain --input resources/sources/ --output report.json --view=lines:des --languages "C,Java.C++,Frank" --exclude="\.c$" --mode=41
+  
+          input: resources/sources/
+         output: report.json
+    config file:
+      languages: C
+      exclusion: \.c$
+    allow empty: true
+          files: 2
+   thread count: 1
+           mode: 41(1+8+32)
+           view: lines:descending
+  ```
 
 ### 如何构建
 * 依赖的第三方库：
@@ -144,7 +158,7 @@ $> ./sc --input demo.c --output report.json --mode=63
   | [FrankXiong/ConsoleLog](https://github.com/xf-bnb/ConsoleLog) | 1.0.0 | 简单的日志框架 |
 * 除依赖的外部库以外，项目代码完全采用`C++17`编写，理论上支持`C++17`的编译器均可编译，但受于开发环境限制，目前仅在部分机器和编译器上测试通过，以下是经过验证的编译环境：
 
-  | platform | compiler |
+  | Platform | Compiler |
   | --- | --- |
   | Windows 1903 | VisualStudio2019 16.4 |
   | Ubuntu 18.04 | GCC 9.1, Clang 9.0 |

@@ -62,7 +62,16 @@ namespace sc
         _lines, _codes, _comments, _blanks
     };
 
+    /*
+     * 语法结构数据类型
+     * 包含：单行注释符号列表、多行注释符号列表、普通字符串符号列表、原生字符串符号列表
+     */
     using syntax_t = std::tuple<list_t, pairs_t, pairs_t, pairs_t>;
+
+    /*
+     * 描述统计的行数结果的数据类型
+     * 依次为：物理行数、有效代码行数、注释行数、空白行数
+     */
     using report_t = std::tuple<unsigned int, unsigned int, unsigned int, unsigned int>;
 
 }

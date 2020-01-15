@@ -1,4 +1,10 @@
-﻿#include "../third/xf_simple_test.h"
+﻿/*
+ * 测试分析器算法
+ * 利用默认配置分别对 resources/sources/ 目录下的示例源文件按照多种统计模式进行统计
+ * 比较统计结果的正确性
+ */
+
+#include "../third/xf_simple_test.h"
 
 #include "../sc-counter/ReportType.h"
 #include "../sc-counter/RuleManager.h"

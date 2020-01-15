@@ -1,5 +1,4 @@
-﻿#include <map>
-#include <list>
+﻿#include <list>
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -11,7 +10,7 @@
 
 namespace sc
 {
-    
+    // 从字符串参数中解析显示规则，若解析成功，返回显示规则值，否则返回0。
     inline unsigned int _parser_view(const std::string& view)
     {
         if (view.empty())
@@ -65,6 +64,7 @@ namespace sc
         return 0;
     }
 
+    // 根据指定的分隔符拆分字符串
     inline std::vector<std::string> _split_string(const std::string& str, char symbol)
     {
         std::vector<std::string> strs;
@@ -84,10 +84,12 @@ namespace sc
         return strs;
     }
 
+    // 构造填充符
     inline std::string _make_filler(std::size_t n, char c) { return std::string(n, c); }
 
 #include "_help_info.inl"
     
+    // 根据显示规则值生成字符串，与上述 _parser_view 函数是相反的。
     inline std::string _make_view_text(unsigned int view)
     {
         const std::string _order_str[]{ "", "nothing", "lines", "codes", "comments", "blanks", "files" };
@@ -101,6 +103,7 @@ namespace sc
         return _order_str[order] + ":" + _dir_str[(order_t::order_direction & view) >> 3];
     }
 
+    // 根据统计模式值生成易于理解的字符串
     inline std::string _make_mode_text(unsigned int mode)
     {
         constexpr unsigned int _mode_value[]{ mode_t::cc_is_code,  mode_t::cc_is_comment,
@@ -114,6 +117,7 @@ namespace sc
         return (_help::_to_string(keys, std::to_string(mode).append("("), ")", "+"));
     }
 
+    // 对命令行参数进行解释打印输出
     inline void Explain(const Counter& counter, const params_t& opt)
     {
         std::cout << std::setw(_help::_indent_number) << "input"        << ": " << opt.input << std::endl;
@@ -128,6 +132,7 @@ namespace sc
         std::cout << std::setw(_help::_indent_number) << "view"         << ": " << _make_view_text(opt.view) << std::endl;
     }
 
+    // 解析命令行参数
     inline bool _parse_option(Counter& counter, params_t& opt, const xf::cmd::result_t& result)
     {
         if (!result.is_valid())
@@ -240,6 +245,7 @@ namespace sc
         return true;
     }
 
+    // 判定一个字符串是否是路径字符串
     inline bool _is_path(const xf::cmd::Parser& parser, const char* str) {
         return (!parser.IsValid(str) && nullptr == std::strpbrk(str, R"(:?*"'<>!=)"));
     }
@@ -247,15 +253,16 @@ namespace sc
     bool ParseCommandLine(Counter& counter, params_t& opt, const char* const* argv, unsigned int argc)
     {
         /*
+         命令行参数示例：
          --help=--input
          --version
          --input=/home/dir
          --output=/home/file
          --config=/home/config.json
          --languages=c++,java,ruby
-         --exclude=*.h
+         --exclude="\.h$"
          --mode=123
-         --view=lines|asc
+         --view=lines:asc
          --analyzer=C++
          --thread=10
          --empty=true
@@ -267,6 +274,7 @@ namespace sc
             return false;
         }
 
+        // 构造命令行参数解析器
         xf::cmd::Parser parser;
         parser.AddOption({ _opt_keys(_sc_cmd_help), { xf::cmd::value_t::vt_string, true, false, false, [&parser](const std::string& k) { return parser.IsValid(k); } } })
             .AddOption({ _opt_keys(_sc_cmd_analyzer), { xf::cmd::value_t::vt_string, true, false, false } })
@@ -346,6 +354,7 @@ namespace sc
         return j;
     }
 
+    // 输出统计报告到文件
     inline bool _OutputToFile(const std::string& filename, const std::vector<Counter::file_report_t>& reports, const report_map_t& reportMap, const view_report_t& total)
     {
         std::ofstream fout(filename);
@@ -374,9 +383,11 @@ namespace sc
             return true;
         }
 
+        std::cout << R"(Invalid path")" << filename << R"(", output report to file failed.)" << std::endl;
         return false;
     }
 
+    // 一个简单的插入排序
     template<typename _LessType>
     void _InsertReport(std::list<report_pair_t>& reports, const report_pair_t& item, _LessType lt)
     {
@@ -390,6 +401,7 @@ namespace sc
 
     constexpr unsigned int _cell_width(10); // 单元格宽度
 
+    // 显示一行数据
     template<typename _Type>
     inline void _show_line(char separator, char placeholder, const std::vector<_Type>& filler)
     {
@@ -434,8 +446,7 @@ namespace sc
 
             for (const auto& item : reportMap)
                 _InsertReport(views, item,
-                              [&asc, rank](const report_pair_t& a, const report_pair_t& b)
-                              {
+                              [&asc, rank](const report_pair_t& a, const report_pair_t& b) {
                                   switch (rank)
                                   {
                                   case order_t::by_files:

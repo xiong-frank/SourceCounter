@@ -1,4 +1,10 @@
-﻿#pragma once
+﻿/*
+ * 定义分析器类
+ * 定义行的判定类型和分析状态
+ * 提供分析函数返回统计结果
+ */
+
+#pragma once
 
 namespace sc
 {
@@ -30,16 +36,23 @@ namespace sc
 
     protected:
 
+        // 当前分析状态
         status_t _status{ status_t::normal };
 
+        using _find_symbol_t = std::size_t(*)(const std::string_view&, const std::string&);
+
+        /*
+         * 下面4个函数分别对应不同分析状态下的处理逻辑，通过循环转移状态分析的方式，最终完成对一行代码的类型判定。
+         */
         virtual unsigned int _OnNormal(std::string_view& line, pair_t& arg, const syntax_t& item);
         virtual unsigned int _OnQuoting(std::string_view& line, pair_t& arg, const syntax_t& item);
         virtual unsigned int _OnPrimitive(std::string_view& line, pair_t& arg, const syntax_t& item);
         virtual unsigned int _OnAnnotating(std::string_view& line, pair_t& arg, const syntax_t& item);
 
+        // 查找起始符号和位置，返回找到的符号类型。
         virtual _symbol_t _search_begin(std::string_view& line, std::size_t& index, pair_t& arg, const syntax_t& item);
-
-        virtual unsigned int _on_status(line_t lt, std::string_view& line, pair_t& arg, const syntax_t& item, std::size_t(*pf)(const std::string_view&, const std::string&));
+        // 查找结束符号，返回行的判定类型。
+        virtual unsigned int _search_end(line_t lt, std::string_view& line, pair_t& arg, const syntax_t& item, _find_symbol_t pf);
 
         // 查找引号结束符位置，同时检查转义字符。
         static std::size_t _find_quote(const std::string_view& view, const std::string& quote)

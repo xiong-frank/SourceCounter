@@ -1,4 +1,9 @@
-﻿#include <string>
+﻿/*
+ * 测试统计器
+ * 测试统计器加载源文件路径的正确性以及对批量源文件统计结果的正确性
+ */
+
+#include <string>
 #include <filesystem>
 
 #include "../third/xf_simple_test.h"
@@ -6,7 +11,7 @@
 
 namespace sc::test
 {
-
+    // 汇总统计报告
     inline sc::report_t _TotalReport(const std::vector<sc::Counter::file_report_t>& reports)
     {
         unsigned int x1(0), x2(0), x3(0), x4(0);

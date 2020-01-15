@@ -7,6 +7,7 @@ namespace sc
     // 定义报告显示规则
     enum order_t
     {
+        // 定义排序列
         no_show         = 0x00,
         by_nothing      = 0x01,
         by_lines        = 0x02,
@@ -16,6 +17,7 @@ namespace sc
         by_files        = 0x06,
         order_mask      = 0x07,
 
+        // 定义排序方向
         ascending       = 0x00,
         descending      = 0x08,
         order_direction = 0x08
@@ -35,10 +37,14 @@ namespace sc
 
     };  // struct params_t
 
-    // 从命令行参数解析配置
+    /*
+     * 从命令行参数解析配置
+     * 将解析到的数据保存到 params_t 数据结构中
+     * 若解析完成后允许对源代码进行分析统计则返回 true，否则返回 false。
+     */
     bool ParseCommandLine(Counter& counter, params_t& opt, const char* const* argv, unsigned int argc);
 
-    // 对报告结果进行输出
+    // 输出统计报告结果
     void OutputReport(const std::vector<Counter::file_report_t>& reports, const std::string& filename, unsigned int view);
 
 }

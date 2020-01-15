@@ -27,7 +27,7 @@ protected:
 
     unsigned int _OnPrimitive(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
-        return _on_status(line_t::has_code, line, arg, item, sc::CsharpAnalyzer::_find_quote);
+        return _search_end(line_t::has_code, line, arg, item, sc::CsharpAnalyzer::_find_quote);
     }
 
 };  // class CsharpAnalyzer

@@ -1,4 +1,10 @@
-﻿#pragma once
+﻿/*
+ * 定义统计器类
+ * 负责加载文件以及开启分析线程
+ * 统计器对象不可拷贝和复制
+ */
+
+#pragma once
 
 #include <map>
 #include <vector>

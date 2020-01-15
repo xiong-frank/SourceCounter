@@ -4,13 +4,9 @@
 #include <filesystem>
 
 #include "../third/xf_log_console.h"
-#include "../third/json.hpp"
-
-#include "ReportType.h"
-#include "RuleManager.h"
-#include "analyzer/Analyzer.h"
 
 #include "Counter.h"
+#include "analyzer/Analyzer.h"
 
 namespace sc
 {
@@ -62,6 +58,10 @@ namespace sc
                         ++n;
             }
         }
+        else
+        {
+            _xfLog(R"("%s" is not a valid path, load sources failed.)", input.c_str());
+        }
 
         return n;
     }
@@ -70,6 +70,8 @@ namespace sc
     {
         if (0 < nThread && !m_Items.empty())
         {
+            _xfLog("Start counting source lines, thread: %d, mode: %d, files: %zd", nThread, mode, m_Items.size());
+
             if (1 < nThread)
             {
                 std::vector<std::future<std::vector<file_report_t>>> vtr;
@@ -90,6 +92,7 @@ namespace sc
             return true;
         }
 
+        _xfLog("There are no items to analyze, or the thread could not be started.");
         return false;
     }
 

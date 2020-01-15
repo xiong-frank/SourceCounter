@@ -29,6 +29,7 @@ namespace sc
             pair_t arg;
             for (std::string line; std::getline(fin, line); )
             {
+                // 根据对一行代码的分析结果类型，结合统计模式进行行数累加。
                 std::string_view view(line);
                 switch (_status_funcs[static_cast<unsigned int>(_status)](view, arg, item))
                 {
@@ -72,14 +73,15 @@ namespace sc
         }
         else
         {
-            _xflog(R"(open file "%s" failed !)", file.c_str());
+            _xfLog(R"(open file "%s" failed !)", file.c_str());
         }
 
-        _xflog("file: %s, lines: %d, codes: %d, comments: %d, blanks: %d", file.c_str(), lines, codes, comments, blanks);
+        _xfLog("file: %s, lines: %d, codes: %d, comments: %d, blanks: %d", file.c_str(), lines, codes, comments, blanks);
 
         return report;
     }
 
+    // 判定是否空白字符
     inline bool _is_space(char c) {
         return (0x20 == c || 0x09 == c || 0x0d == c || 0x0a == c || 0x0c == c || 0x0b == c);
     }
@@ -94,9 +96,10 @@ namespace sc
         view.remove_prefix(i);
     }
 
-    inline std::size_t _find_quote(const std::string_view& view, const std::string& quote) { return view.find(quote); }
+    // 查找符号
+    inline std::size_t _find_symbol(const std::string_view& view, const std::string& quote) { return view.find(quote); }
 
-    // 从line的index位置前面查找str
+    // 从 line 的 index 位置前面查找 str
     inline std::size_t _find_front_position(const std::string_view& line, std::size_t index, const std::string& str)
     {
         if (0 < index)
@@ -109,9 +112,11 @@ namespace sc
         return index;
     }
 
+    // 判定是否是 std::pair 类型
     template<typename _Type> struct is_pair : public std::false_type { };
     template<typename _KeyT, typename _ValueT> struct is_pair<std::pair<_KeyT, _ValueT>> : public std::true_type { };
 
+    // 从一组元素中匹配一个最靠前的元素
     template<Analyzer::_symbol_t _Key, typename _Type>
     void _MatchElement(Analyzer::_symbol_t& st, std::string_view& line, std::size_t& index, const list_type<_Type>& seq, pair_t& arg) {
         for (const auto& v : seq) {
@@ -140,6 +145,22 @@ namespace sc
         _MatchElement<_symbol_t::_st_1>(st, line, index, std::get<0>(item), arg);
 
         return st;
+    }
+
+    unsigned int Analyzer::_search_end(line_t lt, std::string_view& line, pair_t& arg, const syntax_t& item, _find_symbol_t func)
+    {
+        _remove_space(line);
+
+        if (line.empty())
+            return line_t::is_blank;
+
+        auto index = func(line, arg.second);
+        if (std::string::npos == index)
+            return (lt);
+
+        _status = status_t::normal;
+        line.remove_prefix(arg.second.size() + index);
+        return (lt | _OnNormal(line, arg, item));
     }
 
     unsigned int Analyzer::_OnNormal(std::string_view& line, pair_t& arg, const syntax_t& item)
@@ -179,33 +200,17 @@ namespace sc
 
     unsigned int Analyzer::_OnQuoting(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
-        return _on_status(line_t::has_code, line, arg, item, sc::Analyzer::_find_quote);
+        return _search_end(line_t::has_code, line, arg, item, sc::Analyzer::_find_quote);
     }
 
     unsigned int Analyzer::_OnPrimitive(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
-        return _on_status(line_t::has_code, line, arg, item, sc::_find_quote);
+        return _search_end(line_t::has_code, line, arg, item, sc::_find_symbol);
     }
 
     unsigned int Analyzer::_OnAnnotating(std::string_view& line, pair_t& arg, const syntax_t& item)
     {
-        return _on_status(line_t::has_comment, line, arg, item, sc::_find_quote);
-    }
-
-    unsigned int Analyzer::_on_status(line_t lt, std::string_view& line, pair_t& arg, const syntax_t& item, std::size_t (*func)(const std::string_view&, const std::string&))
-    {
-        _remove_space(line);
-
-        if (line.empty())
-            return line_t::is_blank;
-
-        auto index = func(line, arg.second);
-        if (std::string::npos == index)
-            return (lt);
-
-        _status = status_t::normal;
-        line.remove_prefix(arg.second.size() + index);
-        return (lt | _OnNormal(line, arg, item));
+        return _search_end(line_t::has_comment, line, arg, item, sc::_find_symbol);
     }
 
 #include "CppAnalyzer.inl"
@@ -218,6 +223,7 @@ namespace sc
         return (_AnalyzerType().Analyze(file, item, mode));
     }
 
+    // 定义内置的分析器名称和类型的映射
     const std::map<string_type, report_t (*)(const std::string&, const syntax_t&, unsigned int), _str_compare> _analyzerMap{
         { "Java",       _Analyze<Analyzer> },
         { "JavaScript", _Analyze<Analyzer> },
