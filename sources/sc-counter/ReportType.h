@@ -1,0 +1,77 @@
+﻿#pragma once
+
+namespace sc
+{
+
+    using string_type = std::string;
+
+    template<typename _Type>
+    using list_type = std::vector<_Type>;
+
+    template<typename _Key, typename _Value>
+    using pair_list = list_type<std::pair<_Key, _Value>>;
+
+    using list_t = list_type<string_type>;
+    using pair_t = std::pair<string_type, string_type>;
+    using pairs_t = pair_list<string_type, string_type>;
+
+    // 自定义字符串忽略大小写比较函数
+    inline int _StringIgnoreCaseCompare(const char* a, const char* b) {
+        for (; ; ++a, ++b) {
+            unsigned char x = *a;
+            unsigned char y = *b;
+            if ('A' <= x && x <= 'Z') x |= 0x20;
+            if ('A' <= y && y <= 'Z') y |= 0x20;
+            if (0 == x || x != y) return (x - y);
+        }
+    }
+
+    inline bool _StringLessThan(const string_type& a, const string_type& b) {
+        return (_StringIgnoreCaseCompare(a.c_str(), b.c_str()) < 0);
+    }
+
+    inline bool _StringEqual(const string_type& a, const string_type& b) {
+        return (a.size() == b.size()) && (_StringIgnoreCaseCompare(a.c_str(), b.c_str()) == 0);
+    }
+
+    // 忽略大小写的字符串比较函数类型
+    struct _str_compare {
+        bool operator()(const string_type& a, const string_type& b) const {
+            return (_StringLessThan(a, b));
+        }
+    };
+
+    // 定义行解释模式
+    enum mode_t
+    {
+        cc_is_code      = 0x01,
+        cc_is_comment   = 0x02,
+        mc_is_blank     = 0x04,
+        mc_is_comment   = 0x08,
+        ms_is_blank     = 0x10,
+        ms_is_code      = 0x20,
+        default_mode = (cc_is_code | cc_is_comment | mc_is_blank | ms_is_code),
+        full_mode = (cc_is_code | cc_is_comment | mc_is_blank | mc_is_comment | ms_is_blank | ms_is_code)
+    };
+
+    inline bool _check_mode(unsigned int m, unsigned int k) { return ((m & k) == k); }
+
+    // 定义统计行数类型
+    enum count_t {
+        // 物理行数、有效代码行数、注释行数、空白行数
+        _lines, _codes, _comments, _blanks
+    };
+
+    /*
+     * 语法结构数据类型
+     * 包含：单行注释符号列表、多行注释符号列表、普通字符串符号列表、原生字符串符号列表
+     */
+    using syntax_t = std::tuple<list_t, pairs_t, pairs_t, pairs_t>;
+
+    /*
+     * 描述统计的行数结果的数据类型
+     * 依次为：物理行数、有效代码行数、注释行数、空白行数
+     */
+    using report_t = std::tuple<unsigned int, unsigned int, unsigned int, unsigned int>;
+
+}

@@ -28,8 +28,12 @@ bld/
 [Ii]mterdiate/
 
 .vs/
+<<<<<<< HEAD
 
 # XCode
 
 Build
 xcuserdata
+=======
+.vscode/
+>>>>>>> dev

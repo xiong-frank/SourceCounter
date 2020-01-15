@@ -1,0 +1,36 @@
+{
+    "Java": {
+        "extensions": [".java"],
+		"analyzer": "C",
+        "syntax": [ ["//"],
+                    [["/**", "**/"]],
+                    [["\"", "\""]],
+                    [] 
+                  ]
+    },
+	"C/C++ Header": {
+        "extensions": [".h"],
+		"analyzer": "C"
+    },
+	"C": {
+		"analyzer": "C++",
+		"syntax": [ ["#"],
+                    [["<!--", "-->"]],
+                    [["\"", "\""]],
+                    [["a", "b"]] 
+                  ]
+    },
+	"C++": {
+        "extensions": [".cpp", ".cxx"]
+    },
+	"Ruby": {
+		"syntax": [ ["#"],
+                    [["=begin", "=end"]],
+                    [["%q{", "}"]],
+                    [["%Q[", "]"]] 
+                  ]
+    },
+    "Frank": {
+        "extensions": [".cs"]
+    }
+}
