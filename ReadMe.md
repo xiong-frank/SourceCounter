@@ -135,12 +135,13 @@ $> ./sc --input demo.c --output report.json --mode=63
 
 ### 如何构建
 * 依赖的第三方库：
-  * [NielsLohmann/json](https://github.com/nlohmann/json) 3.7.3
-  * [FrankXiong/CommandLineParser](https://github.com/xf-bnb/CommandLineParser) 1.0.3
-  * [FrankXiong/SimpleTest](https://github.com/xf-bnb/SimpleTest) 1.0.1
-  * [FrankXiong/ConsoleLog](https://github.com/xf-bnb/ConsoleLog) 1.0.0
+  | Name | Version | Description |
+  | --- | --- | --- |
+  | [NielsLohmann/json](https://github.com/nlohmann/json) | 3.7.3 | Json 库 |
+  | [FrankXiong/CommandLineParser](https://github.com/xf-bnb/CommandLineParser) | 1.0.3 | 命令行参数解析库 |
+  | [FrankXiong/SimpleTest](https://github.com/xf-bnb/SimpleTest) | 1.0.1 | 简单的测试框架 |
+  | [FrankXiong/ConsoleLog](https://github.com/xf-bnb/ConsoleLog) | 1.0.0 | 简单的日志框架 |
 * 除依赖的外部库以外，项目代码完全采用`C++17`编写，理论上支持`C++17`的编译器均可编译，但受于开发环境限制，目前仅在部分机器和编译器上测试通过，以下是经过验证的编译环境：
-
   | platform | compiler |
   | --- | --- |
   | Windows 1903 | VisualStudio2019 16.4 |
