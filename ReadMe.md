@@ -7,11 +7,11 @@ A source code line counting tool based on C++. It analyzes and count the source 
 
 ### Installation
 * The command line executable programs for multiple platforms are provided in the release page. You can download them to the local computer for decompression and run them in the terminal.
-* You can also choose to build your own. We provide the construction methods for different platforms, refer to [How to build] (#How to build).
+* You can also choose to build your own. We provide the project settings and scripts for different platforms, refer to [How to build](#How to build).
 
-### how to use
+### How to use
 The easiest way:
-Type `sc [path]` in the terminal to count and output the source code of all supported languages ​​in the `path` path. The path parameter can be a directory or a single file path. Examples are as follows:
+Input in the terminal: 'sc [path]' to count the source codes of all supported languages in the 'path' and output the results. The 'path' parameter can be a directory or a file. For example:
 ```shell
 $> ./sc demo.c
 +------------+------------+------------+------------+------------+
@@ -20,7 +20,7 @@ $> ./sc demo.c
 |          1 |         27 |         10 |         10 |          7 |
 +------------+------------+------------+------------+------------+
 ```
-The statistics tool supports multiple command-line options to determine how the statistics behave and output, so you can also run the tool by specifying multiple command-line options. The following example counts the number of lines of the `demo.c` source file and outputs the detailed results of the statistics to the `report.json` file. The rule value 63 is used when counting the number of lines:
+The statistics tool supports multiple command-line options to determine how the statistics behave and output, so you can also run the tool by specifying multiple command-line options. The following example counts the number of lines of the `demo.c` source file, and outputs the detailed results of the statistics to the `report.json`, and use mode value 63:
 ```shell
 $> ./sc --input demo.c --output report.json --mode=63
 +------------+------------+------------+------------+------------+
@@ -30,12 +30,12 @@ $> ./sc --input demo.c --output report.json --mode=63
 +------------+------------+------------+------------+------------+
 ```
 Note: It is recommended to run the statistics tool by specifying multiple command line parameters, which can more clearly determine the statistical behavior. Running in short form works only when there are only one or two parameters, and both parameters represent the path, for example:
-* `sc demo.c` is equivalent to` sc --input demo.c`.
-* `sc demo.c report.json` is equivalent to` sc --input demo.c --output report.json`.
+* `sc demo.c` is equivalent to `sc --input demo.c`.
+* `sc demo.c report.json` is equivalent to `sc --input demo.c --output report.json`.
 * In other cases, it must be explicitly executed as `sc [command] [param] ...`.
 
 ### Supported command line parameters
-```text
+```shell
       --help,-h  For help information.
    --version,-v  Show version information.
   --analyzer,-a  Show built-in analyzer information.
@@ -51,9 +51,10 @@ Note: It is recommended to run the statistics tool by specifying multiple comman
         --empty  [optional] Specifies whether to count empty files. default: true.
 ```
 
-#### 命令行选项释义
-* **--ouput, -o**：默认统计工具仅在屏幕输出汇总后的统计结果，要想获得每个文件的统计结果或者意图将结果输出到文件以供其他地方使用，那么需要利用该选项指定输出的文件位置，否则将不输出。
-* **--config, -c**：统计工具在分析源代码行数的时候会需要用到对应语言的语法规则，例如对注释和字符串如何判定？因此需要提供一个配置文件来描述这些语言的部分语法特征，使用该选项指定配置文件路径。配置文件采用 `json` 格式，示例配置如下：
+#### Command line option definition
+* **--ouput, -o**: the default statistics tool only outputs the summarized statistics results on the console. In order to obtain the statistics results of each file or output the results to the file for other uses, you need to use this option to specify the output file location, otherwise it will not output.
+
+* **--config, -c**: the statistics tool needs to use the syntax rules of the corresponding language when analyzing the number of lines in the source code. For example, how to determine comments and strings? Therefore, you need to provide a configuration file to describe some of the syntax features of these languages. use this option to specify the file path. The configuration file is in the format of 'JSON'. For example:
   ```json
   {
       "C++": {
@@ -75,11 +76,11 @@ Note: It is recommended to run the statistics tool by specifying multiple comman
       }
   }
   ```
-  * 每个语言的配置项包含3个字段：
-    * `analyzer` 指定使用哪种分析器进行分析。
-    * `extensions` 指定语言对应文件关联的扩展名。
-    * `syntax` 指定对应的语法规则，包括4组语法特征，分别对应：单行注释符号，多行注释符号，普通字符串符号，原生字符串符号，如果某些特征没有，则可以配置为空 `[]`。
-  * 统计工具实现了多种语言的分析器，用以对不同语言进行分析统计，并且将会持续迭代以支持更多语言的统计。可以键入：`sc --analyzer` 查看支持的分析器，如果你想统计的语言与支持的分析器的语法类似，则可以在对应配置项的 `analyzer` 字段指定匹配的分析器名称。如果没有，则可以向我提issue，我将在评估之后决定是否实现它。例如，统计工具内置了`Java` 语言的分析器，假定你需要统计一种名叫 `MyJava` 语言的源代码行数，它的语法规则与 `Java` 语言类似。那么你可以进行如下配置：
+  * Configuration items for each language contain three fields:
+    * `analyzer` specifies which analyzer to use for statistics.
+    * `extensions` specifies the extension associated with the file corresponding to the language.
+    * `syntax` specifies the corresponding syntax rules, including four groups of syntax features, respectively corresponding to: single line comment symbol, multi line comment symbol, common string symbol and raw string symbol. If some features are not available, it can be configured as empty '[]'.
+  * Statistical tools implemented multi language analyzers to analyze and count different languages, and will continue to update to support more language. You can type: `sc --analyzer` to view the supported analyzers. If you want to count a language similar to the syntax of the supported analyzers, you can specify the matching analyzer name in the `analyzer` field of the corresponding configuration item. If not, you can commit a issue to me for, and I will decide whether to implement it after evaluation. for example, the statistical tool is built with the parser of the `Java` language, assuming that you need to count the number of source code lines called `MyJava` language, and its syntax rules are similar to those of `Java` language. Then you can configure as follows:
     ```json
     {
         "MyJava": {
@@ -88,7 +89,7 @@ Note: It is recommended to run the statistics tool by specifying multiple comman
         }
     }
     ```
-    那么统计工具将会识别扩展名为 `.javaxx` 的文件，并以 `Java` 语言规则配置和统计算法，输出 `MyJava` 语言的统计结果。如果两种语言的语法一致，但规则配置不一致，例如 `Java` 使用 `/*` `*/` 来表示多行注释，而你的 `MyJava` 语言使用 `xxx` `yyy`，那么也可以自定义配置规则：
+    Then the statistics tool will recognize the file with the extension of `.javaxx`, and use the `Java` language rule configuration and statistics algorithm to output the `Myjava` language statistics results. If the syntax of the two languages is the same, but the rule configuration is not the same, for example, `Java` uses `/*` `*/` to represent multiline comments, and your `Myjava` language uses `xxx` `YYY`, then you can customize the configuration rules:
     ```json
     {
         "MyJava": {
@@ -102,7 +103,7 @@ Note: It is recommended to run the statistics tool by specifying multiple comman
         }
     }
     ```
-    `syntax` 对于非内置语言是可选的，不指定时默认使用对应的 `analyzer` 的配置，但 `extensions` 字段必填，否则统计程序不能确定该将哪种文件识别为 `MyJava` 语言，但同时你依然可以指定 `extensions` 字段为 `[".java"]` ，这会优先将 `.java` 文件识别为 `MyJava`，而不是 `Java`。注意：配置中的语言名称和分析器名称不区分大小写。
+    `syntax` is optional for non built-in languages. If it is not specified, the corresponding configuration of `analyzer` will be used by default, but the `extensions` field is required. Otherwise, the statistical tool don't know which file should be recognized as `Myjava`, but again, you can still specify the `extensions` field as `[".java"]`, which will give priority to `Myjava` instead of `Java`. Note: language names and analyzer names in the configuration are not case sensitive.
 * **--mode, -m**：即使指定了不同语言的语法规则，也不一定就能准确的对行数进行判定，这是因为，即便是相同代码，不同的人会有不同的理解，例如下面的 C++ 代码示例：
   ```c++
   int main(/* void */)
