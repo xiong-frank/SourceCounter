@@ -1,15 +1,17 @@
-## 源代码行数统计工具
-一个基于C++实现的源代码行数统计工具，对指定路径的源代码进行分析统计，输出不同语言的文件数，物理行数，代码行数，注释行数，以及空白行数。
+English | [中文](./ReadMe.zh-cn.md)
+
+## Source Counter
+A source code line counting tool based on C++. It analyzes and count the source code of a specified path, and output the number of files, physical lines, code lines, comment lines and blank lines in different languages.
 
 ##### Version: 1.0.0-SNAPSHOT
 
-### 安装
-* 发布页面中提供了多个平台的命令行可执行程序，下载到本地进行解压，在终端中运行即可。
-* 也可以选择自己构建，我们提供了不同平台的构建方式，参考[如何构建](#如何构建)。
+### Installation
+* The command line executable programs for multiple platforms are provided in the release page. You can download them to the local computer for decompression and run them in the terminal.
+* You can also choose to build your own. We provide the construction methods for different platforms, refer to [How to build] (#How to build).
 
-### 如何使用
-最简单的方式：
-在终端中输入：`sc [path]` 即可对 `path` 路径中所有支持的语言的源代码进行统计并输出结果，`path`  参数可以是一个目录，也可以是单个文件路径。示例如下：
+### how to use
+The easiest way:
+Type `sc [path]` in the terminal to count and output the source code of all supported languages ​​in the `path` path. The path parameter can be a directory or a single file path. Examples are as follows:
 ```shell
 $> ./sc demo.c
 +------------+------------+------------+------------+------------+
@@ -18,7 +20,7 @@ $> ./sc demo.c
 |          1 |         27 |         10 |         10 |          7 |
 +------------+------------+------------+------------+------------+
 ```
-统计工具支持多个命令行选项，以决定统计的行为和输出的方式，因此，也可以通过指定多个命令行选项来运行该工具。以下示例统计`demo.c`源文件的行数，并将统计的详细结果输出到`report.json`文件中，统计行数时使用规则值63：
+The statistics tool supports multiple command-line options to determine how the statistics behave and output, so you can also run the tool by specifying multiple command-line options. The following example counts the number of lines of the `demo.c` source file and outputs the detailed results of the statistics to the `report.json` file. The rule value 63 is used when counting the number of lines:
 ```shell
 $> ./sc --input demo.c --output report.json --mode=63
 +------------+------------+------------+------------+------------+
@@ -27,26 +29,26 @@ $> ./sc --input demo.c --output report.json --mode=63
 |          1 |         27 |         10 |         18 |          8 |
 +------------+------------+------------+------------+------------+
 ```
-注意：通过指定多个命令行参数来运行统计工具是推荐的做法，可以更加明确的决定统计行为。使用简写方式运行仅在只有一个或两个参数时有效，且两个参数都表示路径，例如：
-* `sc demo.c` 等价于 `sc --input demo.c`。
-* `sc demo.c report.json` 等价于 `sc --input demo.c --output report.json`。
-* 其他情形则必须明确以 `sc [command] [param] ...` 方式执行。
+Note: It is recommended to run the statistics tool by specifying multiple command line parameters, which can more clearly determine the statistical behavior. Running in short form works only when there are only one or two parameters, and both parameters represent the path, for example:
+* `sc demo.c` is equivalent to` sc --input demo.c`.
+* `sc demo.c report.json` is equivalent to` sc --input demo.c --output report.json`.
+* In other cases, it must be explicitly executed as `sc [command] [param] ...`.
 
-### 支持的命令行参数
+### Supported command line parameters
 ```text
-     --help, -h  获取帮助信息。
-  --version, -v  查看版本信息。
- --analyzer, -a  查看内置的分析器信息。
-    --input, -i  [必需] 指定要统计的源代码所在的路径，可以是一个目录路径，也可以是单个文件路径。
-   --output, -o  [可选] 指定统计结果输出的位置，若指定，则以json格式输出每个源代码文件的统计详情，否则不输出。
-   --config, -c  [可选] 指定不同语言语法规则的配置文件路径。
-     --mode, -m  [可选] 指定针对具有歧义的行进行解释的方式。
---languages, -l  [可选] 指定要统计的语言，若不指定则统计所有内置支持的语言。
-  --exclude, -e  [可选] 指定要排除的文件，按正则表达式匹配。
-   --thread, -t  [可选] 指定建议程序使用的线程数，但并不一定采纳。
-  --explain, -x  [可选] 在其他所有命令行参数都正确的情况下，对参数值进行解释输出。
-         --view  [可选] 指定终端中输出按语言分类的统计详情以及排序规则。
-        --empty  [可选] 指定是否允许空文件。
+      --help,-h  For help information.
+   --version,-v  Show version information.
+  --analyzer,-a  Show built-in analyzer information.
+     --input,-i  [required] Specify the path of the source to be counted, can be a file or directory.
+    --output,-o  [optional] Specify the file path for the output statistics, the output is in JSON format.
+    --config,-c  [optional] Specifies the config path for language syntax rules.
+      --mode,-m  [optional] Specify statistical rules to explain the ambiguous lines.
+ --languages,-l  [optional] Specify the language for Statistics.
+   --exclude,-e  [optional] A regular expression, specify paths to exclude.
+    --thread,-t  [optional] suggested number of threads used.
+   --explain,-x  [optional] explain parameters to be used during program execution.
+         --view  [optional] Show statistics by language, and you can also specify sorting rules.
+        --empty  [optional] Specifies whether to count empty files. default: true.
 ```
 
 #### 命令行选项释义
