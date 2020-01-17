@@ -3,7 +3,7 @@ English | [中文](./ReadMe.zh-cn.md)
 ## Source Counter
 A source code line counting tool based on C++. It analyzes and count the source code of a specified path, and output the number of files, physical lines, code lines, comment lines and blank lines in different languages.
 
-##### Version: 1.0.0-SNAPSHOT
+##### Version: 1.0.0
 
 ### Installation
 * The command line executable programs for multiple platforms are provided in the release page. You can download them to the local computer for decompression and run them in the terminal.

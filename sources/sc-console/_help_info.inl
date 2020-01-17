@@ -1,5 +1,5 @@
 
-inline const char* version() { return "1.0.0-snapshot"; }
+inline const char* version() { return "1.0.0"; }
 inline const char* app_name() { return "SourceCounter"; }
 
 namespace _help
