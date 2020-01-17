@@ -150,7 +150,7 @@ $> ./sc --input demo.c --output report.json --mode=63
   ```
 
 ### 如何构建
-* 依赖的第三方库：
+* 依赖的第三方库，这些库都是单头文件依赖，并且已经拷贝至本项目中：
 
   | Name | Version | Description |
   | --- | --- | --- |
@@ -166,7 +166,7 @@ $> ./sc --input demo.c --output report.json --mode=63
   | Ubuntu 18.04 | GCC 9.1, Clang 9.0 |
   | MacOS 10.15.2 | GCC 9.2, Clang 9.0, Xcode 11.3 |
 * 在 [./projects](./projects) 目录中按平台和编译器分别提供了支持的构建工程配置或脚本，打开对应环境的配置目录，执行对应的构建脚本或运行构建即可，构建成功将在 `./outputs` 目录中输出生成的结果：
-  * **Windows:** 要求 `VS 2017 15.7` 及以上版本。
+  * **Windows:** 要求 `VisualStudio2017 15.7` 及以上版本。
     * 使用 VisualStudio 打开 [./projects/Windows/VisualStudio/SourceCounter.sln](./projects/Windows/VisualStudio) 工程文件，在菜单中选择构建生成即可。
   * **Linux:** 要求 `GCC 9` / `Clang 9` 及以上版本。
     * **GCC/Clang:** 分别进入 [./projects/Linux](./projects/Linux) 中对应的目录，执行对应环境的 `release.sh` / `debug.sh` 脚本即可。
