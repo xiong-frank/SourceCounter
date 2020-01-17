@@ -11,7 +11,7 @@
 
 ### 如何使用
 最简单的方式：
-在终端中输入：`sc [path]` 即可对 `path` 路径中所有支持的语言的源代码进行统计并输出结果，`path`  参数可以是一个目录，也可以是单个文件路径。示例如下：
+在终端中输入：`sc [path]` 即可对 `path` 路径中所有支持的语言的源代码进行统计并输出结果，`path` 参数可以是一个目录，也可以是单个文件路径。示例如下：
 ```shell
 $> ./sc demo.c
 +------------+------------+------------+------------+------------+
@@ -107,9 +107,9 @@ $> ./sc --input demo.c --output report.json --mode=63
   ```c++
   int main(/* void */)
   {
-      /* to do
+       /* to do
       
-       */
+        */
        return 0;
   }
   ```
@@ -129,21 +129,21 @@ $> ./sc --input demo.c --output report.json --mode=63
    | ms_is_blank   | 16 | Case3 is Blank Line |
    | ms_is_code    | 32 | Case3 is Code Line |
    
-   * 需要注意的是，不同的值可以通过 **位或** (或加法)运算组合使用，例如：`--mode=7` 而 7 = 1 + 2 + 4， 这意味着：当指定7，那么 **一行中同时包含有效代码和注释，该行既统计为代码行，又统计为注释行。并且多行注释中的空行将统计为空行。** 以上述C++代码为例。指定 `--mode=7`，那么统计结果为： *Lines:7, Codes:4, Comments:3, Blanks:1*。
-   * `--mode` 参数是可选的，若不指定，默认值为：39(1 + 2 + 4 + 32)。
+   * 需要注意的是，不同的值可以通过 **位或(或加法)** 运算组合使用，例如：`--mode=7` 而 7 = 1 + 2 + 4， 这意味着：当指定7，那么 **一行中同时包含有效代码和注释，该行既统计为代码行，又统计为注释行。并且多行注释中的空行将统计为空行。** 以上述C++代码为例。指定 `--mode=7`，那么统计结果为： *Lines:7, Codes:4, Comments:3, Blanks:1*。
+   * `--mode` 参数是可选的，若不指定，默认值为：39(1+2+4+32)。
 * **--languages, -l, --exclude, -e**：统计工具内置分析器对应的语言以及配置文件中配置的语言都将得到支持，这通常会导致大量的语言都得到支持，我正是我们想要的，但使用者在统计的时候可能并不想分析所有的源代码，而仅想获得自己关注的某些语言的分析统计结果，此时就可以使用 `--languages` 选项指定，例如：`--languages=C,Java,Python` 意味着统计工具仅分析 C, Java, Python 这3种语言源代码文件的统计结果，前提是统计工具也支持这3种语言。而 `--exclude` 选项则用来排除文件，利用正则表达式对每个文件的绝对路径进行匹配，所有匹配到的文件将不会被统计。
-* **--thread, -t**： 此选项建议统计工具运行时使用的线程数量，为什么是建议？因为如果指定一个较大的数字，统计程序当然不会同时分配如此多的线程。一般指定一个小于32的数字，且不大于目标文件的数量，建议生效。
-* **--explain, -x**： 一旦指定该选项，统计工具将不会真正执行统计工作，仅对当前使用的参数信息进行解释输出，前提是所有的选项和参数都指定正确。例如想在真正运行前查看输入的选项或参数是否和预期的一致，可以添加该选项查看。例如：
+* **--thread, -t**：此选项建议统计工具运行时使用的线程数量，为什么是建议？因为如果指定一个较大的数字，统计程序当然不会同时分配如此多的线程。一般指定一个小于32的数字，且不大于目标文件的数量，建议生效。
+* **--explain, -x**：一旦指定该选项，统计工具将不会真正执行统计工作，仅对当前使用的参数信息进行解释输出，前提是所有的选项和参数都指定正确。例如想在真正运行前查看输入的选项或参数是否和预期的一致，可以添加该选项查看。例如：
   ```shell
-  $> ./sc --explain --input resources/sources/ --output report.json --view=lines:des --languages "C,Java.C++,Frank" --exclude="\.c$" --mode=41
+  $> ./sc --explain --input resources/sources/ --output report.json --view=lines:des --languages "C,Java,C++,Frank" --exclude="\.c$" --mode=41
   
           input: resources/sources/
          output: report.json
     config file:
-      languages: C
+      languages: C,Java,C++
       exclusion: \.c$
     allow empty: true
-          files: 2
+          files: 4
    thread count: 1
            mode: 41(1+8+32)
            view: lines:descending
@@ -165,12 +165,12 @@ $> ./sc --input demo.c --output report.json --mode=63
   | Windows 1903 | VisualStudio2019 16.4 |
   | Ubuntu 18.04 | GCC 9.1, Clang 9.0 |
   | MacOS 10.15.2 | GCC 9.2, Clang 9.0, Xcode 11.3 |
-* 在 [projects](./projects) 目录中按平台和编译器分别提供了支持的构建工程配置或脚本，打开对应环境的配置目录，执行对应的构建脚本或运行构建即可，构建成功将在 `./outputs` 目录中输出生成的结果：
+* 在 [./projects](./projects) 目录中按平台和编译器分别提供了支持的构建工程配置或脚本，打开对应环境的配置目录，执行对应的构建脚本或运行构建即可，构建成功将在 `./outputs` 目录中输出生成的结果：
   * **Windows:** 要求 `VS 2017 15.7` 及以上版本。
     * 使用 VisualStudio 打开 [./projects/Windows/VisualStudio/SourceCounter.sln](./projects/Windows/VisualStudio) 工程文件，在菜单中选择构建生成即可。
-  * **Linux:** 要求 `GCC 9` 或 `Clang 9` 及以上版本。
+  * **Linux:** 要求 `GCC 9` / `Clang 9` 及以上版本。
     * **GCC/Clang:** 分别进入 [./projects/Linux](./projects/Linux) 中对应的目录，执行对应环境的 `release.sh` / `debug.sh` 脚本即可。
-  * **Mac:** 要求 `GCC 9` 或 `Clang 9` 或 `Xcode 11` 及以上版本。注意：对于 `Clang` 或 `Xcode` 编译，同时要求 `MacOS 10.15` 以上版本。
+  * **Mac:** 要求 `GCC 9` / `Clang 9` / `Xcode 11` 及以上版本。注意：对于 `Clang` / `Xcode` 编译，同时要求 `MacOS 10.15` 以上版本。
     * **Xcode:** 使用 `Xcode` 加载 [./projects/Mac/Xcode/SourceCounter.xcworkspace](./projects/Mac/Xcode) 工程，分别对每个模块进行构建即可。
     * **GCC/Clang:** 分别进入 [./projects/Mac](./projects/Mac) 中对应的目录，执行对应环境的 `release.sh` / `debug.sh` 脚本即可。
   * 参考：
