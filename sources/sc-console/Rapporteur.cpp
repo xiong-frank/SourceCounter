@@ -143,7 +143,7 @@ namespace sc
 
         if (result.is_existing(_opt_key(_sc_cmd_version)))
         {
-            std::cout << app_name() << " " << version() << "  2020-01 by FrankXiong" << std::endl;
+            std::cout << app_name() << " " << version() << "  by FrankXiong 2020-01" << std::endl;
             return false;
         }
 
@@ -484,7 +484,8 @@ namespace sc
             _show_line('+', '-', std::vector<std::string>(5, _make_filler(_cell_width, '-')));
         }
 
-        _OutputToFile(filename, reports, reportMap, total);
+        if (!filename.empty())
+            _OutputToFile(filename, reports, reportMap, total);
     }
 
 }

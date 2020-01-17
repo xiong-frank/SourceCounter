@@ -70,8 +70,8 @@ namespace sc::test
         _xfExpect("ok" == strInfo);
 
         _xfExpect(IsEqual(mgr, "C", "C++", { ".c" }, { { "#" }, { {"<!--", "-->"} }, { {"\"", "\""} }, {{"a", "b"}} }));
-        _xfExpect(IsEqual(mgr, "C++", "C++", { ".cxx", ".cpp" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, { { R"(R")", R"(")" }, { "(", ")" } } }));
-        _xfExpect(IsEqual(mgr, "C/C++ Header", "C", { ".h" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
+        _xfExpect(IsEqual(mgr, "C++", "C++", { ".inl", ".cpp" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, { { R"(R")", R"(")" }, { "(", ")" } } }));
+        _xfExpect(IsEqual(mgr, "C++ Header", "C++", { ".h" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, { { R"(R")", R"(")" }, { "(", ")" } } }));
         _xfExpect(IsEqual(mgr, "Frank", "C", { ".cs" }, { { "//" }, { {"/*", "*/"} }, { {"\"", "\""} }, {} }));
         _xfExpect(IsEqual(mgr, "Java", "C", { ".java" }, { { "//" }, { {"/**", "**/"} }, { {"\"", "\""} }, {} }));
         _xfExpect(IsEqual(mgr, "Ruby", "Ruby", { ".rb" }, { { "#" }, { {"=begin", "=end"} }, { {"%q{", "}"} }, {{"%Q[", "]"}} }));

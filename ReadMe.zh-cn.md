@@ -3,10 +3,10 @@
 ## 源代码行数统计工具
 一个基于C++实现的源代码行数统计工具，对指定路径的源代码进行分析统计，输出不同语言的文件数，物理行数，代码行数，注释行数，以及空白行数。
 
-##### Version: 1.0.0
+##### Version: 1.0.1
 
 ### 安装
-* 发布页面中提供了多个平台的命令行可执行程序，下载到本地进行解压，在终端中运行即可。
+* [发布页面](https://github.com/xf-bnb/SourceCounter/releases) 中提供了多个平台的命令行可执行程序，下载到本地进行解压，在终端中运行即可。
 * 也可以选择自己构建，我们提供了不同平台的构建方式，参考[如何构建](#如何构建)。
 
 ### 如何使用
@@ -178,3 +178,32 @@ $> ./sc --input demo.c --output report.json --mode=63
     * [Microsoft C++ 语言一致性](https://docs.microsoft.com/zh-cn/cpp/overview/visual-cpp-language-conformance?view=vs-2019)
     * [GCC 9 发行说明](https://gcc.gnu.org/gcc-9/changes.html)
     * [Clang 9.0.0 发行说明](https://releases.llvm.org/9.0.0/tools/clang/docs/ReleaseNotes.html)
+
+#### 本项目源代码行数统计结果(以下为Windows中执行结果)
+* 按默认统计模式：`--mode=39`
+  ```shell
+  ./sc --input ./sources --config ./resources/config.json --languages "C++ Header,C++" --exclude "third/*" --view files:ascending
+   +------------+------------+------------+------------+------------+------------+
+   |   Language |      Files |      Lines |      Codes |   Comments |     Blanks |
+   +------------+------------+------------+------------+------------+------------+
+   | C++ Header |          5 |        332 |        191 |         78 |         80 |
+   |        C++ |         14 |       1797 |       1431 |         66 |        308 |
+   +------------+------------+------------+------------+------------+------------+
+   |      Total |         19 |       2129 |       1622 |        144 |        388 |
+   +------------+------------+------------+------------+------------+------------+
+  spend time: 3 ms
+  ```
+
+* 按完全统计模式：`--mode=63`
+  ```shell
+  ./sc --input ./sources --config ./resources/config.json --languages "C++ Header,C++" --exclude "third/*" --view files:ascending --mode=63
+   +------------+------------+------------+------------+------------+------------+
+   |   Language |      Files |      Lines |      Codes |   Comments |     Blanks |
+   +------------+------------+------------+------------+------------+------------+
+   | C++ Header |          5 |        332 |        191 |         78 |         80 |
+   |        C++ |         14 |       1797 |       1431 |         66 |        313 |
+   +------------+------------+------------+------------+------------+------------+
+   |      Total |         19 |       2129 |       1622 |        144 |        393 |
+   +------------+------------+------------+------------+------------+------------+
+  spend time: 3 ms
+  ```

@@ -3,10 +3,10 @@ English | [中文](./ReadMe.zh-cn.md)
 ## Source Counter
 A source code line counting tool based on C++. It analyzes and count the source code of a specified path, and output the number of files, physical lines, code lines, comment lines and blank lines in different languages.
 
-##### Version: 1.0.0
+##### Version: 1.0.1
 
 ### Installation
-* The command line executable programs for multiple platforms are provided in the release page. You can download them to the local computer for decompression and run them in the terminal.
+* The command line executable programs for multiple platforms are provided in the [Release Page](https://github.com/xf-bnb/SourceCounter/releases). You can download them to the local computer for decompression and run them in the terminal.
 * You can also choose to build your own. We provide the project settings and scripts for different platforms, refer to [How to build](#How-to-build).
 
 ### How to use
@@ -178,3 +178,32 @@ Note: It is recommended to run the statistics tool by specifying multiple comman
     * [Microsoft C++ language conformance table](https://docs.microsoft.com/zh-cn/cpp/overview/visual-cpp-language-conformance?view=vs-2019)
     * [GCC 9 Release Notes](https://gcc.gnu.org/gcc-9/changes.html)
     * [Clang 9.0.0 Release Notes](https://releases.llvm.org/9.0.0/tools/clang/docs/ReleaseNotes.html)
+
+#### Source code lines of this project(Running in Windows)
+* Statistics by default mode：`--mode=39`
+  ```shell
+  ./sc --input ./sources --config ./resources/config.json --languages "C++ Header,C++" --exclude "third/*" --view files:ascending
+   +------------+------------+------------+------------+------------+------------+
+   |   Language |      Files |      Lines |      Codes |   Comments |     Blanks |
+   +------------+------------+------------+------------+------------+------------+
+   | C++ Header |          5 |        332 |        191 |         78 |         80 |
+   |        C++ |         14 |       1797 |       1431 |         66 |        308 |
+   +------------+------------+------------+------------+------------+------------+
+   |      Total |         19 |       2129 |       1622 |        144 |        388 |
+   +------------+------------+------------+------------+------------+------------+
+  spend time: 3 ms
+  ```
+
+* Statistics by full mode：`--mode=63`
+  ```shell
+  ./sc --input ./sources --config ./resources/config.json --languages "C++ Header,C++" --exclude "third/*" --view files:ascending --mode=63
+   +------------+------------+------------+------------+------------+------------+
+   |   Language |      Files |      Lines |      Codes |   Comments |     Blanks |
+   +------------+------------+------------+------------+------------+------------+
+   | C++ Header |          5 |        332 |        191 |         78 |         80 |
+   |        C++ |         14 |       1797 |       1431 |         66 |        313 |
+   +------------+------------+------------+------------+------------+------------+
+   |      Total |         19 |       2129 |       1622 |        144 |        393 |
+   +------------+------------+------------+------------+------------+------------+
+  spend time: 3 ms
+  ```
