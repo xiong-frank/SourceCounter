@@ -33,11 +33,11 @@ namespace xf::log
         auto tt = std::chrono::system_clock::to_time_t(tp);
 
         struct tm lt;
-#ifdef _MSC_VER
+    #ifdef _MSC_VER
         localtime_s(&lt, &tt);
-#else
+    #else
         localtime_r(&tt, &lt);
-#endif
+    #endif
 
         char info[32]{ 0 };
         std::snprintf(info, 32, "%02d:%02d:%02d.%03d", lt.tm_hour, lt.tm_min, lt.tm_sec, int(tp.time_since_epoch().count() % 1000));

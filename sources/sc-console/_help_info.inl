@@ -1,5 +1,5 @@
 
-inline const char* version() { return "1.0.0-snapshot"; }
+inline const char* version() { return "1.0.1"; }
 inline const char* app_name() { return "SourceCounter"; }
 
 namespace _help
@@ -100,9 +100,9 @@ namespace _help
         "[optional] Specify statistical rules to explain the ambiguous lines.",
         R"(Ambiguous lines refers to a line contains multiple situations.
                  Specifically refer to:
-                   Case1: There are code and comments in one line.
-                   Case2: Empty lines in multiple lines of comments.
-                   Case3: Empty lines in multiple lines of strings.
+                   Case1: One line contains valid code and comments.
+                   Case2: Blank line included in a multi-line comment.
+                   Case3: A blank line contained in a multi-line string.
 
                  Specify "mode" for ambiguous lines to get clear statistical results.
                  The value of "mode" are as follows:

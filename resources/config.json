@@ -8,10 +8,6 @@
                     [] 
                   ]
     },
-	"C/C++ Header": {
-        "extensions": [".h"],
-		"analyzer": "C"
-    },
 	"C": {
 		"analyzer": "C++",
 		"syntax": [ ["#"],
@@ -21,7 +17,11 @@
                   ]
     },
 	"C++": {
-        "extensions": [".cpp", ".cxx"]
+        "extensions": [".cpp", ".inl"]
+    },
+	"C++ Header": {
+        "extensions": [".h"],
+		"analyzer": "C++"
     },
 	"Ruby": {
 		"syntax": [ ["#"],
