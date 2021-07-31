@@ -122,12 +122,12 @@ $> ./sc --input demo.c --output report.json --mode=63
   
    | name | value | explain |
    | --- | --- | --- |
-   | cc_is_code    | 1  | Case1 is Code Line |
-   | cc_is_comment | 2  | Case1 is Comment Line |
-   | mc_is_blank   | 4  | Case2 is Blank Line |
-   | mc_is_comment | 8  | Case2 is Comment Line |
-   | ms_is_blank   | 16 | Case3 is Blank Line |
-   | ms_is_code    | 32 | Case3 is Code Line |
+   | cc_is_code    | 1  | Case1 是代码行 |
+   | cc_is_comment | 2  | Case1 是注释行 |
+   | mc_is_blank   | 4  | Case2 是空白行 |
+   | mc_is_comment | 8  | Case2 是注释行 |
+   | ms_is_blank   | 16 | Case3 是空白行 |
+   | ms_is_code    | 32 | Case3 是代码行 |
    
    * 需要注意的是，不同的值可以通过 **位或(或加法)** 运算组合使用，例如：`--mode=7` 而 7 = 1 + 2 + 4， 这意味着：当指定7，那么 **一行中同时包含有效代码和注释，该行既统计为代码行，又统计为注释行。并且多行注释中的空行将统计为空行。** 以上述C++代码为例。指定 `--mode=7`，那么统计结果为： *Lines:7, Codes:4, Comments:3, Blanks:1*。
    * `--mode` 参数是可选的，若不指定，默认值为：39(1+2+4+32)。
